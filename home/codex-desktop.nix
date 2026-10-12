@@ -153,6 +153,28 @@ lib.mkIf (config.home.username == "cjm") {
     codexHooksRepair
   ];
 
+  # Plugins can refresh while the desktop stays open for days. A path unit
+  # cannot watch all future version directories recursively, so check only
+  # Stripe's small manifest set periodically as well as at desktop launch.
+  systemd.user.services.codex-hooks-repair = {
+    Unit.Description = "Repair Stripe hook command compatibility for Codex";
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${codexHooksRepair}/bin/codex-hooks-repair --codex-home ${homeDir}/.codex";
+      TimeoutStartSec = "15s";
+    };
+  };
+
+  systemd.user.timers.codex-hooks-repair = {
+    Unit.Description = "Repair Codex hooks after background plugin refreshes";
+    Timer = {
+      OnStartupSec = "30s";
+      OnUnitInactiveSec = "1min";
+      AccuracySec = "5s";
+    };
+    Install.WantedBy = [ "timers.target" ];
+  };
+
   home.file.".local/share/applications/codex-desktop.desktop" = {
     force = true;
     text = ''

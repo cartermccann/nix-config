@@ -77,12 +77,20 @@ live interaction results.
 ### Hooks host capability
 
 Stripe plugin 0.10.3 uses `command: node` with the script in a separate `args`
-field. Codex 0.162.0 ignores that field and runs bare Node on the hook's JSON
+field. Codex 0.162.0 and 0.162.1 ignore that field and run bare Node on the hook's JSON
 stdin, producing a syntax error. `codex-hooks-repair` folds only the recognized
 Stripe lifecycle script argument into its command and saves the original
 manifest beside it as `hooks.json.codex-compat-backup`. The desktop guard runs
-this repair on launch so a plugin refresh can be repaired on the next launch.
-CLI users can run `codex-hooks-repair` directly after a plugin refresh.
+this repair on launch. The `codex-hooks-repair.timer` user unit also checks
+Stripe's manifests every minute, covering plugin refreshes while the app stays
+open and newly installed version directories. An unchanged manifest is not
+rewritten. Run `codex-hooks-repair` directly for an immediate repair.
+
+After `nrs`, verify the timer with
+`systemctl --user status codex-hooks-repair.timer` and its latest run with
+`journalctl --user -u codex-hooks-repair.service -n 10`. There is a short interval
+between a refresh and the next check; a running session may also retain cached
+hook commands until it reloads them.
 
 The repair leaves hook enablement and trusted hashes alone. Approve the corrected
 Stripe commands in Settings > Hooks once; changed commands require native trust

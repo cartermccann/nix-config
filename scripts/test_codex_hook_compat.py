@@ -42,6 +42,26 @@ class HookCompatibilityTest(unittest.TestCase):
             self.assertEqual(compat.repair(path), 0)
             self.assertEqual(target.read_text(), '{}')
 
+    def test_upstream_refresh_restores_same_repair_without_replacing_backup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "hooks.json"
+            original = json.dumps({"hooks": {"UserPromptSubmit": [{"hooks": [
+                {"type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/lifecycle/userPromptSubmit.mjs"]},
+            ]}]}}).encode()
+            path.write_bytes(original)
+            self.assertEqual(compat.repair(path), 1)
+            repaired = path.read_bytes()
+            # Plugin refreshes replace the cached manifest during open sessions.
+            refreshed = path.with_name("refreshed.json")
+            refreshed.write_bytes(original)
+            refreshed.replace(path)
+            self.assertEqual(compat.repair(path), 1)
+            self.assertEqual(path.read_bytes(), repaired)
+            self.assertEqual(path.with_name("hooks.json.codex-compat-backup").read_bytes(), original)
+            mtime = path.stat().st_mtime_ns
+            self.assertEqual(compat.repair(path), 0)
+            self.assertEqual(path.stat().st_mtime_ns, mtime)
+
     def test_invalid_manifest_does_not_prevent_other_repairs_or_launch(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "plugins/cache/claude-plugins-official/stripe"
