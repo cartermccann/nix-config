@@ -22,6 +22,16 @@ let
   grokCli = pkgs.callPackage ../pkgs/grok-cli { };
   grokBot = pkgs.callPackage ../pkgs/grok-bot { };
   codexCli = pkgs-unstable.callPackage ../pkgs/codex { };
+  # node-pty's bundled Linux addon needs libstdc++, but the desktop backend
+  # runs under Electron, which does not already load it like standalone Node.
+  t3code = pkgs-unstable.t3code.overrideAttrs (old: {
+    buildCommand = old.buildCommand + ''
+      wrapProgram "$out/bin/t3code-desktop" \
+        --prefix LD_LIBRARY_PATH : "${
+          pkgs-unstable.lib.makeLibraryPath [ pkgs-unstable.stdenv.cc.cc.lib ]
+        }"
+    '';
+  });
   codexUpdater = pkgs.writeShellApplication {
     name = "codex-update";
     runtimeInputs = with pkgs; [
@@ -156,7 +166,7 @@ in
     grokCli # official xAI Grok CLI (grok/agent) — prebuilt binary in ../pkgs/grok-cli
     grokBot # Grok Bot desktop agent — third-party Linux port, see ../pkgs/grok-bot
     pkgs-unstable.cursor-cli # Cursor CLI (binary is `cursor-agent`) — unfree prebuilt, tracks lab releases
-    pkgs-unstable.t3code # T3 Code desktop GUI for coding agents (`t3code-desktop`) — unstable: 26.05 is stuck at 0.0.24
+    t3code # T3 Code desktop GUI with its native terminal runtime dependency
 
     # Meetings & notes
     granola # macOS build repacked onto nixpkgs Electron, see ../pkgs/granola
