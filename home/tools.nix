@@ -155,6 +155,7 @@ in
     grokCli # official xAI Grok CLI (grok/agent) — prebuilt binary in ../pkgs/grok-cli
     grokBot # Grok Bot desktop agent — third-party Linux port, see ../pkgs/grok-bot
     pkgs-unstable.cursor-cli # Cursor CLI (binary is `cursor-agent`) — unfree prebuilt, tracks lab releases
+    pkgs-unstable.t3code # T3 Code desktop GUI for coding agents (`t3code-desktop`) — unstable: 26.05 is stuck at 0.0.24
 
     # Meetings & notes
     granola # macOS build repacked onto nixpkgs Electron, see ../pkgs/granola

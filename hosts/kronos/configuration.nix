@@ -22,6 +22,7 @@
     ../../modules/bluetooth.nix
     ../../modules/printing.nix
     ../../modules/networking.nix
+    ../../modules/runa-private-route.nix
     ../../modules/dictation.nix
     ../../modules/dev.nix
     ../../modules/media.nix
