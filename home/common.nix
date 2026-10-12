@@ -21,6 +21,7 @@
     ./qmd.nix
     ./brain.nix
     ./webctx-tunnel.nix
+    ./cliproxyapi.nix
     ./micro-bridge.nix
     ./cursor-worker.nix
     # Claude Code loops retired: subscription is gone. Keep the Nix files
