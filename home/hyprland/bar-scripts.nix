@@ -193,6 +193,8 @@ let
         add() { [ -n "$3" ] && [ "$3" != null ] && [ "$2" != "$3" ] && echo "$1  $2 → $3" >> "$OUT"; }
         add "Codex CLI" "$(${jq} -r .version $REPO/pkgs/codex/sources.json)" \
           "$($CURL https://api.github.com/repos/openai/codex/releases/latest | ${jq} -r .tag_name | sed 's/^rust-v//')"
+        add "T3 Code" "$(${jq} -r .version "$REPO/pkgs/t3code/sources.json")" \
+          "$($CURL https://api.github.com/repos/pingdotgg/t3code/releases/latest | ${jq} -r 'select(.draft == false and .prerelease == false) | .tag_name | ltrimstr("v")')"
         add "Cursor" "$(${jq} -r .version $REPO/pkgs/code-cursor/sources.json)" \
           "$($CURL 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | ${jq} -r .version)"
         add "Granola" "$(grep -oP 'version = "\K[0-9.]+' $REPO/pkgs/granola/default.nix | head -1)" \
@@ -250,6 +252,16 @@ let
 
     say "codex"
     codex-update --cli-only || say "codex-update failed or had nothing to do; continuing"
+
+    T3_CURRENT=$(${jq} -r .version pkgs/t3code/sources.json)
+    T3_LATEST=$($CURL https://api.github.com/repos/pingdotgg/t3code/releases/latest | ${jq} -r 'select(.draft == false and .prerelease == false) | .tag_name | ltrimstr("v")')
+    if [ -z "$T3_LATEST" ] || [ "$T3_LATEST" = null ]; then
+      say "T3 Code: release check failed"
+    elif [ "$T3_CURRENT" = "$T3_LATEST" ]; then
+      say "T3 Code $T3_CURRENT ✓"
+    else
+      say "T3 Code $T3_CURRENT → $T3_LATEST available; refresh pkgs/t3code source and dependency hashes"
+    fi
 
     bump() { # bump <name> <file> <current> <latest> <url>
       local name=$1 file=$2 cur=$3 new=$4 url=$5

@@ -222,6 +222,9 @@ in
     SUBSYSTEM=="usb", ATTR{idVendor}=="574c", MODE="0660", GROUP="input", TAG+="uaccess"
     SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", MODE="0660", GROUP="input", TAG+="uaccess"
     SUBSYSTEM=="tty", ATTRS{idVendor}=="574c", MODE="0660", GROUP="input", TAG+="uaccess"
+    # Finalmouse (UltralightX dongle, VID 361d): its configurator talks over HID.
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="361d", MODE="0660", GROUP="input", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTR{idVendor}=="361d", MODE="0660", GROUP="input", TAG+="uaccess"
   '';
 
   # Symlink /bin/bash for FHS compatibility (e.g. Claude Code plugin hooks)

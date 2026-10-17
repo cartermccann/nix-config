@@ -59,6 +59,10 @@ let
                 "input"
                 # crash-watch follows systemd-coredump on the system journal.
                 "systemd-journal"
+                # 1Password desktop-app integration gates its CLI/MCP sockets
+                # on these groups; membership lets `op` and 1password-mcp connect.
+                "onepassword-cli"
+                "onepassword-mcp"
               ];
               openssh.authorizedKeys.keys = [
                 # atlas (carter@) — Tailscale SSH access

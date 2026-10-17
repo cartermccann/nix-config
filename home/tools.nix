@@ -22,16 +22,7 @@ let
   grokCli = pkgs.callPackage ../pkgs/grok-cli { };
   grokBot = pkgs.callPackage ../pkgs/grok-bot { };
   codexCli = pkgs-unstable.callPackage ../pkgs/codex { };
-  # node-pty's bundled Linux addon needs libstdc++, but the desktop backend
-  # runs under Electron, which does not already load it like standalone Node.
-  t3code = pkgs-unstable.t3code.overrideAttrs (old: {
-    buildCommand = old.buildCommand + ''
-      wrapProgram "$out/bin/t3code-desktop" \
-        --prefix LD_LIBRARY_PATH : "${
-          pkgs-unstable.lib.makeLibraryPath [ pkgs-unstable.stdenv.cc.cc.lib ]
-        }"
-    '';
-  });
+  t3code = pkgs-unstable.callPackage ../pkgs/t3code { };
   codexUpdater = pkgs.writeShellApplication {
     name = "codex-update";
     runtimeInputs = with pkgs; [
@@ -79,6 +70,15 @@ let
       exec "$bin" "$@"
     '';
   };
+
+  # OpenCode 1.x beside the v2 launcher, for T3 Code. T3 0.0.45 starts
+  # `opencode serve` and calls /global/health, which v2 dropped (its server
+  # answers every route with the web UI's HTML), so T3's OpenCode provider
+  # points binaryPath at `opencode1`. Remove once a stable T3 ships the
+  # OpenCode 2 client (merged upstream 2026-10-01, nightly-only so far).
+  opencode1 = pkgs.writeShellScriptBin "opencode1" ''
+    exec ${pkgs-unstable.opencode}/bin/opencode "$@"
+  '';
 
   comcreateDesktopUpstream =
     comcreate-desktop-app.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -158,6 +158,7 @@ in
 
     # AI / LLM
     opencodeLauncher # OpenCode v2, self-updating in ~/.opencode/bin (see the let binding)
+    opencode1 # OpenCode 1.x as `opencode1`, the T3 Code provider binary (see the let binding)
     pkgs-unstable.bubblewrap # PATH bwrap preferred by Codex over its bundled fallback
     codexCli
     codexUpdater
