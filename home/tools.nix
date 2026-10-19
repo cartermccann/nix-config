@@ -76,8 +76,10 @@ let
   # answers every route with the web UI's HTML), so T3's OpenCode provider
   # points binaryPath at `opencode1`. Remove once a stable T3 ships the
   # OpenCode 2 client (merged upstream 2026-10-01, nightly-only so far).
+  # Pinned in pkgs/opencode1/sources.json; ouranos-update bumps it.
+  opencode1Pkg = pkgs-unstable.callPackage ../pkgs/opencode1 { };
   opencode1 = pkgs.writeShellScriptBin "opencode1" ''
-    exec ${pkgs-unstable.opencode}/bin/opencode "$@"
+    exec ${opencode1Pkg}/bin/opencode "$@"
   '';
 
   comcreateDesktopUpstream =

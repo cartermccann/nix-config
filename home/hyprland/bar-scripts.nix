@@ -179,6 +179,10 @@ let
     esac
   '';
 
+  # jq filter: newest stable v1.x tag from the OpenCode releases list. 2.x
+  # releases share the repo, so releases/latest would be the v2 line.
+  opencode1Latest = ''[.[] | select(.draft == false and .prerelease == false) | .tag_name | select(startswith("v1.")) | ltrimstr("v")] | sort_by(split(".") | map(tonumber? // 0)) | last // empty'';
+
   # ouranos-updates check | status | menu. `check` (daily timer) compares the
   # hand-pinned apps against upstream and the flake's nixpkgs age, writing a
   # cache the bar reads; `status` never touches the network.
@@ -195,6 +199,8 @@ let
           "$($CURL https://api.github.com/repos/openai/codex/releases/latest | ${jq} -r .tag_name | sed 's/^rust-v//')"
         add "T3 Code" "$(${jq} -r .version "$REPO/pkgs/t3code/sources.json")" \
           "$($CURL https://api.github.com/repos/pingdotgg/t3code/releases/latest | ${jq} -r 'select(.draft == false and .prerelease == false) | .tag_name | ltrimstr("v")')"
+        add "OpenCode 1" "$(${jq} -r .version $REPO/pkgs/opencode1/sources.json)" \
+          "$($CURL 'https://api.github.com/repos/anomalyco/opencode/releases?per_page=50' | ${jq} -r '${opencode1Latest}')"
         add "Cursor" "$(${jq} -r .version $REPO/pkgs/code-cursor/sources.json)" \
           "$($CURL 'https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | ${jq} -r .version)"
         add "Granola" "$(grep -oP 'version = "\K[0-9.]+' $REPO/pkgs/granola/default.nix | head -1)" \
@@ -288,6 +294,46 @@ let
     bump grok-cli pkgs/grok-cli/default.nix "$(grep -oP '^  version = "\K[0-9.]+' pkgs/grok-cli/default.nix)" \
       "$XV" "https://storage.googleapis.com/grok-build-public-artifacts/cli/grok-$XV-linux-x86_64"
 
+    # OpenCode 1 (T3's provider binary) is a source build, so a bump needs the
+    # tag's src hash and, when its bun lockfile moved, a new node_modules hash.
+    # Test-build it alone and take node_modules' hash from the mismatch error.
+    O1=pkgs/opencode1/sources.json
+    O1_CUR=$(${jq} -r .version $O1)
+    O1_NEW=$($CURL 'https://api.github.com/repos/anomalyco/opencode/releases?per_page=50' | ${jq} -r '${opencode1Latest}')
+    o1build() {
+      local drv
+      drv=$(nix eval --raw "$REPO#nixosConfigurations.$(uname -n).config.home-manager.users.${config.home.username}.home.packages" \
+        --apply 'ps: (builtins.head (builtins.filter (p: (p.name or "") == "opencode1") ps)).drvPath') || return 1
+      nix build --no-link "$drv^*" 2>&1
+    }
+    if [ -z "$O1_NEW" ] || [ "$O1_NEW" = "$O1_CUR" ] || [ "$(printf '%s\n' "$O1_CUR" "$O1_NEW" | sort -V | tail -n1)" != "$O1_NEW" ]; then
+      say "OpenCode 1 $O1_CUR ✓"
+    elif edited "$O1"; then
+      say "OpenCode 1: $O1 has local edits, skipping"
+    else
+      O1_SRC=$(nix store prefetch-file --unpack --json "https://github.com/anomalyco/opencode/archive/refs/tags/v$O1_NEW.tar.gz" 2>/dev/null | ${jq} -r .hash)
+      if [ -z "$O1_SRC" ]; then
+        say "OpenCode 1: source download failed, skipping"
+      else
+        ${jq} --arg v "$O1_NEW" --arg h "$O1_SRC" '.version = $v | .srcHash = $h' $O1 > $O1.tmp && mv $O1.tmp $O1
+        say "OpenCode 1 $O1_CUR → $O1_NEW; test-building"
+        if ! O1_OUT=$(o1build); then
+          O1_NM=$(grep -A3 'hash mismatch.*node_modules' <<<"$O1_OUT" | grep -oP 'got:\s+\Ksha256-\S+' | head -n1)
+          if [ -n "$O1_NM" ]; then
+            ${jq} --arg h "$O1_NM" '.nodeModulesHash = $h' $O1 > $O1.tmp && mv $O1.tmp $O1
+            say "OpenCode 1: node_modules hash changed; rebuilding"
+            O1_OUT=$(o1build) || O1_NM=
+          fi
+          if [ -z "$O1_NM" ]; then
+            tail -n 15 <<<"$O1_OUT"
+            git checkout -- $O1
+            say "OpenCode 1 $O1_NEW failed to build; kept $O1_CUR"
+          fi
+        fi
+        edited "$O1" && CHANGED+=("$O1")
+      fi
+    fi
+
     say "flake inputs"
     cp flake.lock /tmp/ouranos-update-flake.lock
     nix flake update 2>&1 | grep -E "Updated input '[^/']+'" || say "inputs already current"
@@ -310,7 +356,7 @@ let
     ouranos-updates check
     if $GUM confirm "Apply now (nrs)?"; then nh os switch "$REPO"; fi
     if ! git diff --quiet && $GUM confirm "Commit this update?"; then
-      git add -A flake.lock pkgs/code-cursor pkgs/granola pkgs/grok-cli pkgs/codex flake.nix
+      git add -A flake.lock pkgs/code-cursor pkgs/granola pkgs/grok-cli pkgs/opencode1 pkgs/codex flake.nix
       git commit -q -m "Update pinned apps and flake inputs" && git log --oneline -1
     fi
   '';
