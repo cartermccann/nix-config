@@ -21,6 +21,8 @@ let
   screamingFrog = pkgs.callPackage ../pkgs/screaming-frog-seo-spider { };
   grokCli = pkgs.callPackage ../pkgs/grok-cli { };
   grokBot = pkgs.callPackage ../pkgs/grok-bot { };
+  slackMcpServer = pkgs.callPackage ../pkgs/slack-mcp-server { };
+  rakazo = pkgs.callPackage ../pkgs/rakazo { };
   codexCli = pkgs-unstable.callPackage ../pkgs/codex { };
   t3code = pkgs-unstable.callPackage ../pkgs/t3code { };
   codexUpdater = pkgs.writeShellApplication {
@@ -168,6 +170,8 @@ in
     pkgs-unstable.ollama # CLI client only (server is the podman container) — unstable to stay near the 0.30.x server API
     grokCli # official xAI Grok CLI (grok/agent) — prebuilt binary in ../pkgs/grok-cli
     grokBot # Grok Bot desktop agent — third-party Linux port, see ../pkgs/grok-bot
+    slackMcpServer # korotovsky slack-mcp-server (Go), used by the slack-mcp entry in ~/.mcp.json
+    rakazo # Rakazo desktop client, unpacked upstream AppImage, see ../pkgs/rakazo
     pkgs-unstable.cursor-cli # Cursor CLI (binary is `cursor-agent`) — unfree prebuilt, tracks lab releases
     t3code # T3 Code desktop GUI with its native terminal runtime dependency
 
