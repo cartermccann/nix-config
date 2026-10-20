@@ -25,6 +25,8 @@ let
   rakazo = pkgs.callPackage ../pkgs/rakazo { };
   codexCli = pkgs-unstable.callPackage ../pkgs/codex { };
   t3code = pkgs-unstable.callPackage ../pkgs/t3code { };
+  agentToolGuard = pkgs.callPackage ../pkgs/agent-tool-guard { };
+  agentTools = pkgs.callPackage ../pkgs/agent-tools { };
   codexUpdater = pkgs.writeShellApplication {
     name = "codex-update";
     runtimeInputs = with pkgs; [
@@ -166,6 +168,8 @@ in
     pkgs-unstable.bubblewrap # PATH bwrap preferred by Codex over its bundled fallback
     codexCli
     codexUpdater
+    agentToolGuard
+    agentTools
     pkgs-unstable.cliproxyapi # OpenAI/Gemini/Claude/Codex-compatible local proxy
     pkgs-unstable.ollama # CLI client only (server is the podman container) — unstable to stay near the 0.30.x server API
     grokCli # official xAI Grok CLI (grok/agent) — prebuilt binary in ../pkgs/grok-cli

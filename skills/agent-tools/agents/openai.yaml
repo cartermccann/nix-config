@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent tools"
+  short_description: "Bounded shell execution and repository checks"
+  default_prompt: "Use $agent-tools to diagnose this checkout and run a bounded check."
