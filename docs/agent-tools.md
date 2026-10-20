@@ -10,7 +10,9 @@ the usage decisions; global agent instructions only link to it.
 Data flow: CLI validation → command module → local Git, process, or ripgrep →
 bounded result → one JSON object. There is no daemon, database, network service,
 automatic retry, or automatic package installation. The existing Gmail guard
-is separate. `check`, `json-edit`, and `health` remain later candidates.
+is separate. `check` and `json-edit` remain later candidates. Daily collection,
+activation checks and recovery scenarios are separate commands documented in
+[agent-health.md](agent-health.md).
 
 ## Run now and install
 

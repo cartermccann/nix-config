@@ -18,6 +18,7 @@
     ./tmux.nix
     ./dictation.nix
     ./tools.nix
+    ./agent-health.nix
     ./qmd.nix
     ./brain.nix
     ./webctx-tunnel.nix

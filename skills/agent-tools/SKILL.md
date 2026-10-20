@@ -45,3 +45,8 @@ Existing tool permissions and task scope still apply.
 Read `~/nix-config/docs/agent-tools.md` for output contracts, exact limits,
 verification, and implementation boundaries. Gmail/Monday direct-MCP policy
 remains in the separate `agent-tool-guard` hooks.
+
+For tool-outcome trends or guard activation, use `agent-health` and
+`agent-activation`; for synthetic recovery checks, use `agent-recovery`.
+Read `~/nix-config/docs/agent-health.md` first. These checks do not establish
+live provider enforcement or model performance, and do not authorize hooks.
