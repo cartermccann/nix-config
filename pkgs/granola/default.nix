@@ -76,11 +76,11 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "granola";
-  version = "7.668.2";
+  version = "7.668.3";
 
   src = fetchurl {
     url = "https://dr2v7l5emb758.cloudfront.net/${finalAttrs.version}/Granola-${finalAttrs.version}-mac-universal.dmg";
-    hash = "sha256-uj7S6kAgL4TGA4Z2nitD8rhozCxF2AzySLtIdruAQkI=";
+    hash = "sha256-cxquEryB8ekOhrAFAc6WTXrP+516rLIKJ12hrsguy6w=";
   };
 
   nativeBuildInputs = [
