@@ -1,0 +1,3454 @@
+{
+  "projects_root": "/home/cjm/projects",
+  "expanded_at": "2026-10-23T20:15:13Z",
+  "projects": [
+    {
+      "path": "/home/cjm/nix-config",
+      "remote": "https://github.com/cartermccann/nix-config.git",
+      "enrolled_after": "2026-10-23T20:45:28Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/Buckshot",
+      "remote": "https://github.com/cartermccann/Buckshot.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/CTC2",
+      "remote": "https://github.com/cartermccann/CTC2.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/Ceen/app",
+      "remote": "https://github.com/cartermccann/ceen.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/Entrada-dashboard/workshop",
+      "remote": "https://github.com/comcreate-io/entrada-product-workshop.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/Granola-for-Linux",
+      "remote": "https://github.com/tirtha4/Granola-for-Linux.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/TradBot",
+      "remote": "https://github.com/cartermccann/TradBot.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/WiseGuys",
+      "remote": "https://github.com/cartermccann/WiseGuys.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/american-skin-tech/AmericanSkinTech",
+      "remote": "https://github.com/cartermccann/AmericanSkinTech.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/arch-dotfiles",
+      "remote": "https://github.com/cartermccann/arch-dotfiles.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/atomic",
+      "remote": "https://github.com/cartermccann/atomic-electric.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/attendee",
+      "remote": "https://github.com/attendee-labs/attendee.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/bebop-boys",
+      "remote": "https://github.com/comcreate-io/bebop-boys.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/bidspectre",
+      "remote": "https://github.com/cartermccann/bidspectre.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/brain",
+      "remote": "https://github.com/cartermccann/brain.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/buttonranch",
+      "remote": "https://github.com/cartermccann/buttonranch.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/community-medical-supply",
+      "remote": "https://github.com/cartermccann/community-medical-supply.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/entrada/entrada",
+      "remote": "https://github.com/cartermccann/entrada.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/entrada/entrada-4c",
+      "remote": "https://github.com/cartermccann/entrada-4c.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/hermes-integrations",
+      "remote": "https://github.com/cartermccann/hermes-integrations.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/magnolia/MagnoliaDistro",
+      "remote": "https://github.com/cartermccann/MagnoliaDistro.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/magnolia/MagnoliaMedSupply",
+      "remote": "https://github.com/cartermccann/MagnoliaMedSupply.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/mcp-gateway",
+      "remote": "https://github.com/cartermccann/mcp-gateway.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/niri",
+      "remote": "https://github.com/cartermccann/niri.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/Runa",
+      "remote": "https://github.com/cartermccann/Runa.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/share",
+      "remote": "https://github.com/cartermccann/share.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/soundhealth-site",
+      "remote": "https://github.com/cartermccann/soundhealth-site.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/Personal/web-context-gateway",
+      "remote": "https://github.com/cartermccann/web-context-gateway.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/SirEddBot",
+      "remote": "https://github.com/JakeSalah/SirEddBot.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/VectorFlow",
+      "remote": "https://github.com/cartermccann/VectorFlow.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/arizona-doodle-puppies",
+      "remote": "https://github.com/Gunzilla3268/arizona-doodle-puppies.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/bmad-flow",
+      "remote": "https://github.com/cartermccann/bmad-flow.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/Lambo/ai-website-cloner-template",
+      "remote": "https://github.com/comcreate-io/lamborghini-clone.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/blazity",
+      "remote": "https://github.com/comcreate-io/ai-website-cloner-template.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/swimclub",
+      "remote": "https://github.com/comcreate-io/swimclub-clone",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/micah",
+      "remote": "https://github.com/cartermccann/micahwrapped.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/MASTERS/archive",
+      "remote": "https://github.com/cartermccann/tko-house-2026.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/MASTERS/mockups",
+      "remote": "https://github.com/cartermccann/tko-house-mockups.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/4corners-seo-docs",
+      "remote": "https://github.com/cartermccann/4corners-seo-docs.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/EmLandscape-SEO-Docs",
+      "remote": "https://github.com/cartermccann/EmLandscape-SEO-Docs.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/astro-docs-template-main",
+      "remote": "https://github.com/cartermccann/casita-seo.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/casita-seo-docs",
+      "remote": "https://github.com/cartermccann/casita-seo-docs.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/doc",
+      "remote": "https://github.com/cartermccann/doc-astro.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/jira-calendar",
+      "remote": "https://github.com/cartermccann/jira-calendar.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-dashboard-audit",
+      "remote": "https://github.com/comcreate-io/comcreate-dashboard-audit.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/liberman-law-group",
+      "remote": "https://github.com/jdawggy25/liberman-law-group.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/RECVR",
+      "remote": "https://github.com/cartermccann/RECVR.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/bridge-chiropractic-proposal",
+      "remote": "https://github.com/jdawggy25/bridge-chiropractic-proposal.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/silverstate",
+      "remote": "https://github.com/cartermccann/silverstate.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/micro-herdr",
+      "remote": "https://github.com/cartermccann/micro-herdr.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/typesafe-computer-use-hyprland",
+      "remote": "https://github.com/cartermccann/typesafe-computer-use-hyprland.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/4Corners/4corners-site",
+      "remote": "https://github.com/comcreate-io/4corners-site.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/ADUsIn",
+      "remote": "https://github.com/comcreate-io/ADUsIn.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/ATP-ECommerce-Final",
+      "remote": "https://github.com/comcreate-io/ATP-ECommerce-Final.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/AllLevelsAthletics-website",
+      "remote": "https://github.com/cartermccann/AllLevelsAthletics.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/Bizrupt",
+      "remote": "https://github.com/jdawggy25/amanda-version-2.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/BrodyLluis/brodycomp",
+      "remote": "https://github.com/comcreate-io/cadiz-lluis-site.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/repos/coachloop",
+      "remote": "https://github.com/goldk3y/coachloop.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/repos/cortex-recon",
+      "remote": "https://github.com/comcreate-io/cortex.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/repos/project4",
+      "remote": "https://github.com/setup181912/project4.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/product",
+      "remote": "https://github.com/comcreate-io/coachloop.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/ComQuest",
+      "remote": "https://github.com/comcreate-io/ComQuest.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/Concierge-Zillow",
+      "remote": "https://github.com/comcreate-io/Concierge-Zillow.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/DCStreamlined-landing",
+      "remote": "https://github.com/comcreate-io/DCStreamlined-landing.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/King-roof",
+      "remote": "https://github.com/comcreate-io/KingRoof.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/Korum-Wealth",
+      "remote": "https://github.com/comcreate-io/kuorum-wealth.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/LouWellSpa",
+      "remote": "git@github.com:cartermccann/LouWellSpa.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/MysticRiverMedia",
+      "remote": "https://github.com/comcreate-io/mystic-river-media.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/RECVR",
+      "remote": "https://github.com/comcreate-io/RECVR.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/Runway",
+      "remote": "https://github.com/JakeSalah/Runway.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/TJ",
+      "remote": "https://github.com/comcreate-io/revive-gym.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/Tarzana/DesignSystem",
+      "remote": "https://github.com/cartermccann/tarzana-design-system.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/TwoPalms",
+      "remote": "https://github.com/comcreate-io/two-palms-medical.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/VirtueRecoveryCenter/VirtueRecovery",
+      "remote": "https://github.com/imperium-creator/VirtueRecovery.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/bluefox-designlang-pilot",
+      "remote": "https://github.com/comcreate-io/bluefox-designlang-pilot.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-bmad",
+      "remote": "https://github.com/comcreate-io/comcreate-bmad.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/QAUI",
+      "remote": "https://github.com/comcreate-io/QAUI.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/abilities",
+      "remote": "https://github.com/cartermccann/abilities.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/archive/PAUL",
+      "remote": "https://github.com/cartermccann/PAUL.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/comcreate-audit-template",
+      "remote": "https://github.com/comcreate-io/comcreate-audit-template.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/comcreate-basics",
+      "remote": "https://github.com/comcreate-io/comcreate-basics.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/comcreate-case-study-template",
+      "remote": "https://github.com/comcreate-io/comcreate-case-study-template.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/comcreate-marketing-mcp-v2",
+      "remote": "https://github.com/comcreate-io/comcreate-marketing-mcp-v2.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/comcreate-questionnaire",
+      "remote": "https://github.com/cartermccann/comcreate-questionnaire.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/md-to-pdf",
+      "remote": "https://github.com/comcreate-io/md-to-pdf.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/svelte",
+      "remote": "https://github.com/comcreate-io/comcreate-svelte.git",
+      "enrolled_after": "2026-10-23T19:25:52.854183+00:00"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-pdf-kit",
+      "remote": "https://github.com/comcreate-io/comcreate-pdf-kit.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-site-starter",
+      "remote": "https://github.com/comcreate-io/comcreate-site-starter.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/crawlie",
+      "remote": "https://github.com/comcreate-io/crawlie.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/designlang",
+      "remote": "https://github.com/comcreate-io/designlang.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/lsa-template",
+      "remote": "https://github.com/comcreate-io/lsa-template.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/lsa-template-v2",
+      "remote": "https://github.com/comcreate-io/lsa-template-v2.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/morningstar-designlang-pilot",
+      "remote": "https://github.com/comcreate-io/morningstar-designlang-pilot.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/3Comms/meridian",
+      "remote": "https://github.com/comcreate-io/3comms-meridian.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/3Comms/tuscanhills",
+      "remote": "https://github.com/comcreate-io/3comms-tuscanhills.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/3Comms/westmont",
+      "remote": "https://github.com/comcreate-io/3comms-westmont.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/Teknik-Audit",
+      "remote": "https://github.com/comcreate-io/Teknik-Audit.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/newco/Newco-Sports-Tech---Landing-Pages",
+      "remote": "https://github.com/Romanfell662/Newco-Sports-Tech---Landing-Pages.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/Camp-Alegria",
+      "remote": "https://github.com/comcreate-io/Camp-Alegria.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/CasitaAzul",
+      "remote": "https://github.com/comcreate-io/CasitaAzul.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/King-roof",
+      "remote": "https://github.com/comcreate-io/King-roof.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/SD-Dumps-Full-CRM",
+      "remote": "https://github.com/comcreate-io/SD-Dumps-Full-CRM.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/Spanish-horizons-site",
+      "remote": "https://github.com/comcreate-io/Spanish-horizons-site.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/client-cocinarte",
+      "remote": "https://github.com/comcreate-io/client-cocinarte.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/tools/gmb-platform",
+      "remote": "https://github.com/comcreate-io/kastly.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/backburner/CSB",
+      "remote": "https://github.com/Comcreate-dev/CSB.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/backburner/DumpsterAnt",
+      "remote": "https://github.com/cartermccann/DumpsterAnt.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/backburner/KBC",
+      "remote": "https://github.com/cartermccann/KeyBuyersClub.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/backburner/forsyth/forsyth4defense",
+      "remote": "https://github.com/jdawggy25/forsyth4defense.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/basketball",
+      "remote": "https://github.com/comcreate-io/ryan-smith-intro.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/bridge/bridge-chiropractic",
+      "remote": "https://github.com/comcreate-io/bridge-chiropractic.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/bridge/bridge-redesign",
+      "remote": "https://github.com/comcreate-io/bridge-chiro-v2.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/comcreate-buzz",
+      "remote": "https://github.com/comcreate-io/comcreate-buzz.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/context.fm",
+      "remote": "https://github.com/comcreate-io/context.fm.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/custom-living-homes/CustomLivingHomes",
+      "remote": "https://github.com/comcreate-io/CustomLivingHomes.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/custom-living-homes/redesign-repo",
+      "remote": "https://github.com/comcreate-io/Custom-Living-Homes.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/ebots/proposal",
+      "remote": "https://github.com/comcreate-io/ebots-proposal.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/feline/template",
+      "remote": "https://github.com/comcreate-io/audit-template.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/garagecomps/halcyon",
+      "remote": "https://github.com/comcreate-io/halcyon.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/garagecomps/juniper",
+      "remote": "https://github.com/comcreate-io/juniper.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/heropro",
+      "remote": "https://github.com/comcreate-io/heropro-demo.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/homepage-designs/sources/bluefox-garage-doors",
+      "remote": "https://github.com/comcreate-io/bluefox-garage-doors.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/knockturnal-audit",
+      "remote": "https://github.com/comcreate-io/knockturnal-audit.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/knockturnal-migration-deck",
+      "remote": "https://github.com/comcreate-io/TheKnockturnal-Nextjs-Migration-Deck",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/knockturnal-platform",
+      "remote": "https://github.com/comcreate-io/knockturnal-platform.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/knockturnal-sanity-migration-docs",
+      "remote": "https://github.com/comcreate-io/knockturnal-sanity-migration-docs.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/kpwealth/website-blog",
+      "remote": "https://github.com/kpwtech/website-blog.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/mcg",
+      "remote": "https://github.com/comcreate-io/mcg.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/mind-body-athletes-recovered",
+      "remote": "https://github.com/comcreate-io/mind-body-athletes.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/morningstar-garage",
+      "remote": "https://github.com/comcreate-io/morningstar-garage",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/nora",
+      "remote": "https://github.com/comcreate-io/nora.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/nova1-supplements-context",
+      "remote": "https://github.com/comcreate-io/nova1-supplements-context.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/philter/philterV1",
+      "remote": "https://github.com/JakeSalah/philterV1.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/rivit",
+      "remote": "https://github.com/comcreate-io/rivit.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/rs-surf",
+      "remote": "https://github.com/comcreate-io/rs-surf",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/shipAuto",
+      "remote": "https://github.com/comcreate-io/shipAuto",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-hospice-lp",
+      "remote": "https://github.com/cartermccann/silverado-hospice-lp.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-mc-lp",
+      "remote": "https://github.com/cartermccann/silverado-mc-lp.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-proposal",
+      "remote": "https://github.com/cartermccann/silverado-proposal.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-sites",
+      "remote": "https://github.com/cartermccann/silverado-sites.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-sites-conversion",
+      "remote": "https://github.com/cartermccann/silverado-sites-conversion.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-web-ops/repos/silverado-cf7",
+      "remote": "https://github.com/cartermccann/silverado-cf7.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-web-ops/repos/silverado-toolkit",
+      "remote": "https://github.com/cartermccann/silverado-toolkit.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/slowburn/slowburn",
+      "remote": "https://github.com/cartermccann/slowburn.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/tamid/tamid-on-tour-audit-2026-05",
+      "remote": "https://github.com/jordanbeardedmgmt/tamid-on-tour-audit-2026-05.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/teknik-engagement",
+      "remote": "https://github.com/comcreate-io/teknik-engagement.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/teknikinc",
+      "remote": "https://github.com/comcreate-io/teknikinc.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/tensui-kintsugi",
+      "remote": "https://github.com/comcreate-io/tensui-kintsugi.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/typetrainer",
+      "remote": "https://github.com/JakeSalah/typetrainer.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/valor-roof",
+      "remote": "https://github.com/cartermccann/valor-roof.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform",
+      "remote": "https://github.com/comcreate-io/wagerbabe-platform.git",
+      "enrolled_after": "2026-10-23T20:15:13Z"
+    }
+  ],
+  "held": [
+    {
+      "path": "/home/cjm/projects/work/CoachLoop",
+      "reasons": [
+        "contains_nested_git_roots",
+        "missing_origin",
+        "unborn_or_unreadable_HEAD"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/LouWellSpa--genny-brand-pass",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/RATH",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/entrada-mockup",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/mcg-client-preview",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/mind-body-athletes-agent-forms",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/mind-body-athletes-agent-seo",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/mind-body-athletes-hardening",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/scenic-doors",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr",
+      "reasons": [
+        "contains_nested_git_roots"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/tarzana",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/teknikinc-r2-pr63",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/4Corners/4corners-impeccable",
+      "reasons": [
+        "git_command_failed"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/4Corners/4corners-studio",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/Brain/Brain",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/VirtueRecoveryCenter/recovery",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/VirtueRecoveryCenter/virtue-recovery",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/VirtueRecoveryCenter/virtue-recovery-unified",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/Google-Service-MCP",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-bmad-chat-workspace",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-bmad-reference-previews",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-site-starter--pilot-seed",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/designlang-chat-workspace",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/designlang-reference-previews",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop",
+      "reasons": [
+        "contains_nested_git_roots"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/bnc/New-BNC-BUILDERS",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/cadiz/cadizlluis",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/elevationDesign/elevation-design",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-web-ops",
+      "reasons": [
+        "contains_nested_git_roots"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-bmad-client",
+      "reasons": [
+        "contains_nested_git_roots",
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--betting-backlog",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--deps-audit",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--feed-observations",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--feed-staleness",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-bot-alert",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-cache-search-guard",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-client-drift",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-dashboard-timeout",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-fuse",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-game-settings-fk",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--fix-sentry-dev",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--freshness",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--jev-plan",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--market-upsert",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--odds-sync-unjam",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--open-markets",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--perf-client",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--perf-queries",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--pr164",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--pr181-review",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--pr225-review",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--pr227-review",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--promex-off",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--recovery-backlog",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--sentry-nav-abort",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--sse-canonical",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--stale-fixtures-2a",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-platform--ui-backlog",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-server",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-w1-operator-safety",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-w1-player-trust",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-w2-decision-surfaces",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-w2-resilience-a11y",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/android-app-links",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/android-build-12",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/aws-alerts",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/brief-loading",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/build16",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/ci-blacksmith",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/ci-sentry",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/dev-current",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/diag-picker",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/dune-architecture",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/dune-backend-ci",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/dune-test",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fee-123",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fee-review",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fix-168",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fix-169",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fix-boot-latch-flake",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fix-clock-caps",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fix-flaky-pending",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/fix-identity-cache",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/guardian-family",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-151",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-159",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-160",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-161",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-162",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-163",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/jake-164",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-a",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-a1",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-a2",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-a3",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-b",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-b1",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-b2",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-c",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-c1",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-c2",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-d",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-e",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-f",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-g",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-h",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-i",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-j",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-k",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-l",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-m",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-n",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-o",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lane-p",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/lanes-ab",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/large-text",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/library-picker",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/merge-jake",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/native-verification-pilot",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/plan-storage-allowances",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/polish",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/port-main-fixes",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/pr-133",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/pr-136",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/pricing-plan",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/recon-build11",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-148",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-151",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-153",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-154",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-155",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-159",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-160",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-161",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-162",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-163",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-164",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/review-dune",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/small-fixes",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/sync-main",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/verify16",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/vision-fullscreen",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/worktrees/worker-runtime-packages",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/LSgen",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/comcreate-dashboard",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "prior_filename_review_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/svelte-crt-shader",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/morningstargarage-audit",
+      "reasons": [
+        "contains_nested_git_roots",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/backburner/forsyth/DigitalVisibility",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/homepage-designs/sites/bluefox",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/homepage-designs/sites/morningstar",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/homepage-designs/sources/morningstar-garage",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/wagerbabe-comp/wagerbabe-bmad-client/server",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/archive/Comcreate-Simple-Crm",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/archive/KnowledgeBase",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/archive/comcreate-site",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/props/morningstargarage-audit/morningstar-bluefox-data",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved",
+        "unborn_or_unreadable_HEAD"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/New-BNC-BUILDERS",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/_verify-CasitaAzul",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/_verify-King-roof",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/_verify-New-BNC-BUILDERS",
+      "reasons": [
+        "generated_worktree_or_reference_copy",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/_verify-Spanish-horizons-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/_verify-cocinarte",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/_verify-scenic-doors",
+      "reasons": [
+        "generated_worktree_or_reference_copy",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/cadizlluis-real",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/elevation-design",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/scenic-doors",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/seo-loop/work/teknikinc",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/pr-gate-delivery/halcyon",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/proposed-change-input/halcyon",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/repos/CoachLoop",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/android-keyboard",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/android-usb",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/app-icon",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/audit-delete",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/classes-free",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/classes-usb",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/connect-reviewing",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/context-choice-redirect",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/dc-e2e",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/dc-pr1-schema",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/dc-pr2-onboarding",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/dc-pr4-checkout",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/dc-pr5-webhooks",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/deletion-entry",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/deletion-live",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/deletion-notify",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/deploy-main",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/direct-charges",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/direct-charges-app",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/docs-fallback",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/domain-online",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/eas-setup",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/favicon",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/fcm",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/fee-guard",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/kronos-runner",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/launch-followups",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/launch-integration-check",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-render-authorization",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legal-pages",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/main-android",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/payments-fix",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/payments-merge",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/pr53",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/pr7-player-invite",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/production-build-guards",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/reconcile-manual",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/report-block",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/review-launch-batch",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/review-preview",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/sentry",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/site-basics",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/site-media",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/store-demo",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/store-listing",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/store-polish",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/store-ready",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/store-recorder",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/terms-agreement",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/web-deploy",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/_comcreate/comcreate-org/archive/AGENCY/agency",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/recovery/repo-consolidation/fresh-clone",
+      "reasons": [
+        "unsupported_or_credential_bearing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a0eb005cf193597f7",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a158704c1214a19d0",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a3e7ab33c1e3fbc50",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a5aa4b51ce7c62290",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a68dfee229b67f482",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a76b7ca7b414e4d14",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-a793c685dd2e63758",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-ab2d8d9c8f4ac8c0d",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-abc8a18df6bfd4482",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-ac5927f9df602d3c3",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-aca570e75f7f0eb89",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/CoachLoop/archive/2026-09-30/worktrees/legacy-agents/agent-af1d7a5d19425b9ee",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/Cardenas-In-Cabo",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/ER-soccer",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/Sisters-In-Motion",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/Smokes-Concrete",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/V3Biomedical",
+      "reasons": [
+        "generated_worktree_or_reference_copy",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/bluefox-garage-doors",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/comcreate-bmad",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/comcreate-skills",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/comcreate-svelte",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/halcyon",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/juniper",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/morningstar-garage",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/skaidr/_bmad-output/brainstorming/evidence/repos/tensui-water",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-web-ops/archive/migration-staging-precutover/corporate/wp-content/plugins/silverado-cf7",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/work/silverado/silverado-web-ops/archive/migration-staging-precutover/corporate/wp-content/plugins/silverado-toolkit",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/Portfolio2",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/agent-zero-worker",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/cbbot",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/investing-algorithm-sandbox",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/money-hermes",
+      "reasons": [
+        "missing_origin",
+        "unborn_or_unreadable_HEAD"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/reviveAZ",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/web-context-gateway-gateway",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/M-M-Runa",
+      "reasons": [
+        "contains_nested_git_roots",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/M-M-Runa--order-intake",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/SH-Runa",
+      "reasons": [
+        "contains_nested_git_roots",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/magnolia-messaging-delivery-fix",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/magnolia-premerge-preservation",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/M-M-Runa/_reference/magnolia-app",
+      "reasons": [
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/Personal/runa/SH-Runa/_reference/magnolia-app",
+      "reasons": [
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/agent-config",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/codex-desktop-linux",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/input-linux",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/reference/firecrawl",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "generated_worktree_or_reference_copy",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/reference/goose-skills",
+      "reasons": [
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/worktrees/bebop-meet-voice-poc",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/worktrees/brain-coverage-drift",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/worktrees/brain-loop-resilience",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/worktrees/bridge-meta-lander",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "generated_worktree_or_reference_copy"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/incomeroadmap/clone/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/BOTS",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/VRP",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/story",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/4corners-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/9-pine-tree-road",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/ATP-ECommerce-Final",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/BNC-Builders",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/BlindPig",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/Camp-Alegria",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/DigitalVisibility",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/DirectHoldings-landing",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/DumpsterAnthony",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/Em-Landscape",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/Heatcheck",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/KeyBuyersClub",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/New-Comcreate-site",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/QAUI",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/SD-Dumps-Full-CRM",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/Spanish-horizons-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/The-Heather-Experience",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/V3-Landing",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/V3Biomedical",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/cadiz-lluis-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/chillnprop",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/client-cocinarte",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/comcreate-audit-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/comcreate-case-study-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/comcreate-dashboard",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/comcreate-local-llm",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/comcreate-questionnaire",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/comcreate-svelte",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/designlang",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/ebots-proposal",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/heropro-demo",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/il-Bambina",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/ironclad-home-solutions",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/md-to-pdf",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/mermaids-of-carlsbad-health-report",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/omg-proposal",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/proposal-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/tko-house-masters",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/Github_audit-2026-05-11/topset",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/SEO/astro-docs-template",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/JosJos",
+      "reasons": [
+        "unborn_or_unreadable_HEAD"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/Scenicdoors",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/Silverado",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/airbnb_group_app",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/aventi",
+      "reasons": [
+        "current_recorder_filename_boundary_hold"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/bobby",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/chillnoututc",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/Buro/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/Function/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/GTE/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/alaia/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/antimetal/ai-website-cloner-template",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/assembly/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/chanel/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/claudetype/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/craft-engineer/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/instrument/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/lifetime/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/locomotive/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/ramp/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/rerun/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/speakeasy/ai-website-cloner-template",
+      "reasons": [
+        "missing_origin"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/techweek/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/tempo/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/therow/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/v7lab/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/waka/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/4corners-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/9-pine-tree-road",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/ATP-ECommerce-Final",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/BNC-Builders",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/BlindPig",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/Camp-Alegria",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/Concierge-Zillow",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/DCStreamlined-landing",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/DigitalVisibility",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/DirectHoldings-landing",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/DumpsterAnthony",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/Em-Landscape",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/Google-Service-MCP",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/Heatcheck",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/KeyBuyersClub",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/King-roof",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/New-BNC-BUILDERS",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/New-Comcreate-site",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/QAUI",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/RECVR",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/SD-Dumps-Full-CRM",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/Spanish-horizons-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/The-Heather-Experience",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/V3-Landing",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/V3Biomedical",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/bridge-chiropractic",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/cadiz-lluis-site",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/chillnprop",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/client-cocinarte",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/comcreate-case-study-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/comcreate-dashboard",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/comcreate-local-llm",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/comcreate-questionnaire",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/comcreate-svelte",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/designlang",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/ebots-proposal",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/elevation-design",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/heropro-demo",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/il-Bambina",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/ironclad-home-solutions",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/md-to-pdf",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/mermaids-of-carlsbad-health-report",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/mystic-river-media",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/omg-proposal",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/proposal-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/scenic-doors",
+      "reasons": [
+        "nested_discovery_incomplete_due_to_walk_budget",
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/tko-house-masters",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/comcreate-audit/clones/topset",
+      "reasons": [
+        "current_recorder_filename_boundary_hold",
+        "duplicate_checkout_not_canonical_primary",
+        "nested_discovery_incomplete_due_to_walk_budget"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/work/proposals/omg-group/proposal-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/firecrawl/siteclone/ai-website-cloner-template",
+      "reasons": [
+        "same_remote_primary_checkout_unresolved"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/healthcare/forhims/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    },
+    {
+      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/healthcare/heidihealth/ai-website-cloner-template",
+      "reasons": [
+        "duplicate_checkout_not_canonical_primary"
+      ]
+    }
+  ],
+  "inventory_counts": {
+    "candidate_git_roots": 547,
+    "verified_git_roots": 546,
+    "approved": 150,
+    "held": 397,
+    "distinct_supported_remotes": 214,
+    "duplicate_remote_groups": 76,
+    "linked_worktrees": 194,
+    "nested_parent_repositories": 8,
+    "current_filename_boundary_holds": 30,
+    "prior_unresolved_filename_review_holds": 1,
+    "global_depth_boundary_repositories": 206,
+    "approved_with_global_depth_boundary": 12,
+    "reasons": {
+      "contains_nested_git_roots": 8,
+      "missing_origin": 14,
+      "unborn_or_unreadable_HEAD": 4,
+      "duplicate_checkout_not_canonical_primary": 267,
+      "current_recorder_filename_boundary_hold": 30,
+      "same_remote_primary_checkout_unresolved": 80,
+      "git_command_failed": 1,
+      "nested_discovery_incomplete_due_to_walk_budget": 46,
+      "generated_worktree_or_reference_copy": 178,
+      "prior_filename_review_unresolved": 1,
+      "unsupported_or_credential_bearing_origin": 1
+    }
+  },
+  "coverage": {
+    "root": "/home/cjm/projects",
+    "max_depth": 10,
+    "max_entries": 1000000,
+    "entries_examined": 1000000,
+    "directories_scanned": 88347,
+    "symlinks_followed": false,
+    "pruned_names": [
+      ".agents",
+      ".cache",
+      ".cargo",
+      ".claude",
+      ".codex",
+      ".delta",
+      ".direnv",
+      ".expo",
+      ".git",
+      ".gradle",
+      ".next",
+      ".npm",
+      ".nuxt",
+      ".output",
+      ".pnpm-store",
+      ".svelte-kit",
+      ".t3",
+      ".terraform",
+      ".turbo",
+      ".venv",
+      ".vercel",
+      ".yarn",
+      "Pods",
+      "__pycache__",
+      "_bmad",
+      "build",
+      "cache",
+      "caches",
+      "coverage",
+      "dist",
+      "node_modules",
+      "result",
+      "target",
+      "vendor",
+      "venv"
+    ]
+  },
+  "coverage_note": "Global discovery is bounded and partial. Targeted scans cleared all five otherwise eligible repositories held solely by the cap; remaining incomplete subtree flags also have independent holds.",
+  "additional_project_paths": [
+    "/home/cjm/nix-config"
+  ]
+}

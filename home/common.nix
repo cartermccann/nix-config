@@ -18,6 +18,7 @@
     ./tmux.nix
     ./dictation.nix
     ./tools.nix
+    ./t3-delta-recorder.nix
     ./agent-health.nix
     ./qmd.nix
     ./brain.nix
