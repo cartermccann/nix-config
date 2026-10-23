@@ -90,6 +90,7 @@ let
                   herdr
                   hyprland
                   qmd
+                  zed-delta
                   ;
               };
               backupFileExtension = "hm-bak";

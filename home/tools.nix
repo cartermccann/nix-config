@@ -6,6 +6,7 @@
   google-workspace-cli,
   fenix,
   herdr,
+  zed-delta,
   ...
 }:
 let
@@ -27,6 +28,16 @@ let
   t3code = pkgs-unstable.callPackage ../pkgs/t3code { };
   agentToolGuard = pkgs.callPackage ../pkgs/agent-tool-guard { };
   agentTools = pkgs.callPackage ../pkgs/agent-tools { };
+  deltaUpstream = zed-delta.packages.${pkgs.stdenv.hostPlatform.system}.delta;
+  deltaApp = pkgs.symlinkJoin {
+    name = "zed-delta-${deltaUpstream.version}";
+    paths = [ deltaUpstream ];
+    # Git's diff viewer already owns `delta`. Desktop entries use upstream's
+    # absolute CLI path, so renaming the public command preserves URL handling.
+    postBuild = ''
+      mv "$out/bin/delta" "$out/bin/zed-delta"
+    '';
+  };
   codexUpdater = pkgs.writeShellApplication {
     name = "codex-update";
     runtimeInputs = with pkgs; [
@@ -178,6 +189,7 @@ in
     rakazo # Rakazo desktop client, unpacked upstream AppImage, see ../pkgs/rakazo
     pkgs-unstable.cursor-cli # Cursor CLI (binary is `cursor-agent`) — unfree prebuilt, tracks lab releases
     t3code # T3 Code desktop GUI with its native terminal runtime dependency
+    deltaApp # Zed Delta desktop app; CLI is zed-delta to preserve Git's delta
 
     # Meetings & notes
     granola # macOS build repacked onto nixpkgs Electron, see ../pkgs/granola

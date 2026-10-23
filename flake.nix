@@ -17,6 +17,10 @@
       url = "github:tobi/qmd";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    zed-delta = {
+      url = "github:zed-industries/delta-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     stylix = {
       url = "github:nix-community/stylix/release-26.05";
