@@ -183,6 +183,11 @@ let
   # releases share the repo, so releases/latest would be the v2 line.
   opencode1Latest = ''[.[] | select(.draft == false and .prerelease == false) | .tag_name | select(startswith("v1.")) | ltrimstr("v")] | sort_by(split(".") | map(tonumber? // 0)) | last // empty'';
 
+  # Delta's stable version at a zed-delta flake rev (`$1`: a rev or HEAD).
+  # Upstream bumps releases.json once per release, so the locked rev's file is
+  # the installed version and HEAD's is the latest.
+  deltaVersion = ''${pkgs.curl}/bin/curl -fsSL --max-time 20 "https://raw.githubusercontent.com/zed-industries/delta-nix/$1/releases.json" | ${jq} -r '.stable.version // empty' '';
+
   # ouranos-updates check | status | menu. `check` (daily timer) compares the
   # hand-pinned apps against upstream and the flake's nixpkgs age, writing a
   # cache the bar reads; `status` never touches the network.
@@ -207,6 +212,8 @@ let
           "$(${pkgs.curl}/bin/curl -sI --max-time 20 https://api.granola.ai/v1/download-latest | grep -i '^location' | grep -oP '/\K[0-9]+\.[0-9]+\.[0-9]+(?=/)')"
         add "grok-cli" "$(grep -oP 'version = "\K[0-9.]+' $REPO/pkgs/grok-cli/default.nix | head -1)" \
           "$($CURL https://storage.googleapis.com/grok-build-public-artifacts/cli/stable | tr -d '[:space:]')"
+        deltav() { ${deltaVersion}; }
+        add "Zed Delta" "$(deltav "$(${jq} -r '.nodes["zed-delta"].locked.rev' $REPO/flake.lock)")" "$(deltav HEAD)"
         # Staleness is when the lock was last refreshed, not how old each
         # input's commit is: an input already at upstream HEAD can still carry
         # a months-old commit date. Two weeks without `nix flake update` counts.
@@ -239,7 +246,8 @@ let
   # ouranos-update: the one-click update, run from the badge or the menu.
   # Omarchy's plugin-update loop (fetch -> diff -> build -> rollback) for this
   # flake: codex first (codex-update owns its pins and its own test build),
-  # then the hand-pinned apps, then the flake inputs, then one test build.
+  # then the hand-pinned apps and Delta's input, then the rest of the flake
+  # inputs, then one test build.
   # A failed build rolls the lock back and retries with the pin bumps alone,
   # so one broken input doesn't throw away everything else.
   ouranosUpdate = pkgs.writeShellScriptBin "ouranos-update" ''
@@ -332,6 +340,22 @@ let
         fi
         edited "$O1" && CHANGED+=("$O1")
       fi
+    fi
+
+    # Delta is a flake input rather than a hand pin, so its bump is that one
+    # lock entry. Taking it before the full refresh keeps it in the fallback
+    # build when some other input breaks.
+    deltav() { ${deltaVersion}; }
+    D_CUR=$(deltav "$(${jq} -r '.nodes["zed-delta"].locked.rev' flake.lock)")
+    D_NEW=$(deltav HEAD)
+    if [ -z "$D_NEW" ] || [ "$D_NEW" = "$D_CUR" ]; then
+      say "Zed Delta $D_CUR ✓"
+    elif edited flake.lock; then
+      say "Zed Delta: flake.lock has local edits; leaving it to the input refresh"
+    elif nix flake update zed-delta >/dev/null 2>&1; then
+      CHANGED+=(flake.lock); say "Zed Delta $D_CUR → $D_NEW"
+    else
+      say "Zed Delta: lock update failed, skipping"
     fi
 
     say "flake inputs"
