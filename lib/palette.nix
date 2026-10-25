@@ -1,6 +1,7 @@
-# Ouranos — the house palette. Cobalt on near-black (night) and cobalt on
-# near-white (day), named for the sky: the thing Atlas is condemned to hold up
-# and the father Kronos was born to. One name that covers both machines.
+# Auseklis — the house palette. Cobalt on near-black (night) and cobalt on
+# near-white (day), named for the Latvian morning star: one cold blue light
+# over a dark field, the same thing the night variant draws. The machines
+# under it carry the rest of the pantheon (perkons, usins, rukis).
 #
 # Colours are lifted from ~/projects/gentoo-dotfiles/themes/{cobalt,cobalt-light}
 # and remapped onto Base16 slots, which is the shape this repo's consumers
@@ -8,8 +9,8 @@
 #
 # Consumed by the Hyprland session components (hyprland.lua and its waybar,
 # fuzzel, swaync, swayosd, hyprlock), by home/ghostty.nix, and through
-# lib/ouranos.nix by Stylix (every other themed app) and by nvim's
-# colors/palette.lua (generated ~/.config/ouranos/palette.lua). Change a slot
+# lib/auseklis.nix by Stylix (every other themed app) and by nvim's
+# colors/palette.lua (generated ~/.config/auseklis/palette.lua). Change a slot
 # here and one rebuild carries it everywhere.
 #
 # Caelestia consumes base0D only, and indirectly: it is Material 3 end to end,

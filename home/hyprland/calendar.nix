@@ -37,21 +37,21 @@ let
   # One command for the bar's on-click: a running popup is closed, otherwise
   # one opens. pkill matches the script's store path, which only the popup's
   # python process carries on its command line.
-  calendarPopup = pkgs.writeShellScriptBin "ouranos-calendar" ''
+  calendarPopup = pkgs.writeShellScriptBin "auseklis-calendar" ''
     ${pkgs.procps}/bin/pkill -f -- '${script}' && exit 0
     # gtk4-layer-shell has to load before libwayland-client; for a Python
     # client that means preloading it.
     export LD_PRELOAD=${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so''${LD_PRELOAD:+:$LD_PRELOAD}
     export GI_TYPELIB_PATH=${typelibs}''${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}
-    export OURANOS_HYPRCTL=${hyprctl}
+    export AUSEKLIS_HYPRCTL=${hyprctl}
     exec ${python}/bin/python3 ${script} "$@"
   '';
 in
 {
   home.packages = [ calendarPopup ];
 
-  xdg.configFile."ouranos-calendar/style.css".source = ../../config/hyprland/calendar.css;
-  xdg.configFile."ouranos-calendar/_ouranos.css".text = import ./palette-css.nix lib pal;
+  xdg.configFile."auseklis-calendar/style.css".source = ../../config/hyprland/calendar.css;
+  xdg.configFile."auseklis-calendar/_auseklis.css".text = import ./palette-css.nix lib pal;
 
   # Seed the accounts file once, private, with a commented template. It holds
   # secret URLs, so it lives with the other credentials and never in the store.
@@ -60,7 +60,7 @@ in
     if [ ! -e "$f" ]; then
       [ -d "$(dirname "$f")" ] || run install -d -m 700 "$(dirname "$f")"
       run install -m 600 ${pkgs.writeText "calendars.toml" ''
-        # Accounts for the waybar calendar dropdown (ouranos-calendar).
+        # Accounts for the waybar calendar dropdown (auseklis-calendar).
         #
         # For each Google account, open calendar.google.com > Settings, pick a
         # calendar under "Settings for my calendars", scroll to "Integrate

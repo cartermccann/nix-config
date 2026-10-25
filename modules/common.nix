@@ -28,7 +28,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Stylix themes Limine too and would win the whole style block. Stylix now
-  # runs Ouranos (modules/stylix.nix), but the boot menu below is hand-tuned
+  # runs Auseklis (modules/stylix.nix), but the boot menu below is hand-tuned
   # from lib/palette.nix beyond what a base16 mapping gives, so Stylix still
   # hands this target over. Same call as Caelestia taking gtk.css off Stylix
   # in home/hyprland/caelestia.nix.
@@ -58,14 +58,14 @@ in
       backdrop = pal.night.raw.base02;
 
       interface = {
-        branding = "kronos"; # same title as the Ly greeter's box
+        branding = "perkons"; # same title as the Ly greeter's box
         # Kept visible on purpose, unlike Ly's hide_key_hints. This menu is the
         # rollback path; the one time it matters is the one time you will not
         # remember the keys.
         helpHidden = false;
       };
 
-      # Ouranos night, so firmware → Limine → Ly reads as one surface rather
+      # Auseklis night, so firmware → Limine → Ly reads as one surface rather
       # than three. base02 is the same ground Ly paints (modules/desktop-
       # wayland.nix), not base00, which is why this is not quite the desktop
       # background. Six hex digits is RRGGBB; the TT transparency byte the

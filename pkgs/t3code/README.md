@@ -4,7 +4,7 @@ The stable release is pinned in `sources.json` while nixpkgs catches up. This
 reuses nixpkgs' source build and resource monitor, with the Electron/node-pty
 libstdc++ wrapper retained.
 
-`ouranos-updates check` includes T3 in the update badge. `ouranos-update` reports
+`auseklis-updates check` includes T3 in the update badge. `auseklis-update` reports
 the pinned and latest stable versions. It does not automatically change this
 source pin: a new release also needs a verified pnpm dependency hash and a build.
 

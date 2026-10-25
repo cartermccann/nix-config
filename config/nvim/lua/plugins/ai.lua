@@ -83,8 +83,8 @@ return {
       { "<leader>ae", function() require("ai.herdr").diagnostics("codex") end, desc = "Codex: fix these diagnostics" },
       { "<leader>aE", function() require("ai.herdr").diagnostics("claude") end, desc = "Claude pane: fix these diagnostics" },
       { "<leader>at", function()
-        if vim.fn.executable("ouranos-herdr") == 0 then return vim.notify("ouranos-herdr not on PATH", vim.log.levels.WARN) end
-        vim.system({ "ouranos-herdr" })
+        if vim.fn.executable("auseklis-herdr") == 0 then return vim.notify("auseklis-herdr not on PATH", vim.log.levels.WARN) end
+        vim.system({ "auseklis-herdr" })
       end, desc = "Open herdr" },
     },
   },

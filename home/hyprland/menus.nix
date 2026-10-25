@@ -6,8 +6,8 @@
 # fuzzel (launcher + every dmenu script) and swayosd (volume/brightness OSD).
 let
   pal = import ../../lib/palette.nix;
-  ouranos = import ../../lib/ouranos.nix;
-  lens = ouranos.glass.lens;
+  auseklis = import ../../lib/auseklis.nix;
+  lens = auseklis.glass.lens;
   cfgHome = config.xdg.configHome;
   # 0.5 -> "80": fuzzel takes RRGGBBAA, so glass alphas become a hex byte.
   alphaHex =
@@ -20,7 +20,7 @@ in
 {
   xdg.configFile."fuzzel/hypr.ini".text = ''
     [main]
-    font=${ouranos.font.mono}:size=12
+    font=${auseklis.font.mono}:size=12
     prompt=>
     icon-theme=Papirus-Dark
     lines=10
@@ -30,7 +30,7 @@ in
     inner-pad=10
     layer=overlay
 
-    # Lens tier (lib/ouranos.nix): Hyprland's layer blur behind a 50% tint,
+    # Lens tier (lib/auseklis.nix): Hyprland's layer blur behind a 50% tint,
     # a neutral hairline rather than a cobalt frame, and cobalt only on the
     # selected row. fuzzel draws no inner shadows, so the edge light that
     # waybar/swaync get is carried here by the hairline alone.
@@ -48,27 +48,27 @@ in
 
     [border]
     width=1
-    radius=${toString ouranos.radius.surface}
-    selection-radius=${toString ouranos.radius.row}
+    radius=${toString auseklis.radius.surface}
+    selection-radius=${toString auseklis.radius.row}
   '';
 
   # swayosd: lens tier. GTK4 resolves the @import next to this file, so the
   # OSD reads the same generated tokens as waybar and swaync.
-  xdg.configFile."swayosd/_ouranos.css".text = import ./palette-css.nix lib pal;
+  xdg.configFile."swayosd/_auseklis.css".text = import ./palette-css.nix lib pal;
   xdg.configFile."swayosd/style.css".text = ''
-    @import url("_ouranos.css");
+    @import url("_auseklis.css");
     window {
       background-color: @lens_bg;
       background-image: linear-gradient(to bottom, @lens_sheen, transparent 40%);
       border: 1px solid @lens_hairline;
-      border-radius: ${toString ouranos.radius.surface}px;
+      border-radius: ${toString auseklis.radius.surface}px;
       box-shadow: inset 0 1px 0 @lens_rim, inset 1px 0 0 @lens_fringe_l,
         inset -1px 0 0 @lens_fringe_r, inset 0 -1px 0 @lens_caustic,
         inset 0 0 18px @lens_glow;
     }
     label {
       color: @base05;
-      font-family: "${ouranos.font.mono}", monospace;
+      font-family: "${auseklis.font.mono}", monospace;
     }
     progressbar trough {
       background: alpha(@base05, 0.08);

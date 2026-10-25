@@ -1,7 +1,7 @@
 { config, ... }:
 
 {
-  # Temporary Kronos-only route for private pilot acceptance. Remove this module
+  # Temporary Perkons-only route for private pilot acceptance. Remove this module
   # and rebuild before testing the public DNS cutover.
   networking.hosts."127.0.0.1" = [ "app.runahealth.io" ];
 

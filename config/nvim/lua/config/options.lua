@@ -49,7 +49,7 @@ o.foldmethod = "expr"
 o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 o.foldtext = ""
 
--- Ouranos chrome: one global statusline, no tabline, hairline borders on
+-- Auseklis chrome: one global statusline, no tabline, hairline borders on
 -- every float (0.12-native winborder), cobalt kept for the few things that
 -- carry focus (see colors/palette.lua).
 o.termguicolors = true

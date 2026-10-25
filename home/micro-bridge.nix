@@ -15,7 +15,7 @@
 #
 # Injection does not vary by machine: wtype synthesises the keystrokes and
 # wlrctl activates windows, and both work on Hyprland here and on mango on
-# atlas, because both compositors implement virtual-keyboard-v1 and
+# usins, because both compositors implement virtual-keyboard-v1 and
 # foreign-toplevel-management. Only the focus signal differs, and the bridge
 # abstracts that internally (Hyprland's .socket2.sock here, `mmsg watch` there).
 #

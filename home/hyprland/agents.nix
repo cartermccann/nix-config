@@ -16,7 +16,7 @@ let
   jq = "${pkgs.jq}/bin/jq";
   fuzzel = "${pkgs.fuzzel}/bin/fuzzel --dmenu --config ${cfgHome}/fuzzel/hypr.ini";
 
-  agents = pkgs.writeShellScriptBin "ouranos-agents" ''
+  agents = pkgs.writeShellScriptBin "auseklis-agents" ''
     LIST=$(herdr agent list 2>/dev/null | ${jq} -c '.result.agents // []') || LIST='[]'
     [ -n "$LIST" ] || LIST='[]'
 
@@ -46,28 +46,28 @@ let
         SEL=$(printf '%s\n%s\n' "$ROWS" "$EXTRA" | sed '/^$/d' \
           | ${fuzzel} --index --prompt="agents › " --width 64) || exit 0
         if [ "$SEL" -lt "$N" ]; then
-          ouranos-herdr
+          auseklis-herdr
           herdr agent focus "$(${jq} -r --argjson i "$SEL" '.[$i].pane_id' <<<"$SORTED")" >/dev/null
           exit 0
         fi
         case $((SEL - N)) in
           0) KIND=claude ;;
           1) KIND=codex ;;
-          2) exec ouranos-herdr ;;
-          3) exec ouranos-focus-or-launch '^codex-desktop$' codex-desktop-guard ;;
+          2) exec auseklis-herdr ;;
+          3) exec auseklis-focus-or-launch '^codex-desktop$' codex-desktop-guard ;;
         esac
-        DIR=$(PROMPT="$KIND in › " ouranos-project --pick) || exit 0
+        DIR=$(PROMPT="$KIND in › " auseklis-project --pick) || exit 0
         WS=$(herdr workspace list | ${jq} -r --arg l "$(basename "$DIR")" \
           '[.result.workspaces[] | select(.label == $l)][0].workspace_id // empty')
         if [ -z "$WS" ]; then
           # No workspace yet: the project launcher's layout already starts both.
-          exec ouranos-project --open "$DIR"
+          exec auseklis-project --open "$DIR"
         fi
         # Existing workspace: a new pane beside its first one, running the agent.
         FIRST=$(herdr pane list --workspace "$WS" | ${jq} -r '.result.panes[0].pane_id')
         NEW=$(herdr pane split "$FIRST" --direction right --cwd "$DIR" --no-focus | ${jq} -r .result.pane.pane_id)
         herdr pane run "$NEW" "$KIND" >/dev/null
-        ouranos-herdr
+        auseklis-herdr
         herdr workspace focus "$WS" >/dev/null
         ;;
     esac

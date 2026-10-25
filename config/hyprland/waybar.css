@@ -1,11 +1,11 @@
 /* Waybar stylesheet for the Hyprland session.
  *
- * Colours and the Ouranos glass tokens come from _ouranos.css, generated next
- * to this file from lib/palette.nix + lib/ouranos.nix by
+ * Colours and the Auseklis glass tokens come from _auseklis.css, generated next
+ * to this file from lib/palette.nix + lib/auseklis.nix by
  * home/hyprland/palette-css.nix. Use @slot for solids, alpha(@slot, a) for
  * one-off translucency, and the @frost_* / @lens_* tokens for glass. Radii are
  * literal (GTK cannot parametrise lengths): 14 surface, 10 row, 9 chip. */
-@import url("_ouranos.css");
+@import url("_auseklis.css");
 
 * {
   font-family: "JetBrainsMono Nerd Font", monospace;

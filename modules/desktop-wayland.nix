@@ -13,7 +13,7 @@
 # desktop-niri-noctalia.nix layer session-specific bits on top of this.
 let
   # The Ly greeter's monogram animation and slash-pair language file.
-  lyOuranos = pkgs.callPackage ../pkgs/ly-ouranos { };
+  lyAuseklis = pkgs.callPackage ../pkgs/ly-auseklis { };
   pal = import ../lib/palette.nix;
 
   # Ly colours are 0x00RRGGBB. The most significant byte is a *styling* flag,
@@ -49,7 +49,7 @@ in
   programs.niri.enable = true;
 
   # Ly remains the default TUI display manager unless a host explicitly enables
-  # SDDM. This keeps atlas unchanged while kronos opts into the graphical login.
+  # SDDM. This keeps usins unchanged while perkons opts into the graphical login.
   services.displayManager.ly = lib.mkIf (!config.services.displayManager.sddm.enable) {
     enable = true;
     # The greeter is ported from the atlas one (cartermccann/gentoo-dotfiles,
@@ -57,10 +57,10 @@ in
     # Portfolio2's language as far as a console allows: the CM/26 monogram
     # resolving coarse to sharp (Ly's .dur animation), slash-pair labels from
     # a custom language file ("01 / USER"), a hairline box and one cobalt
-    # accent. Assets are generated in pkgs/ly-ouranos.
+    # accent. Assets are generated in pkgs/ly-auseklis.
     #
     # Ly renders on the framebuffer console: colours snap to the 16 VT slots
-    # (Stylix's console target sets them from Ouranos) and text is a bitmap font.
+    # (Stylix's console target sets them from Auseklis) and text is a bitmap font.
     settings = {
       waylandsessions = "${visibleWaylandSessions}";
       full_color = true;
@@ -86,14 +86,14 @@ in
 
       asterisk = "0x2022"; # bullet instead of *
       hide_version_string = true;
-      hide_key_hints = false; # "F1 / SHUTDOWN" etc. from the ouranos lang file
+      hide_key_hints = false; # "F1 / SHUTDOWN" etc. from the auseklis lang file
       sleep_cmd = "/run/current-system/systemd/bin/systemctl suspend"; # F3 / SLEEP
       hide_keyboard_locks = true;
-      lang = "ouranos"; # /etc/ly/lang/ouranos.ini
+      lang = "auseklis"; # /etc/ly/lang/auseklis.ini
       initial_info_text = "AUTH / READY";
 
       animation = "dur_file";
-      dur_file_path = "/etc/ly/ouranos.dur";
+      dur_file_path = "/etc/ly/auseklis.dur";
       dur_offset_alignment = "topcenter";
       dur_y_offset = 1;
       animation_timeout_sec = 0; # the .dur loops: resolve, hold 45s, resolve
@@ -108,8 +108,8 @@ in
   # Ly reads its language from <config dir>/lang/<lang>.ini, so the assets sit
   # beside /etc/ly/config.ini.
   environment.etc = lib.mkIf (!config.services.displayManager.sddm.enable) {
-    "ly/ouranos.dur".source = "${lyOuranos}/ouranos.dur";
-    "ly/lang/ouranos.ini".source = "${lyOuranos}/ouranos.ini";
+    "ly/auseklis.dur".source = "${lyAuseklis}/auseklis.dur";
+    "ly/lang/auseklis.ini".source = "${lyAuseklis}/auseklis.ini";
   };
 
   # SDDM's package, Breeze theme and Wayland greeter are supplied by Plasma's

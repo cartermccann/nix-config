@@ -11,7 +11,7 @@
 #
 #   scripts.nix     the hypr-* helper scripts
 #   bar-scripts.nix waybar's live modules: modes, recording, Tailscale, updates
-#   menu.nix        the Ouranos menu (Super+Alt+Space), focus-or-launch, keybinding list
+#   menu.nix        the Auseklis menu (Super+Alt+Space), focus-or-launch, keybinding list
 #   projects.nix    project launcher (Super+O): repo picker -> herdr workspace layout
 #   agents.nix      agent cockpit: waybar module + switcher (Super+Shift+A) over herdr
 #   calendar.nix    the clock's calendar dropdown (calendar.py, Google iCal feeds)
@@ -24,11 +24,11 @@
 #   palette-css.nix palette + glass tokens -> GTK @define-color block (not a module)
 #
 # Colours come from lib/palette.nix; glass, shape and blur from
-# lib/ouranos.nix. Each module imports them directly rather than threading
+# lib/auseklis.nix. Each module imports them directly rather than threading
 # them through, so any one of them can be read on its own. The large stylesheets (waybar, swaync, calendar) are plain .css
 # files under config/hyprland/ with no interpolation; palette-css.nix emits
 # the palette and glass tokens next to each (and next to swayosd's inline
-# one) as _ouranos.css, which they pull in with @import. fuzzel, hyprlock and
+# one) as _auseklis.css, which they pull in with @import. fuzzel, hyprlock and
 # hypridle stay inline.
 {
   imports = [
@@ -69,7 +69,7 @@
   # config directly. The compositor + portal come from modules/desktop-hyprland.nix.
   # API reference: $hyprland/share/hypr/stubs/hl.meta.lua
 
-  # Opt the Hyprland session out of global Stylix so it carries the Ouranos
+  # Opt the Hyprland session out of global Stylix so it carries the Auseklis
   # palette (same idea as stylix.targets.niri.enable=false in home/shell.nix).
   # Guarded: stylix 25.11 may not declare a `hyprland` target, and if it
   # doesn't, Stylix never touches hypr/ anyway.

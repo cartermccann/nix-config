@@ -1,5 +1,5 @@
 -- nvim on plain lazy.nvim: no distro, native LSP (lua/lsp.lua), every server
--- and formatter from Nix (home/neovim.nix). Colours come from the Ouranos
+-- and formatter from Nix (home/neovim.nix). Colours come from the Auseklis
 -- palette via colors/palette.lua.
 --
 --   lua/config/options.lua    editor options

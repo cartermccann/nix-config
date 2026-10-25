@@ -34,7 +34,7 @@ let
         cp config.kdl "$out"
       '';
 
-  # Ouranos as a Noctalia colour scheme.
+  # Auseklis as a Noctalia colour scheme.
   #
   # Noctalia reads schemes from ~/.config/noctalia/colorschemes/<Name>/<Name>.json
   # (Services/Theming/ColorSchemeService.qml) and only ever reads them — it
@@ -133,8 +133,8 @@ in
   # writes colorSchemes.{predefinedScheme,useWallpaperColors,darkMode} into
   # settings.json, which is 20KB of live user state. Declaring those keys would
   # fight the UI on every rebuild, so the scheme is shipped here and picked
-  # there — Settings → Color scheme → Ouranos, wallpaper colours off.
-  xdg.configFile."noctalia/colorschemes/Ouranos/Ouranos.json".text = builtins.toJSON {
+  # there — Settings → Color scheme → Auseklis, wallpaper colours off.
+  xdg.configFile."noctalia/colorschemes/Auseklis/Auseklis.json".text = builtins.toJSON {
     dark = mkScheme {
       v = pal.night;
       onPrimary = pal.night.base07; # #f4f7fc

@@ -40,7 +40,7 @@ Run from the repository root:
 ```sh
 nix build --impure --no-link -L --expr '
   let f = builtins.getFlake (toString ./.);
-      p = f.nixosConfigurations.kronos.pkgs;
+      p = f.nixosConfigurations.perkons.pkgs;
   in p.callPackage ./pkgs/gnome-keyring/check.nix {}'
 ```
 

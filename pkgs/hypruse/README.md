@@ -1,4 +1,4 @@
-# Hypruse on kronos
+# Hypruse on perkons
 
 Standalone, pinned Hypruse 0.10.0 proof of concept. This does not patch Codex,
 replace its CUA integration, install global tools, or require a system switch.

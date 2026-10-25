@@ -5,16 +5,16 @@
   hyprland,
   ...
 }:
-# The Ouranos menu: one keybind (Super+Alt+Space) for apps, capture, modes,
+# The Auseklis menu: one keybind (Super+Alt+Space) for apps, capture, modes,
 # sharing, style, updates, keybindings and system, after Omarchy's menu tree
 # (default/omarchy/omarchy-menu.jsonc) but drawn by fuzzel.
 #
-# The tree is the `entries` list below, compiled to ~/.config/ouranos/menu.json.
+# The tree is the `entries` list below, compiled to ~/.config/auseklis/menu.json.
 # Ids are dotted paths; an entry with `action` runs it, one without is a
 # submenu of the entries under it. `when` hides a row unless its shell test
 # passes and `checked` adds a tick; each level's tests run in one batched bash
 # before fuzzel opens. Every submenu is reachable directly too:
-# `ouranos-menu capture` is what Super+Ctrl+C runs.
+# `auseklis-menu capture` is what Super+Ctrl+C runs.
 let
   cfgHome = config.xdg.configHome;
   hyprctl = "${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/hyprctl";
@@ -22,8 +22,8 @@ let
   fuzzel = "${pkgs.fuzzel}/bin/fuzzel --dmenu --config ${cfgHome}/fuzzel/hypr.ini";
 
   # Focus the app if a window of it exists, launch it otherwise (Omarchy's
-  # omarchy-launch-or-focus). Usage: ouranos-focus-or-launch <class-regex> <cmd...>
-  focusOrLaunch = pkgs.writeShellScriptBin "ouranos-focus-or-launch" ''
+  # omarchy-launch-or-focus). Usage: auseklis-focus-or-launch <class-regex> <cmd...>
+  focusOrLaunch = pkgs.writeShellScriptBin "auseklis-focus-or-launch" ''
     RE=$1; shift
     ADDR=$(${hyprctl} clients -j | ${jq} -r --arg re "$RE" \
       '[.[] | select(.class | test($re; "i"))] | sort_by(.focusHistoryID) | .[0].address // empty')
@@ -36,7 +36,7 @@ let
 
   # Long-running menu actions run in a floating terminal that ends on a clear
   # Done/Failed line instead of vanishing (Omarchy's presentation wrapper).
-  present = pkgs.writeShellScriptBin "ouranos-present" ''
+  present = pkgs.writeShellScriptBin "auseklis-present" ''
     exec ghostty --class=TUI.float -e bash -c '
       eval "$1"; code=$?
       echo
@@ -46,7 +46,7 @@ let
 
   # The keybinding cheatsheet (Super+/): desktop, nvim, tmux, herdr, Ly and
   # bar bindings, each read live by cheatsheet.py, searchable in fuzzel.
-  keys = pkgs.writeShellScriptBin "ouranos-keys" ''
+  keys = pkgs.writeShellScriptBin "auseklis-keys" ''
     ${pkgs.python3}/bin/python3 ${./cheatsheet.py} \
       | ${fuzzel} --prompt="keys › " --width 100 --lines 24 >/dev/null
   '';
@@ -79,42 +79,42 @@ let
       glyph = "󰈹";
       label = "Zen";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^zen' zen-beta";
+      action = "auseklis-focus-or-launch '^zen' zen-beta";
     }
     {
       id = "apps.codex";
       glyph = "󰚩";
       label = "Codex";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^codex-desktop$' codex-desktop-guard";
+      action = "auseklis-focus-or-launch '^codex-desktop$' codex-desktop-guard";
     }
     {
       id = "apps.claude";
       glyph = "󰚩";
       label = "Claude";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^com.anthropic.claude$' claude-desktop";
+      action = "auseklis-focus-or-launch '^com.anthropic.claude$' claude-desktop";
     }
     {
       id = "apps.cursor";
       glyph = "󰨞";
       label = "Cursor";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^cursor$' cursor";
+      action = "auseklis-focus-or-launch '^cursor$' cursor";
     }
     {
       id = "apps.obsidian";
       glyph = "󰠮";
       label = "Obsidian";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^(obsidian|md.obsidian)$' obsidian";
+      action = "auseklis-focus-or-launch '^(obsidian|md.obsidian)$' obsidian";
     }
     {
       id = "apps.granola";
       glyph = "󰍬";
       label = "Granola";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^granola$' granola";
+      action = "auseklis-focus-or-launch '^granola$' granola";
     }
 
     {
@@ -122,21 +122,21 @@ let
       glyph = "󰚩";
       label = "Agents";
       hint = "Super+Shift+A";
-      action = "ouranos-agents menu";
+      action = "auseklis-agents menu";
     }
     {
       id = "projects";
       glyph = "󰉋";
       label = "Projects";
       hint = "Super+O";
-      action = "ouranos-project";
+      action = "auseklis-project";
     }
     {
       id = "herdr";
       glyph = "󰆍";
       label = "Herdr";
       hint = "agent workspaces";
-      action = "ouranos-herdr";
+      action = "auseklis-herdr";
     }
     {
       id = "capture";
@@ -212,29 +212,29 @@ let
       id = "toggle.night";
       label = "Night light";
       hint = "Super+Ctrl+N";
-      action = "ouranos-mode toggle night";
-      checked = "ouranos-mode is night";
+      action = "auseklis-mode toggle night";
+      checked = "auseklis-mode is night";
     }
     {
       id = "toggle.caffeine";
       label = "Caffeine";
       hint = "screen stays on";
-      action = "ouranos-mode toggle caffeine";
-      checked = "ouranos-mode is caffeine";
+      action = "auseklis-mode toggle caffeine";
+      checked = "auseklis-mode is caffeine";
     }
     {
       id = "toggle.dnd";
       label = "Do not disturb";
       hint = "notifications";
-      action = "ouranos-mode toggle dnd";
-      checked = "ouranos-mode is dnd";
+      action = "auseklis-mode toggle dnd";
+      checked = "auseklis-mode is dnd";
     }
     {
       id = "toggle.dictation";
       label = "Dictation";
       hint = "Super+Alt+L";
-      action = "ouranos-mode toggle dictation";
-      checked = "ouranos-mode is dictation";
+      action = "auseklis-mode toggle dictation";
+      checked = "auseklis-mode is dictation";
     }
     {
       id = "toggle.bar";
@@ -259,13 +259,13 @@ let
       id = "share.taildrop";
       label = "Taildrop a file";
       hint = "to a tailnet machine";
-      action = "ouranos-tailscale menu";
+      action = "auseklis-tailscale menu";
     }
     {
       id = "share.localsend";
       label = "LocalSend";
       hint = "focus or open";
-      action = "ouranos-focus-or-launch '^localsend_app$' localsend_app";
+      action = "auseklis-focus-or-launch '^localsend_app$' localsend_app";
     }
 
     {
@@ -284,8 +284,8 @@ let
       id = "style.night";
       label = "Night light";
       hint = "Super+Ctrl+N";
-      action = "ouranos-mode toggle night";
-      checked = "ouranos-mode is night";
+      action = "auseklis-mode toggle night";
+      checked = "auseklis-mode is night";
     }
 
     {
@@ -293,14 +293,14 @@ let
       glyph = "󰚰";
       label = "Update";
       hint = "pins and flake";
-      action = "ouranos-updates menu";
+      action = "auseklis-updates menu";
     }
     {
       id = "keys";
       glyph = "󰌌";
       label = "Keybindings";
       hint = "Super+/";
-      action = "ouranos-keys";
+      action = "auseklis-keys";
     }
 
     {
@@ -336,8 +336,8 @@ let
     }
   ];
 
-  menu = pkgs.writeShellScriptBin "ouranos-menu" ''
-    MENU=${cfgHome}/ouranos/menu.json
+  menu = pkgs.writeShellScriptBin "auseklis-menu" ''
+    MENU=${cfgHome}/auseklis/menu.json
     ROUTE=''${1:-}
     while :; do
       ITEMS=$(${jq} -c --arg r "$ROUTE" \
@@ -356,7 +356,7 @@ let
           "\($l)\(" " * ([2, 34 - ($l | length)] | max))\(.hint // "")"' <<<"$ITEMS")
         LINES+=("$ROW"); MAP+=("$i")
       done <<<"$STATE"
-      PROMPT="ouranos''${ROUTE:+ / ''${ROUTE//./ / }} › "
+      PROMPT="auseklis''${ROUTE:+ / ''${ROUTE//./ / }} › "
       SEL=$(printf '%s\n' "''${LINES[@]}" | ${fuzzel} --index --prompt="$PROMPT" --width 52) || exit 0
       PICK=''${MAP[$SEL]}
       if [ "$PICK" = back ]; then
@@ -374,7 +374,7 @@ let
   '';
 in
 {
-  xdg.configFile."ouranos/menu.json".text = builtins.toJSON entries;
+  xdg.configFile."auseklis/menu.json".text = builtins.toJSON entries;
 
   home.packages = [
     menu

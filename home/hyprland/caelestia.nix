@@ -12,33 +12,33 @@
 # Themed from lib/palette.nix, but not the way the waybar session is. Caelestia
 # is Material 3 end to end: every surface, container and "on-" role comes out of
 # one seed colour, so handing it a Base16 slot map would fight the system. What
-# it gets instead is the Ouranos cobalt as that seed, expanded into a full M3
-# role set by Caelestia's own generator (see the ouranosScheme derivation).
+# it gets instead is the Auseklis cobalt as that seed, expanded into a full M3
+# role set by Caelestia's own generator (see the auseklisScheme derivation).
 let
   system = pkgs.stdenv.hostPlatform.system;
   palette = import ../../lib/palette.nix;
 
-  # ── The Ouranos scheme ────────────────────────────────────────────────────
+  # ── The Auseklis scheme ────────────────────────────────────────────────────
   # Caelestia resolves a named scheme from
   # <cli-package>/data/schemes/<name>/<flavour>/<mode>.txt, which lives in the
   # store — so a house scheme is generated at build time and grafted into a
   # copy of the CLI. `caelestia scheme list` then shows it alongside the
   # bundled fourteen and the shell's own picker can select it.
-  schemeName = "ouranos";
+  schemeName = "auseklis";
   schemeFlavour = "cobalt";
 
   # M3 variant, and the one real design knob here. It is baked in at build
   # time: for a file-backed scheme the CLI reads the .txt verbatim and never
   # re-runs the generator, so `caelestia scheme set --variant ...` cannot
   # change it. `content` was picked over the alternatives because it is the
-  # only variant that keeps both halves of Ouranos:
+  # only variant that keeps both halves of Auseklis:
   #
-  #   variant     primary          background       vs. Ouranos
+  #   variant     primary          background       vs. Auseklis
   #   tonalspot   #bcc5ee (C26)    #0d0e12 (C5)     accent too washed out
   #   vibrant     #94aaff (C48)    #08082f (C28)    ground is navy, not black
   #   content     #b6c4ff (C35)    #11131b (C9)     both land
   #
-  # (Ouranos night: accent #3b6bff C73, ground #0a0c11 C6.) Material re-tones
+  # (Auseklis night: accent #3b6bff C73, ground #0a0c11 C6.) Material re-tones
   # the seed for contrast — nothing survives at tone 50 on a dark ground — so
   # `primary` is a lighter cobalt than base0D. The hue carries through exactly
   # at 274.8°, which is what makes it read as the house colour.
@@ -68,19 +68,19 @@ let
   # directories that do not exist.
   sitePackages = p: "${p}/lib/python${cliPython.pythonVersion}/site-packages";
 
-  ouranosScheme =
+  auseklisScheme =
     pkgs.runCommand "caelestia-scheme-${schemeName}"
       {
         nativeBuildInputs = [ cliPython ];
         PYTHONPATH = lib.concatMapStringsSep ":" sitePackages ([ baseCli ] ++ cliDeps);
       }
       ''
-        python3 ${../../scripts/caelestia-ouranos-scheme.py} \
+        python3 ${../../scripts/caelestia-auseklis-scheme.py} \
           "${palette.night.raw.base0D}" "${schemeTertiary}" \
           "${schemeName}" "${schemeFlavour}" "${schemeVariant}" "$out"
       '';
 
-  ouranosCli = baseCli.overrideAttrs (old: {
+  auseklisCli = baseCli.overrideAttrs (old: {
     # Newline-joined, not concatenated: upstream's postInstall ends mid-line
     # (installShellCompletion ...) and would otherwise swallow the first
     # command here as an extra argument.
@@ -89,8 +89,8 @@ let
       + "\n"
       + ''
         schemeDir="$out/lib/python${cliPython.pythonVersion}/site-packages/caelestia/data/schemes/${schemeName}/${schemeFlavour}"
-        install -Dm444 ${ouranosScheme}/dark.txt "$schemeDir/dark.txt"
-        install -Dm444 ${ouranosScheme}/light.txt "$schemeDir/light.txt"
+        install -Dm444 ${auseklisScheme}/dark.txt "$schemeDir/dark.txt"
+        install -Dm444 ${auseklisScheme}/light.txt "$schemeDir/light.txt"
       '';
   });
 
@@ -106,8 +106,8 @@ let
   # file as authored, which for nixos-icons is the real two-tone mark
   # (#5277c3 / #7ebae4). --replace-fail so a flake update that reshapes this
   # component fails the build instead of silently reverting the logo.
-  ouranosShell =
-    (caelestia.packages.${system}.with-cli.override { caelestia-cli = ouranosCli; }).overrideAttrs
+  auseklisShell =
+    (caelestia.packages.${system}.with-cli.override { caelestia-cli = auseklisCli; }).overrideAttrs
       (old: {
         # Line-at-a-time rather than one block replace, so the patch does not
         # depend on upstream's indentation surviving a reformat.
@@ -181,10 +181,10 @@ in
 
   programs.caelestia = {
     enable = true;
-    package = ouranosShell;
+    package = auseklisShell;
     cli = {
       enable = true;
-      package = ouranosCli;
+      package = auseklisCli;
 
       # cli.json, unlike shell.json, really is a read-only input — the CLI only
       # ever read_text()s it (utils/paths.py) — so it is safe to declare here.
@@ -192,7 +192,7 @@ in
         # `caelestia scheme set` otherwise writes OSC colour sequences straight
         # into every /dev/pts on the machine (apply_terms in utils/theme.py),
         # repainting live terminals in EVERY session, not just this one. That
-        # overrode Ghostty's Ouranos palette and, because OSC 11 replaces the
+        # overrode Ghostty's Auseklis palette and, because OSC 11 replaces the
         # background outright, took its background-opacity with it. Ghostty is
         # themed from lib/palette.nix in home/ghostty.nix; Caelestia keeps its
         # hands off. Already-open terminals stay repainted until they restart.
@@ -252,7 +252,7 @@ in
     caelestiaScheme="${config.xdg.stateHome}/caelestia/scheme.json"
     if [ ! -e "$caelestiaScheme" ]; then
       run mkdir -p $VERBOSE_ARG "$(dirname "$caelestiaScheme")"
-      run install -m 0644 ${ouranosScheme}/scheme.json "$caelestiaScheme"
+      run install -m 0644 ${auseklisScheme}/scheme.json "$caelestiaScheme"
     fi
   '';
 }

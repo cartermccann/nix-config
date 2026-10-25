@@ -1,9 +1,9 @@
 -- Palette — neovim colorscheme derived from lib/palette.nix
--- Ouranos night: cobalt on near-black. Mirrors the Hyprland session so the
+-- Auseklis night: cobalt on near-black. Mirrors the Hyprland session so the
 -- editor matches the desktop.
 --
 -- Palette source of truth: ~/nix-config/lib/palette.nix (Base16). The 16 slots
--- are read from ~/.config/ouranos/palette.lua, which home/neovim.nix generates
+-- are read from ~/.config/auseklis/palette.lua, which home/neovim.nix generates
 -- from it, so a palette change reaches the editor on the next rebuild. The
 -- derived tints below (string-green, bg washes, selection, indent guides) are
 -- design calls tuned for reading a full file, so they stay hand-written here.
@@ -21,10 +21,10 @@ vim.g.colors_name = "palette"
 
 local transparent = vim.g.palette_transparent ~= false
 
-local b = dofile(vim.fn.expand("~/.config/ouranos/palette.lua"))
+local b = dofile(vim.fn.expand("~/.config/auseklis/palette.lua"))
 
 local c = {
-  -- ── Base16 slots — Ouranos night (generated from lib/palette.nix) ──
+  -- ── Base16 slots — Auseklis night (generated from lib/palette.nix) ──
   bg = b.base00, -- near-black ground
   surface = b.base01, -- panels / status
   raised = b.base02, -- selection / raised
@@ -45,7 +45,7 @@ local c = {
 
   -- ── Derived tints (kept restrained for full-file readability) ──
   -- Comments do NOT use base03. Base16 nominates base03 for "comments /
-  -- disabled", but the Ouranos ramp puts it three steps off base00 and it
+  -- disabled", but the Auseklis ramp puts it three steps off base00 and it
   -- measures 1.92:1 against the ground — under even the 3:1 UI floor, and a
   -- comment-heavy file (the nix modules in this repo) reads as empty space.
   -- This sits at 4.54:1, i.e. WCAG AA for small text, while staying far below
@@ -99,17 +99,17 @@ hl("StatusLineNC", { fg = c.taupe, bg = c.surface })
 
 -- ── Statusline (lua/config/statusline.lua): one bar, cobalt only on the
 -- normal-mode dot; other modes and git/diagnostic counts use the accents. ──
-hl("OuranosSLText", { fg = c.fg, bg = c.surface })
-hl("OuranosSLDim", { fg = c.taupe, bg = c.surface })
-hl("OuranosSLNormal", { fg = c.azure, bg = c.surface, bold = true })
-hl("OuranosSLInsert", { fg = c.green, bg = c.surface, bold = true })
-hl("OuranosSLVisual", { fg = c.periwinkle, bg = c.surface, bold = true })
-hl("OuranosSLCommand", { fg = c.yellow, bg = c.surface, bold = true })
-hl("OuranosSLReplace", { fg = c.red, bg = c.surface, bold = true })
-hl("OuranosSLAdd", { fg = c.green, bg = c.surface })
-hl("OuranosSLChange", { fg = c.yellow, bg = c.surface })
-hl("OuranosSLWarn", { fg = c.yellow, bg = c.surface })
-hl("OuranosSLErr", { fg = c.red, bg = c.surface })
+hl("AuseklisSLText", { fg = c.fg, bg = c.surface })
+hl("AuseklisSLDim", { fg = c.taupe, bg = c.surface })
+hl("AuseklisSLNormal", { fg = c.azure, bg = c.surface, bold = true })
+hl("AuseklisSLInsert", { fg = c.green, bg = c.surface, bold = true })
+hl("AuseklisSLVisual", { fg = c.periwinkle, bg = c.surface, bold = true })
+hl("AuseklisSLCommand", { fg = c.yellow, bg = c.surface, bold = true })
+hl("AuseklisSLReplace", { fg = c.red, bg = c.surface, bold = true })
+hl("AuseklisSLAdd", { fg = c.green, bg = c.surface })
+hl("AuseklisSLChange", { fg = c.yellow, bg = c.surface })
+hl("AuseklisSLWarn", { fg = c.yellow, bg = c.surface })
+hl("AuseklisSLErr", { fg = c.red, bg = c.surface })
 hl("TabLine", { fg = c.taupe, bg = c.surface })
 hl("TabLineSel", { fg = c.azure, bg = NB, bold = true })
 hl("TabLineFill", { bg = NB })

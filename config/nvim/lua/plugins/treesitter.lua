@@ -20,7 +20,7 @@ return {
       if #missing > 0 then ts.install(missing, { summary = true }) end
 
       vim.api.nvim_create_autocmd("FileType", {
-        group = vim.api.nvim_create_augroup("ouranos_treesitter", { clear = true }),
+        group = vim.api.nvim_create_augroup("auseklis_treesitter", { clear = true }),
         callback = function(ev)
           if pcall(vim.treesitter.start, ev.buf) then
             vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"

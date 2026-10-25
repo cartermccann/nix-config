@@ -8,7 +8,7 @@
 # hyprlock (lock screen) and hypridle (idle -> lock -> dpms chain).
 let
   pal = import ../../lib/palette.nix;
-  ouranos = import ../../lib/ouranos.nix;
+  auseklis = import ../../lib/auseklis.nix;
   hyprctl = "${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/hyprctl";
 in
 {
@@ -16,8 +16,8 @@ in
     background {
       monitor =
       path = ${config.home.homeDirectory}/wallpaper.png
-      blur_passes = ${toString ouranos.blur.passes}
-      blur_size = ${toString ouranos.blur.size}
+      blur_passes = ${toString auseklis.blur.passes}
+      blur_size = ${toString auseklis.blur.size}
       noise = 0.035
       contrast = 0.9
       brightness = 0.7
@@ -36,7 +36,7 @@ in
       check_color = rgba(${pal.raw.base0C}ee)
       fail_color = rgba(${pal.raw.base08}ee)
       placeholder_text = <span foreground="##${pal.raw.base04}">password</span>
-      rounding = ${toString ouranos.radius.surface}
+      rounding = ${toString auseklis.radius.surface}
       fade_on_empty = false
       position = 0, -40
       halign = center
@@ -47,7 +47,7 @@ in
       monitor =
       text = $TIME
       font_size = 64
-      font_family = ${ouranos.font.mono}
+      font_family = ${auseklis.font.mono}
       color = rgba(${pal.raw.base05}ff)
       position = 0, 120
       halign = center
@@ -58,7 +58,7 @@ in
       monitor =
       text = cmd[update:60000] date +"%A, %B %d"
       font_size = 18
-      font_family = ${ouranos.font.mono}
+      font_family = ${auseklis.font.mono}
       color = rgba(${pal.raw.base06}cc)
       position = 0, 60
       halign = center

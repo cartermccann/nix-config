@@ -95,7 +95,7 @@ require("lazy").load({ plugins = { "nvim-lspconfig", "gitsigns.nvim" } })
 local buf = vim.api.nvim_create_buf(false, true)
 local attach = {
   LSP = function()
-    vim.api.nvim_exec_autocmds("LspAttach", { group = "ouranos_lsp", buffer = buf, data = { client_id = -1 } })
+    vim.api.nvim_exec_autocmds("LspAttach", { group = "auseklis_lsp", buffer = buf, data = { client_id = -1 } })
   end,
   git = function()
     local plugin = require("lazy.core.config").plugins["gitsigns.nvim"]
@@ -153,7 +153,7 @@ def tmux():
     # sheet matches the config even if the running server predates a rebuild.
     # It has no sessions, so it exits as soon as list-keys returns.
     conf = os.path.join(HOME, ".config/tmux/tmux.conf")
-    out = run(["tmux", "-L", "ouranos-keys", "-f", conf, "start-server", ";",
+    out = run(["tmux", "-L", "auseklis-keys", "-f", conf, "start-server", ";",
                "show-options", "-gv", "prefix", ";", "list-keys", "-N"])
     if not out:
         return [("tmux", "?", "couldn't read the tmux config")]
@@ -213,7 +213,7 @@ def herdr():
 
 LY = [
     ("F1", "Shut down"), ("F2", "Reboot"), ("F3", "Sleep"), ("F7", "Show password"),
-    ("F5 / F6", "Brightness down / up (atlas; kronos has no panel)"),
+    ("F5 / F6", "Brightness down / up (usins; perkons has no panel)"),
 ]
 
 # waybar's on-click actions, from home/hyprland/waybar.nix

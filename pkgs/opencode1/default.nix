@@ -2,7 +2,7 @@
   lib,
   opencode,
 }:
-# OpenCode 1.x pinned ahead of nixpkgs. ouranos-update bumps sources.json to
+# OpenCode 1.x pinned ahead of nixpkgs. auseklis-update bumps sources.json to
 # the newest v1.x release: srcHash from `nix store prefetch-file --unpack` of
 # the tag tarball, nodeModulesHash only when it differs from nixpkgs' (null
 # keeps nixpkgs'). Once nixpkgs carries a 1.x at least as new, it wins and the

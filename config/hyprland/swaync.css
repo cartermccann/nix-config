@@ -1,10 +1,10 @@
 /* swaync stylesheet for the Hyprland session.
  *
- * Colours and the Ouranos glass tokens come from _ouranos.css, generated next
- * to this file from lib/palette.nix + lib/ouranos.nix by
+ * Colours and the Auseklis glass tokens come from _auseklis.css, generated next
+ * to this file from lib/palette.nix + lib/auseklis.nix by
  * home/hyprland/palette-css.nix. The control centre is a summoned surface
  * (lens tier); notification cards stay up on their own (frost tier). */
-@import url("_ouranos.css");
+@import url("_auseklis.css");
 
 /* Explicit type scale — swaync otherwise inherits the (oversized) GTK default. */
 * {

@@ -19,9 +19,9 @@ local servers = {
       nixd = {
         formatting = { command = { "nixfmt" } },
         options = {
-          nixos = { expr = '(builtins.getFlake "' .. vim.env.HOME .. '/nix-config").nixosConfigurations.kronos.options' },
+          nixos = { expr = '(builtins.getFlake "' .. vim.env.HOME .. '/nix-config").nixosConfigurations.perkons.options' },
           home_manager = {
-            expr = '(builtins.getFlake "' .. vim.env.HOME .. '/nix-config").nixosConfigurations.kronos.options.home-manager.users.type.getSubOptions []',
+            expr = '(builtins.getFlake "' .. vim.env.HOME .. '/nix-config").nixosConfigurations.perkons.options.home-manager.users.type.getSubOptions []',
           },
         },
       },
@@ -85,7 +85,7 @@ function M.setup()
   vim.lsp.enable(enable)
 
   vim.api.nvim_create_autocmd("LspAttach", {
-    group = vim.api.nvim_create_augroup("ouranos_lsp", { clear = true }),
+    group = vim.api.nvim_create_augroup("auseklis_lsp", { clear = true }),
     callback = function(ev)
       local function map(lhs, rhs, desc, mode)
         vim.keymap.set(mode or "n", lhs, rhs, { buffer = ev.buf, desc = desc })

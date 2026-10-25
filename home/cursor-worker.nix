@@ -149,7 +149,7 @@ in
         "--computer-use"
         "--share-desktop view"
         "--worker-dir ${homeDir}/projects"
-        "--name kronos"
+        "--name perkons"
         "start"
       ];
 

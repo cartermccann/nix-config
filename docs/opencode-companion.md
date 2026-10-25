@@ -16,7 +16,7 @@ and restarts after an unexpected exit. Ollama already has its own boot service.
 - HTTP listens only on `127.0.0.1:4096`. Tailscale Serve exposes authenticated
   HTTPS on port `8443` within the existing tailnet.
 - Model: existing local Ollama `gemma4:12b-it-qat`. Provider credentials are
-  not inherited. Mini uses Kronos for inference, so Kronos must be online.
+  not inherited. Rukis (formerly Mini) uses Perkons for inference, so Perkons must be online.
 
 The server archive and unmodified executable both have fixed SHA-256 checks.
 Updates require the mobile compatibility checks before changing this pin.

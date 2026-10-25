@@ -12,7 +12,7 @@
 # refreshes them all at once.
 let
   pal = import ../../lib/palette.nix;
-  ouranos = import ../../lib/ouranos.nix;
+  auseklis = import ../../lib/auseklis.nix;
 
   # Mode indicators. Each mode is two custom modules from one script: the
   # `mode-*` one shows only while the mode is on (bar stays quiet otherwise),
@@ -29,11 +29,11 @@ let
   modeModule = view: name: {
     name = "custom/${if view == "on" then "mode" else "peek"}-${name}";
     value = {
-      exec = "ouranos-mode status ${name} ${view}";
+      exec = "auseklis-mode status ${name} ${view}";
       return-type = "json";
       interval = 5;
       signal = 8;
-      on-click = "ouranos-mode toggle ${name}";
+      on-click = "auseklis-mode toggle ${name}";
       escape = true;
     };
   };
@@ -72,7 +72,7 @@ in
         "group/modes" = {
           orientation = "horizontal";
           drawer = {
-            transition-duration = ouranos.motion.openMs;
+            transition-duration = auseklis.motion.openMs;
             transition-left-to-right = false;
             children-class = "peek";
           };
@@ -95,24 +95,24 @@ in
             "Etc/UTC"
           ];
           tooltip = false;
-          on-click = "ouranos-calendar";
+          on-click = "auseklis-calendar";
           actions.on-click-middle = "tz_up";
         };
         # Every agent herdr knows about; amber when one is waiting on you.
         "custom/agents" = {
-          exec = "ouranos-agents status";
+          exec = "auseklis-agents status";
           return-type = "json";
           interval = 3;
           signal = 8;
-          on-click = "ouranos-agents menu";
+          on-click = "auseklis-agents menu";
           escape = true;
         };
         "custom/updates" = {
-          exec = "ouranos-updates status";
+          exec = "auseklis-updates status";
           return-type = "json";
           interval = 300;
           signal = 8;
-          on-click = "ouranos-updates menu";
+          on-click = "auseklis-updates menu";
           escape = true;
         };
 
@@ -154,12 +154,12 @@ in
           on-click = "ghostty --class=TUI.float -e btop";
         };
         "custom/tailscale" = {
-          exec = "ouranos-tailscale status";
+          exec = "auseklis-tailscale status";
           return-type = "json";
           interval = 15;
           signal = 8;
-          on-click = "ouranos-tailscale menu";
-          on-click-right = "ouranos-tailscale toggle";
+          on-click = "auseklis-tailscale menu";
+          on-click-right = "auseklis-tailscale toggle";
           escape = true;
         };
         network = {
@@ -287,11 +287,11 @@ in
     ];
 
   # The stylesheet lives in config/hyprland/waybar.css as real CSS. It carries
-  # no Nix interpolation at all: the palette and the Ouranos glass tokens are
-  # emitted alongside it as _ouranos.css and pulled in with @import, so the two
+  # no Nix interpolation at all: the palette and the Auseklis glass tokens are
+  # emitted alongside it as _auseklis.css and pulled in with @import, so the two
   # travel together and the stylesheet stays editable with normal CSS tooling.
   xdg.configFile."waybar/style.css".source = ../../config/hyprland/waybar.css;
-  xdg.configFile."waybar/_ouranos.css".text = import ./palette-css.nix lib pal;
+  xdg.configFile."waybar/_auseklis.css".text = import ./palette-css.nix lib pal;
 
   # fuzzel: session launcher (separate config path; launched via --config)
 }

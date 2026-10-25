@@ -1,7 +1,7 @@
 -- The house motion curve, cubic-bezier(.2,.8,.2,1), as a snacks easing
 -- function (t elapsed, b start, c change, d duration). x(u) is solved for u by
 -- Newton's method, then y(u) is the eased progress.
-local function ouranos_ease(t, b, c, d)
+local function auseklis_ease(t, b, c, d)
   local x1, y1, x2, y2 = 0.2, 0.8, 0.2, 1
   local function bez(u, p1, p2) return 3 * (1 - u) ^ 2 * u * p1 + 3 * (1 - u) * u ^ 2 * p2 + u ^ 3 end
   local function dbez(u, p1, p2) return 3 * (1 - u) ^ 2 * p1 + 6 * (1 - u) * u * (p2 - p1) + 3 * u ^ 2 * (1 - p2) end
@@ -36,7 +36,7 @@ return {
       indent = { enabled = true, animate = { enabled = false } },
       scroll = {
         enabled = true,
-        animate = { duration = { step = 10, total = 160 }, easing = ouranos_ease },
+        animate = { duration = { step = 10, total = 160 }, easing = auseklis_ease },
       },
       dashboard = {
         enabled = true,

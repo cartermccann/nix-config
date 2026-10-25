@@ -1,4 +1,4 @@
-# Codex desktop on kronos
+# Codex desktop on perkons
 
 The desktop entry is configured in `home/codex-desktop.nix`. It uses the
 `codex-desktop-linux` flake input, wrapped by `pkgs/codex-desktop/default.nix`.
@@ -57,7 +57,7 @@ and workspace access. Screen context is a macOS-only extra in this release.
 ### Voice and pet overlay bounds
 
 The shared avatar/voice overlay's native-draw layout allocates a canvas almost
-twice the tallest display's height. On kronos, a 1,920-pixel portrait display
+twice the tallest display's height. On perkons, a 1,920-pixel portrait display
 and an 87-pixel mascot produce `2 * 1920 + 56 - 87 = 3809` pixels, matching the
 observed oversized voice window. The window is non-resizable; a compositor
 resize did not hold. This is app geometry, not a Caelestia size rule.

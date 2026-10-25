@@ -73,17 +73,17 @@ let
   # so every terminal paid an animation plus a full system probe before it was
   # usable. Plain `fastfetch` is still installed (modules/apps.nix) for when
   # the system readout is actually wanted.
-  kronosBanner = pkgs.writeShellScriptBin "kronos-banner" (
+  perkonsBanner = pkgs.writeShellScriptBin "perkons-banner" (
     builtins.replaceStrings
       [ "@fill0@" "@fill1@" "@shadow@" ]
       [ (ansiRgb pal.base0D) (ansiRgb pal.accentBright) (ansiRgb pal.base0F) ]
-      (builtins.readFile ../scripts/kronos-banner.sh)
+      (builtins.readFile ../scripts/perkons-banner.sh)
   );
 in
 {
   home.packages = [
     comcreateBanner
-    kronosBanner
+    perkonsBanner
   ];
 
   programs.fish = {
@@ -92,7 +92,7 @@ in
     interactiveShellInit = ''
       function fish_greeting
         if not set -q TMUX
-          kronos-banner
+          perkons-banner
         end
       end
       set -gx NH_FLAKE $HOME/nix-config
@@ -169,7 +169,7 @@ in
     inherit shellAliases;
     initExtra = ''
       export PATH="$HOME/.local/bin:$PATH"
-      if [[ $- == *i* && -z "$TMUX" ]]; then kronos-banner; fi
+      if [[ $- == *i* && -z "$TMUX" ]]; then perkons-banner; fi
     '';
   };
 
@@ -177,7 +177,7 @@ in
   stylix.targets.neovim.enable = false;
   stylix.targets.niri.enable = false;
 
-  # Starship: the Ouranos prompt.
+  # Starship: the Auseklis prompt.
   #
   # Ported from the atlas prompt in the gentoo dotfiles (config/starship/
   # body.toml) and retinted from lib/palette.nix. The shape is that file's:
@@ -221,7 +221,7 @@ in
         };
       in
       {
-        palette = "ouranos";
+        palette = "auseklis";
         add_newline = true;
         command_timeout = 800;
 
@@ -327,7 +327,7 @@ in
 
         # Role names, not colour names, so the whole prompt retints from
         # lib/palette.nix in one place — same discipline as the atlas palette.
-        palettes.ouranos = {
+        palettes.auseklis = {
           accent = pal.base0D; # cobalt — directory pill
           accent_soft = pal.accentBright; # git status
           ground = pal.base00; # text on the cobalt pill

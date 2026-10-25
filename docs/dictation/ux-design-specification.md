@@ -42,14 +42,14 @@ designDirectionDecision:
 > `qs-shell`, the Quickshell session that has since been removed from the flake
 > (commit `a02bf09`). Its Quickshell role is now filled by **Caelestia**
 > (`home/hyprland/caelestia.nix`, the "Hyprland (Caelestia)" login tile), which
-> derives its own Material colour scheme rather than the Umbra/Ouranos tokens
+> derives its own Material colour scheme rather than the Umbra/Auseklis tokens
 > this document inherits.
 >
 > The interaction design, capture model and copy are unaffected and still hold.
 > What needs revisiting before implementation is every reference to
 > `qs-shell/Commons/Theme.qml`, `qs-shell/Commons/Style.qml`, and the
 > "Dictation inherits the qs-shell Umbra identity" premise — those files no
-> longer exist. The palette itself lives in `lib/palette.nix` (Ouranos) and is
+> longer exist. The palette itself lives in `lib/palette.nix` (Auseklis) and is
 > deliberately *not* wired into Caelestia.
 
 # UX Design Specification — Dictation

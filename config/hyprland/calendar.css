@@ -1,19 +1,19 @@
 /* The clock's calendar dropdown (home/hyprland/calendar.py).
    Lens edges (rim, sheen, cobalt glow) like the tooltips, but a heavier tint:
    it carries a page of small text, which the 0.50 lens tint left hard to read
-   over busy windows. Hyprland blurs behind it (layer rule `ouranos-calendar`)
+   over busy windows. Hyprland blurs behind it (layer rule `auseklis-calendar`)
    and plays the layersIn popin, so nothing here animates the surface itself.
    Accent marks today and the running event only; borders stay neutral.
 
    Every control rule is scoped `.pop .x` so it outranks the `.pop button`
    reset below; a bare `.day` loses to it and the cells collapse. */
-@import url("_ouranos.css");
+@import url("_auseklis.css");
 
-window.ouranos-calendar,
-window.ouranos-calendar-dismiss {
+window.auseklis-calendar,
+window.auseklis-calendar-dismiss {
   background: transparent;
 }
-window.ouranos-calendar {
+window.auseklis-calendar {
   font-family: "JetBrainsMono Nerd Font", monospace;
   font-size: 14px;
   color: @base05;

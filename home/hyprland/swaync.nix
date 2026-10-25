@@ -40,9 +40,9 @@ in
   };
 
   # Same arrangement as waybar: real CSS in config/hyprland/swaync.css, with
-  # the palette emitted next to it as _ouranos.css and pulled in via @import.
+  # the palette emitted next to it as _auseklis.css and pulled in via @import.
   xdg.configFile."swaync/style.css".source = ../../config/hyprland/swaync.css;
-  xdg.configFile."swaync/_ouranos.css".text = import ./palette-css.nix lib pal;
+  xdg.configFile."swaync/_auseklis.css".text = import ./palette-css.nix lib pal;
 
   # hyprlock: frosted blur-over-wallpaper lock
 }

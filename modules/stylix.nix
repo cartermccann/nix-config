@@ -5,12 +5,12 @@
     enable = true;
     polarity = "dark";
     image = ../wallpaper/fam.jpg;
-    # Ouranos, the house palette (lib/palette.nix via lib/ouranos.nix), so GTK,
+    # Auseklis, the house palette (lib/palette.nix via lib/auseklis.nix), so GTK,
     # btop, bat, fzf, tmux, yazi, lazygit and the rest match the Hyprland
     # session instead of running catppuccin-macchiato beside it. Zen is covered
-    # on kronos through home/zen.nix (Stylix needs an HM-managed profile). Not
+    # on perkons through home/zen.nix (Stylix needs an HM-managed profile). Not
     # covered: Qt (desktop-plasma.nix hands it to Plasma/Breeze).
-    base16Scheme = (import ../lib/ouranos.nix).base16;
+    base16Scheme = (import ../lib/auseklis.nix).base16;
 
     fonts = {
       monospace = {

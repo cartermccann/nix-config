@@ -6,8 +6,8 @@ NixOS flake for all my machines: Hyprland (two shell variants — waybar and Cae
 
 | Host | Hardware | User | Notes |
 |------|----------|------|-------|
-| **atlas** | Surface Laptop Studio, i7, 32GB RAM | carter | nixos-hardware Surface module, CPU-only Ollama |
-| **kronos** | Ryzen 9 9950X, RTX 5070 12GB, 64GB RAM | cjm | LUKS + btrfs, GPU Ollama + llama.cpp heavy mode |
+| **usins** | Surface Laptop Studio, i7, 32GB RAM | carter | nixos-hardware Surface module, CPU-only Ollama |
+| **perkons** | Ryzen 9 9950X, RTX 5070 12GB, 64GB RAM | cjm | LUKS + btrfs, GPU Ollama + llama.cpp heavy mode |
 
 ## Usage
 
@@ -18,7 +18,7 @@ git clone https://github.com/cartermccann/nix-config ~/nix-config
 nh os build ~/nix-config
 
 # Apply (or use the `nrs` alias)
-sudo nixos-rebuild switch --flake ~/nix-config#kronos
+sudo nixos-rebuild switch --flake ~/nix-config#perkons
 ```
 
 `update` (alias) rebuilds with updated flake inputs.
@@ -31,7 +31,7 @@ parts/             # flake-parts modules: hosts (mkHost), templates
 hosts/             # per-machine configuration + hardware config
 modules/           # NixOS system modules (desktop, nvidia, audio, ollama, oom-protection, ...)
 home/              # home-manager modules (shell, tools, neovim, tmux, niri, hyprland, crash-watch, ...)
-lib/               # overlays, the Ouranos palette (night/day), llm-models.nix
+lib/               # overlays, the Auseklis palette (night/day), llm-models.nix
 pkgs/              # custom package definitions (codex, qmd, ...)
 templates/         # dev-shell templates for `nix flake init -t ~/nix-config#<lang>`
 config/            # generated blobs kept as real files: nvim, hyprland CSS, audio presets, qmd
@@ -63,9 +63,9 @@ wallpaper/
 
 All sessions share ghostty, tmux, the shared Wayland base in `modules/desktop-wayland.nix`, and the helper scripts in `home/niri.nix`.
 
-Colours come from `lib/palette.nix` — **Ouranos**, cobalt on near-black (`night`)
-or near-white (`day`), named for the sky Atlas holds up and the father Kronos
-was born to. Both variants are always defined; `active` picks which one the
+Colours come from `lib/palette.nix` — **Auseklis**, cobalt on near-black (`night`)
+or near-white (`day`), named for the Latvian morning star. The machines carry
+the rest of the pantheon: perkons, usins, rukis. Both variants are always defined; `active` picks which one the
 session components get. Caelestia does its own theming (it derives a Material
 scheme) and is deliberately not wired to it.
 

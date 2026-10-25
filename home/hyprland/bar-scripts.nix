@@ -40,15 +40,15 @@ let
     ${refresh}
   '';
 
-  # ouranos-mode status <mode> on|peek   waybar JSON for one indicator
-  # ouranos-mode toggle <mode>            flip it
-  # ouranos-mode is <mode>                exit 0 if on
+  # auseklis-mode status <mode> on|peek   waybar JSON for one indicator
+  # auseklis-mode toggle <mode>            flip it
+  # auseklis-mode is <mode>                exit 0 if on
   #
   # `on` modules show only while active; `peek` modules show only while
   # inactive and live in the hover drawer, so the bar stays quiet until a mode
   # is on but every mode is still one hover and one click away.
-  ouranosMode = pkgs.writeShellScriptBin "ouranos-mode" ''
-    CAFF="''${XDG_RUNTIME_DIR:-/tmp}/ouranos-caffeine.pid"
+  auseklisMode = pkgs.writeShellScriptBin "auseklis-mode" ''
+    CAFF="''${XDG_RUNTIME_DIR:-/tmp}/auseklis-caffeine.pid"
     alive() { [ -f "$1" ] && kill -0 "$(cat "$1")" 2>/dev/null; }
 
     active() {
@@ -78,7 +78,7 @@ let
     }
 
     case "$1" in
-      # Exit status only: lets the Ouranos menu tick active modes.
+      # Exit status only: lets the Auseklis menu tick active modes.
       is) active "$2" ;;
       status)
         MODE=$2; VIEW=$3
@@ -101,7 +101,7 @@ let
             if alive "$CAFF"; then
               kill "$(cat "$CAFF")"; rm -f "$CAFF"
             else
-              systemd-inhibit --what=idle --who=ouranos --why="caffeine (bar)" sleep infinity &
+              systemd-inhibit --what=idle --who=auseklis --why="caffeine (bar)" sleep infinity &
               echo $! > "$CAFF"; disown
             fi ;;
           dnd)   ${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw >/dev/null ;;
@@ -117,9 +117,9 @@ let
     esac
   '';
 
-  # ouranos-tailscale status | menu | toggle. Works unprivileged because
+  # auseklis-tailscale status | menu | toggle. Works unprivileged because
   # tailscale's operator is set to this user.
-  ouranosTailscale = pkgs.writeShellScriptBin "ouranos-tailscale" ''
+  auseklisTailscale = pkgs.writeShellScriptBin "auseklis-tailscale" ''
     TS=${pkgs.tailscale}/bin/tailscale
     case "$1" in
       status)
@@ -136,12 +136,12 @@ let
           | ([$p[] | select(.ExitNode) | .HostName][0]) as $exit
           | ([$p[] | select(.Online) | "● \(.HostName)"] | sort) as $on
           | ([$p[] | select(.Online | not)] | length) as $off
-          | (if any($p[]; .HostName == "atlas" and .Online) then "atlas: online" else "atlas: offline" end) as $atlas
+          | (if any($p[]; .HostName == "usins" and .Online) then "usins: online" else "usins: offline" end) as $usins
           | { text: (if $exit then "TS EXIT" else "TS ON" end),
               class: (if $exit then "exit" else "on" end),
-              # atlas is the other machine this flake builds; name it outright.
+              # usins is the other machine this flake builds; name it outright.
               tooltip: ((if $exit then ["exit node: \($exit)"] else [] end)
-                        + [$atlas, ""] + $on + ["\($off) offline"] | join("\n")) }'
+                        + [$usins, ""] + $on + ["\($off) offline"] | join("\n")) }'
         ;;
       toggle)
         if [ "$($TS status --json 2>/dev/null | ${jq} -r .BackendState)" = Running ]; then $TS down; else $TS up; fi
@@ -188,12 +188,12 @@ let
   # the installed version and HEAD's is the latest.
   deltaVersion = ''${pkgs.curl}/bin/curl -fsSL --max-time 20 "https://raw.githubusercontent.com/zed-industries/delta-nix/$1/releases.json" | ${jq} -r '.stable.version // empty' '';
 
-  # ouranos-updates check | status | menu. `check` (daily timer) compares the
+  # auseklis-updates check | status | menu. `check` (daily timer) compares the
   # hand-pinned apps against upstream and the flake's nixpkgs age, writing a
   # cache the bar reads; `status` never touches the network.
-  ouranosUpdates = pkgs.writeShellScriptBin "ouranos-updates" ''
+  auseklisUpdates = pkgs.writeShellScriptBin "auseklis-updates" ''
     REPO=${home}/nix-config
-    CACHE=''${XDG_CACHE_HOME:-$HOME/.cache}/ouranos/updates
+    CACHE=''${XDG_CACHE_HOME:-$HOME/.cache}/auseklis/updates
     mkdir -p "$(dirname "$CACHE")"
     CURL="${pkgs.curl}/bin/curl -fsSL --max-time 20"
     case "$1" in
@@ -236,21 +236,21 @@ let
       menu)
         PICK=$( (cat "$CACHE" 2>/dev/null; echo "Update everything + test build"; echo "Re-check now") | ${fuzzel} --prompt="updates › ")
         case "$PICK" in
-          "Update everything + test build") ouranos-present ouranos-update & ;;
+          "Update everything + test build") auseklis-present auseklis-update & ;;
           "Re-check now") "$0" check ;;
         esac
         ;;
     esac
   '';
 
-  # ouranos-update: the one-click update, run from the badge or the menu.
+  # auseklis-update: the one-click update, run from the badge or the menu.
   # Omarchy's plugin-update loop (fetch -> diff -> build -> rollback) for this
   # flake: codex first (codex-update owns its pins and its own test build),
   # then the hand-pinned apps and Delta's input, then the rest of the flake
   # inputs, then one test build.
   # A failed build rolls the lock back and retries with the pin bumps alone,
   # so one broken input doesn't throw away everything else.
-  ouranosUpdate = pkgs.writeShellScriptBin "ouranos-update" ''
+  auseklisUpdate = pkgs.writeShellScriptBin "auseklis-update" ''
     set -u
     REPO=${home}/nix-config
     cd "$REPO" || exit 1
@@ -359,7 +359,7 @@ let
     fi
 
     say "flake inputs"
-    cp flake.lock /tmp/ouranos-update-flake.lock
+    cp flake.lock /tmp/auseklis-update-flake.lock
     nix flake update 2>&1 | grep -E "Updated input '[^/']+'" || say "inputs already current"
 
     git --no-pager diff --stat
@@ -368,16 +368,16 @@ let
       say "test build passed"
     else
       say "build failed with the new inputs; retrying with the app pins only"
-      cp /tmp/ouranos-update-flake.lock flake.lock
+      cp /tmp/auseklis-update-flake.lock flake.lock
       if ! build; then
         say "build failed with the app pins too; restoring everything"
         [ ''${#CHANGED[@]} -gt 0 ] && git checkout -- "''${CHANGED[@]}"
-        ouranos-updates check
+        auseklis-updates check
         exit 1
       fi
       say "test build passed without the input refresh (an input is broken upstream)"
     fi
-    ouranos-updates check
+    auseklis-updates check
     if $GUM confirm "Apply now (nrs)?"; then nh os switch "$REPO"; fi
     if ! git diff --quiet && $GUM confirm "Commit this update?"; then
       git add -A flake.lock pkgs/code-cursor pkgs/granola pkgs/grok-cli pkgs/opencode1 pkgs/codex flake.nix
@@ -387,14 +387,14 @@ let
 in
 {
   home.packages = [
-    ouranosUpdate
+    auseklisUpdate
     hyprRecord
-    ouranosMode
-    ouranosTailscale
-    ouranosUpdates
+    auseklisMode
+    auseklisTailscale
+    auseklisUpdates
   ];
 
-  systemd.user.services.ouranos-updates = {
+  systemd.user.services.auseklis-updates = {
     Unit.Description = "Check pinned apps and flake inputs for updates (waybar badge)";
     Service = {
       Type = "oneshot";
@@ -406,10 +406,10 @@ in
           pkgs.procps
         ]
       }";
-      ExecStart = "${ouranosUpdates}/bin/ouranos-updates check";
+      ExecStart = "${auseklisUpdates}/bin/auseklis-updates check";
     };
   };
-  systemd.user.timers.ouranos-updates = {
+  systemd.user.timers.auseklis-updates = {
     Unit.Description = "Daily update check for the waybar badge";
     Timer = {
       OnCalendar = "daily";

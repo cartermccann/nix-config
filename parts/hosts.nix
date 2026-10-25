@@ -65,7 +65,7 @@ let
                 "onepassword-mcp"
               ];
               openssh.authorizedKeys.keys = [
-                # atlas (carter@) — Tailscale SSH access
+                # usins (carter@, key generated as atlas) — Tailscale SSH access
                 "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKCM/HUY44HAmSX35c7AXzhE/dbIUwz8F7ZeaaNieHY4 carter@atlas"
               ];
             };
@@ -102,8 +102,8 @@ let
     };
 in
 {
-  flake.nixosConfigurations.atlas = mkHost "atlas" {
+  flake.nixosConfigurations.usins = mkHost "usins" {
     extraModules = [ inputs.nixos-hardware.nixosModules.microsoft-surface-common ];
   };
-  flake.nixosConfigurations.kronos = mkHost "kronos" { user = "cjm"; };
+  flake.nixosConfigurations.perkons = mkHost "perkons" { user = "cjm"; };
 }

@@ -1,4 +1,4 @@
-# Ouranos — the house design system. lib/palette.nix owns the colours; this
+# Auseklis — the house design system. lib/palette.nix owns the colours; this
 # file owns everything else that has to agree across surfaces (glass, shape,
 # type, motion) and the derived forms consumers need (a Stylix base16 scheme,
 # GTK @define-color tokens, a Lua palette for nvim).
@@ -17,9 +17,9 @@
 # Hyprland blur is global (one strength for every blurred surface), so the
 # tiers differ by tint and edge treatment, not blur radius.
 #
-#   let ouranos = import ../lib/ouranos.nix;
-#   ouranos.glass.frost.tint   # 0.42
-#   ouranos.base16             # Stylix base16Scheme attrset
+#   let auseklis = import ../lib/auseklis.nix;
+#   auseklis.glass.frost.tint   # 0.42
+#   auseklis.base16             # Stylix base16Scheme attrset
 let
   pal = import ./palette.nix;
   slots = [
@@ -114,8 +114,8 @@ rec {
 
   # Stylix wants bare hex per slot. Night variant: the house runs dark.
   base16 = pick pal.raw // {
-    scheme = "Ouranos";
-    author = "kronos nix-config";
+    scheme = "Auseklis";
+    author = "perkons nix-config";
   };
 
   # GTK3/4 CSS has no custom properties, only @define-color, so the glass
@@ -144,7 +144,7 @@ rec {
   # nvim's colorscheme reads the base16 slots from this instead of mirroring
   # them by hand. Derived tints stay in palette.lua: they are design calls.
   luaPalette =
-    "-- Generated from lib/palette.nix by lib/ouranos.nix. Do not edit.\nreturn {\n"
+    "-- Generated from lib/palette.nix by lib/auseklis.nix. Do not edit.\nreturn {\n"
     + builtins.concatStringsSep "" (map (s: "  ${s} = \"${pal.${s}}\",\n") slots)
     + "}\n";
 }

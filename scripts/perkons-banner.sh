@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Kronos terminal banner — the host wordmark, drawn once per interactive shell.
+# Perkons terminal banner — the host wordmark, drawn once per interactive shell.
 #
 # Replaces the old `ff` cascade, which replayed fastfetch line-by-line with a
 # sleep between each one: every new terminal paid an animation plus a full
@@ -8,7 +8,7 @@
 # The art is a literal heredoc rather than a figlet call, so there is no
 # startup dependency and the output cannot drift when a font package updates.
 # Colours are injected from lib/palette.nix at build time (@fill0@ / @fill1@ /
-# @shadow@ are "r;g;b" triplets), so the banner follows Ouranos without a
+# @shadow@ are "r;g;b" triplets), so the banner follows Auseklis without a
 # second source of truth.
 #
 # The letterforms are solid blocks (█) with box-drawing glyphs standing in for
@@ -64,19 +64,19 @@ paint() {
 
 echo
 paint <<'ART'
-██╗  ██╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ███████╗
-██║ ██╔╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██╔════╝
-█████╔╝ ██████╔╝██║   ██║██╔██╗ ██║██║   ██║███████╗
-██╔═██╗ ██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║
-██║  ██╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║
-╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
+██████╗ ███████╗██████╗ ██╗  ██╗ ██████╗ ███╗   ██╗███████╗
+██╔══██╗██╔════╝██╔══██╗██║ ██╔╝██╔═══██╗████╗  ██║██╔════╝
+██████╔╝█████╗  ██████╔╝█████╔╝ ██║   ██║██╔██╗ ██║███████╗
+██╔═══╝ ██╔══╝  ██╔══██╗██╔═██╗ ██║   ██║██║╚██╗██║╚════██║
+██║     ███████╗██║  ██║██║  ██╗╚██████╔╝██║ ╚████║███████║
+╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 ART
 
 # Hairline rule under the wordmark, stepping along the same ramp. Coloured in
 # whole segments rather than per character — cheap, and the width matches the
 # art above it.
 rule() {
-  local width=52 segs=13 i seg f r g b f0r f0g f0b f1r f1g f1b
+  local width=59 segs=13 i n seg f r g b f0r f0g f0b f1r f1g f1b
   IFS=';' read -r f0r f0g f0b <<<"@fill0@"
   IFS=';' read -r f1r f1g f1b <<<"@fill1@"
   printf '%s' "$pad"
@@ -85,7 +85,10 @@ rule() {
     r=$((f0r + (f1r - f0r) * f / 100))
     g=$((f0g + (f1g - f0g) * f / 100))
     b=$((f0b + (f1b - f0b) * f / 100))
-    seg=$(printf '%*s' $((width / segs)) '')
+    # The last segment takes the remainder so the rule spans the art exactly.
+    n=$((width / segs))
+    ((i == segs - 1)) && n=$((width - n * (segs - 1)))
+    seg=$(printf '%*s' "$n" '')
     printf '\033[38;2;%d;%d;%dm%s' "$r" "$g" "$b" "${seg// /─}"
   done
   printf '\033[0m\n'

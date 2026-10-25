@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a Caelestia colour scheme from the Ouranos cobalt accent.
+"""Generate a Caelestia colour scheme from the Auseklis cobalt accent.
 
 Caelestia resolves a named scheme by reading
 `<cli-package>/data/schemes/<name>/<flavour>/<mode>.txt` — a flat "key value"
@@ -19,17 +19,17 @@ carried through exactly, which is what makes the result read as cobalt.
 
 Emits `dark.txt` and `light.txt` for the package graft, plus a `scheme.json`
 that home-manager seeds into ~/.local/state/caelestia so a fresh state dir
-starts on Ouranos rather than the CLI's hardcoded catppuccin-mocha fallback.
+starts on Auseklis rather than the CLI's hardcoded catppuccin-mocha fallback.
 
 Material derives every role from one seed, including `tertiary` — the
 contrasting accent Caelestia puts on the clock and the distro icon. From a
-cobalt seed that lands on magenta (#f5adff), which is not a colour Ouranos
+cobalt seed that lands on magenta (#f5adff), which is not a colour Auseklis
 owns. So tertiary is re-seeded separately: the generator runs a second time
 with the tertiary seed as the source and its primary* roles are copied over
 the tertiary* ones, which keeps the tone ladder M3 expects instead of pasting
 one flat colour into eleven slots.
 
-Usage: caelestia-ouranos-scheme.py <seed-hex> <tertiary-hex> <name> <flavour> <variant> <outdir>
+Usage: caelestia-auseklis-scheme.py <seed-hex> <tertiary-hex> <name> <flavour> <variant> <outdir>
 """
 
 import json
@@ -88,7 +88,7 @@ def main() -> int:
     for mode in ("dark", "light"):
         # gen_scheme only reads `flavour` to decide whether to apply its "hard"
         # surface darkening, which we do not want: the standard surfaces
-        # already land on the Ouranos near-black ground (#11131b against the
+        # already land on the Auseklis near-black ground (#11131b against the
         # palette's #0a0c11), and hard drops them to near-#000.
         colours = gen_scheme(Seed(mode, variant, flavour), hex_to_hct(seed.lstrip("#")))
         reseed_tertiary(

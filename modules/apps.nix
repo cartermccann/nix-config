@@ -98,7 +98,7 @@ in
       # AI
       claude-desktop.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop-fhs
     ]
-    # Zen: from home-manager where home/zen.nix manages it (kronos, so Stylix
+    # Zen: from home-manager where home/zen.nix manages it (perkons, so Stylix
     # can theme the profile), as a system package everywhere else. Installing
     # both put two copies in the closure.
     ++ lib.optional (

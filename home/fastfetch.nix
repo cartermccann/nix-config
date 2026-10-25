@@ -1,5 +1,5 @@
-# Ouranos-styled fastfetch. Colours come from lib/palette.nix — same source as
-# the Kronos banner, Starship prompt, and Hyprland session — so the on-demand
+# Auseklis-styled fastfetch. Colours come from lib/palette.nix — same source as
+# the Perkons banner, Starship prompt, and Hyprland session — so the on-demand
 # system readout matches the rest of the desktop instead of the old neon-rainbow
 # arcade boxes.
 { lib, ... }:
@@ -31,7 +31,7 @@ let
     inherit keyColor;
   };
 
-  # A compact Ouranos ramp: ground → surface → accent → tertiary accents.
+  # A compact Auseklis ramp: ground → surface → accent → tertiary accents.
   paletteStrip =
     let
       colors = [

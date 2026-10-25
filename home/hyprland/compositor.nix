@@ -10,7 +10,7 @@
 # swaync.nix, menus.nix, lock.nix.
 let
   pal = import ../../lib/palette.nix;
-  ouranos = import ../../lib/ouranos.nix;
+  auseklis = import ../../lib/auseklis.nix;
   cfgHome = config.xdg.configHome;
   hyprctl = "${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/hyprctl";
 
@@ -90,8 +90,8 @@ let
         },
         -- Glassy blur + rounding + soft shadows + glow
         decoration = {
-          rounding = ${toString ouranos.radius.surface},
-          rounding_power = ${toString ouranos.radius.squirclePower}, -- subtle squircle — smoother corner flow than pure circle
+          rounding = ${toString auseklis.radius.surface},
+          rounding_power = ${toString auseklis.radius.squirclePower}, -- subtle squircle — smoother corner flow than pure circle
           -- Opacity strategy: globals stay 1.0; translucency is granted per-app via
           -- window rules below (the terminal is the only glass pane by default).
           active_opacity = 1.0,
@@ -114,22 +114,22 @@ let
             --   paint. At 26 the desktop looked solid; 14 kept enough shape
             --   to see through.
             --
-            -- Now driven by lib/ouranos.nix (blur.*): one extra pass at a
-            -- slightly smaller size is the Ouranos frost: heavier diffusion
+            -- Now driven by lib/auseklis.nix (blur.*): one extra pass at a
+            -- slightly smaller size is the Auseklis frost: heavier diffusion
             -- with the same shape, and the tint floor keeps text legible.
-            size = ${toString ouranos.blur.size},
-            passes = ${toString ouranos.blur.passes},
+            size = ${toString auseklis.blur.size},
+            passes = ${toString auseklis.blur.passes},
             new_optimizations = true,
             xray = true, -- biggest NVIDIA perf lever: blur samples the wallpaper, not stacked windows
             ignore_opacity = true,
-            noise = ${toString ouranos.blur.noise}, -- coarser grain = the diffusion through the frost
-            contrast = ${toString ouranos.blur.contrast},
-            brightness = ${toString ouranos.blur.brightness},
+            noise = ${toString auseklis.blur.noise}, -- coarser grain = the diffusion through the frost
+            contrast = ${toString auseklis.blur.contrast},
+            brightness = ${toString auseklis.blur.brightness},
             -- The one value without a 1:1 mapping: scenefx takes a saturation
             -- multiplier (1.7 there), Hyprland takes a 0–1 vibrancy. 0.5 was
-            -- the eyeball equivalent; Ouranos runs it at 0.7 for the heavier
+            -- the eyeball equivalent; Auseklis runs it at 0.7 for the heavier
             -- frost. Tune it first if the backdrop reads too grey or too lurid.
-            vibrancy = ${toString ouranos.blur.vibrancy},
+            vibrancy = ${toString auseklis.blur.vibrancy},
             vibrancy_darkness = 0.0,
             popups = true, -- blurred right-click menus
             popups_ignorealpha = 0.2,
@@ -230,7 +230,7 @@ let
       -- ignore_alpha must sit below each surface's tint or Hyprland skips the blur
       -- entirely (a 0.42 frost card under a 0.5 threshold renders as flat
       -- tint), and above zero so transparent gaps don't haze. Glass surfaces
-      -- take ouranos.glass.blurThreshold, which sits under the tint floor.
+      -- take auseklis.glass.blurThreshold, which sits under the tint floor.
       ${shell
         [
           # xray: the bar's blur samples only the wallpaper. Without it Hyprland
@@ -238,11 +238,11 @@ let
           # when that window's colours change, until a hover forces a redraw
           # (hyprwm/Hyprland discussion #10363; seen here 2026-10-06).
           ''hl.layer_rule({ match = { namespace = "waybar" },                     blur = true, ignore_alpha = 0.2, xray = true })''
-          ''hl.layer_rule({ match = { namespace = "launcher" },                   blur = true, ignore_alpha = ${toString ouranos.glass.blurThreshold}, dim_around = true }) -- fuzzel: spotlight dim''
-          ''hl.layer_rule({ match = { namespace = "swaync-control-center" },      blur = true, ignore_alpha = ${toString ouranos.glass.blurThreshold} })''
-          ''hl.layer_rule({ match = { namespace = "swaync-notification-window" }, blur = true, ignore_alpha = ${toString ouranos.glass.blurThreshold} })''
-          ''hl.layer_rule({ match = { namespace = "swayosd" },                    blur = true, ignore_alpha = ${toString ouranos.glass.blurThreshold} })''
-          ''hl.layer_rule({ match = { namespace = "^ouranos-calendar$" },         blur = true, ignore_alpha = ${toString ouranos.glass.blurThreshold} })''
+          ''hl.layer_rule({ match = { namespace = "launcher" },                   blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold}, dim_around = true }) -- fuzzel: spotlight dim''
+          ''hl.layer_rule({ match = { namespace = "swaync-control-center" },      blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
+          ''hl.layer_rule({ match = { namespace = "swaync-notification-window" }, blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
+          ''hl.layer_rule({ match = { namespace = "swayosd" },                    blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
+          ''hl.layer_rule({ match = { namespace = "^auseklis-calendar$" },         blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
         ]
         [
           # Every Caelestia surface is namespaced caelestia-<name>
@@ -284,14 +284,14 @@ let
         [
           ''hl.bind(mod .. " + SPACE",  hl.dsp.exec_cmd("fuzzel --config ${cfgHome}/fuzzel/hypr.ini"), { description = "App launcher" })''
           ''hl.bind(mod .. " + V",      hl.dsp.exec_cmd("cliphist list | fuzzel --dmenu --config ${cfgHome}/fuzzel/hypr.ini | cliphist decode | wl-copy"), { description = "Clipboard history" })''
-          # The Ouranos menu (home/hyprland/menu.nix) and direct jumps into it.
-          ''hl.bind(mod .. " + ALT + SPACE", hl.dsp.exec_cmd("ouranos-menu"), { description = "Ouranos menu" })''
-          ''hl.bind(mod .. " + CTRL + C",    hl.dsp.exec_cmd("ouranos-menu capture"), { description = "Menu › Capture" })''
-          ''hl.bind(mod .. " + CTRL + O",    hl.dsp.exec_cmd("ouranos-menu toggle"), { description = "Menu › Toggle" })''
-          ''hl.bind(mod .. " + ESCAPE",      hl.dsp.exec_cmd("ouranos-menu system"), { description = "Menu › System" })''
-          ''hl.bind(mod .. " + slash",       hl.dsp.exec_cmd("ouranos-keys"), { description = "Keybinding cheatsheet" })''
-          ''hl.bind(mod .. " + O",           hl.dsp.exec_cmd("ouranos-project"), { description = "Open a project" })''
-          ''hl.bind(mod .. " + SHIFT + A",   hl.dsp.exec_cmd("ouranos-agents menu"), { description = "Agent switcher" })''
+          # The Auseklis menu (home/hyprland/menu.nix) and direct jumps into it.
+          ''hl.bind(mod .. " + ALT + SPACE", hl.dsp.exec_cmd("auseklis-menu"), { description = "Auseklis menu" })''
+          ''hl.bind(mod .. " + CTRL + C",    hl.dsp.exec_cmd("auseklis-menu capture"), { description = "Menu › Capture" })''
+          ''hl.bind(mod .. " + CTRL + O",    hl.dsp.exec_cmd("auseklis-menu toggle"), { description = "Menu › Toggle" })''
+          ''hl.bind(mod .. " + ESCAPE",      hl.dsp.exec_cmd("auseklis-menu system"), { description = "Menu › System" })''
+          ''hl.bind(mod .. " + slash",       hl.dsp.exec_cmd("auseklis-keys"), { description = "Keybinding cheatsheet" })''
+          ''hl.bind(mod .. " + O",           hl.dsp.exec_cmd("auseklis-project"), { description = "Open a project" })''
+          ''hl.bind(mod .. " + SHIFT + A",   hl.dsp.exec_cmd("auseklis-agents menu"), { description = "Agent switcher" })''
         ]
         [
           ''hl.bind(mod .. " + SPACE",  hl.dsp.global("caelestia:launcher"), { description = "App launcher" })''

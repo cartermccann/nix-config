@@ -1,4 +1,4 @@
-"""Write ouranos.dur: the CM/26 monogram resolving coarse -> sharp, for Ly.
+"""Write auseklis.dur: the CM/26 monogram resolving coarse -> sharp, for Ly.
 
 The .dur format is durdraw's: gzipped JSON, every frame a list of text rows
 plus colorMap[x][y] = [fg, bg]. Ly plays frames at `framerate` and holds each
@@ -7,7 +7,7 @@ delay and the resolve replays every ~45s.
 
 Colours use the 256 format with full_color on: Ly sends them as 24-bit and
 the kernel console snaps each to its 16-slot palette by brightness
-(vt.c rgb_foreground), which Stylix's console target remaps to Ouranos. The
+(vt.c rgb_foreground), which Stylix's console target remaps to Auseklis. The
 indices below are the ones that land on the intended slots:
   15  (255,255,255) -> bright white  -> #f4f7fc  letters
   12  (0,0,255)     -> bright blue   -> #3b6bff  slash + shadow
@@ -58,8 +58,8 @@ def main(out):
             "colorFormat": "256",
             "preferredFont": "fixed",
             "encoding": "utf-8",
-            "name": "ouranos",
-            "artist": "kronos",
+            "name": "auseklis",
+            "artist": "perkons",
             "framerate": float(FPS),
             "sizeX": len(frames[0]["contents"][0]),
             "sizeY": len(frames[0]["contents"]),

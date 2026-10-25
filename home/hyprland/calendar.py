@@ -1,5 +1,5 @@
 """The clock's calendar dropdown: a month grid and a day agenda, pinned under
-the waybar clock as a layer-shell surface (namespace `ouranos-calendar`).
+the waybar clock as a layer-shell surface (namespace `auseklis-calendar`).
 
 Events come from Google Calendar's "secret address in iCal format" links,
 listed per account in ~/.config/credentials/calendars.toml:
@@ -11,11 +11,11 @@ listed per account in ~/.config/credentials/calendars.toml:
     email = "tech@comcreate.org"     # picks the account when opening Google
     urls  = ["https://calendar.google.com/calendar/ical/.../basic.ics"]
 
-Read-only by construction: no OAuth, so no Google sign-in flow on kronos.
-Each link is cached under ~/.cache/ouranos-calendar and refetched when older
+Read-only by construction: no OAuth, so no Google sign-in flow on perkons.
+Each link is cached under ~/.cache/auseklis-calendar and refetched when older
 than ten minutes, so the dropdown opens on cached data and fills in after.
 
-Opening and closing is the wrapper's job (`ouranos-calendar` kills a running
+Opening and closing is the wrapper's job (`auseklis-calendar` kills a running
 instance instead of starting a second). From inside, Esc, a click anywhere
 outside it, or opening an event in the browser closes it. Click-away is a
 transparent layer over every monitor rather than a focus-out handler:
@@ -46,13 +46,13 @@ from gi.repository import Gtk4LayerShell as LayerShell  # noqa: E402
 # The wrapper preloads gtk4-layer-shell for this process only; keep it out of
 # everything spawned from here (hyprctl, the browser).
 os.environ.pop("LD_PRELOAD", None)
-HYPRCTL = os.environ.pop("OURANOS_HYPRCTL", "hyprctl")
+HYPRCTL = os.environ.pop("AUSEKLIS_HYPRCTL", "hyprctl")
 
 HOME = Path.home()
 CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config"))
 CREDS = CONFIG / "credentials" / "calendars.toml"
-STYLE = CONFIG / "ouranos-calendar" / "style.css"
-CACHE = Path(os.environ.get("XDG_CACHE_HOME", HOME / ".cache")) / "ouranos-calendar"
+STYLE = CONFIG / "auseklis-calendar" / "style.css"
+CACHE = Path(os.environ.get("XDG_CACHE_HOME", HOME / ".cache")) / "auseklis-calendar"
 
 STALE = dt.timedelta(minutes=10)
 ACCOUNT_SLOTS = 5  # .acct0 .. .acct4 in style.css; accounts past that reuse them
@@ -94,7 +94,7 @@ def cache_file(url):
 
 def fetch(url):
     """Refresh one link's cache file. True if the feed changed."""
-    req = urllib.request.Request(url, headers={"User-Agent": "ouranos-calendar"})
+    req = urllib.request.Request(url, headers={"User-Agent": "auseklis-calendar"})
     with urllib.request.urlopen(req, timeout=20) as r:
         body = r.read()
     if not body.lstrip().startswith(b"BEGIN:VCALENDAR"):
@@ -248,7 +248,7 @@ def label(text="", css=(), xalign=None, markup=False, **kw):
 
 class Popup(Gtk.Application):
     def __init__(self):
-        super().__init__(application_id="org.ouranos.Calendar", flags=Gio.ApplicationFlags.NON_UNIQUE)
+        super().__init__(application_id="org.auseklis.Calendar", flags=Gio.ApplicationFlags.NON_UNIQUE)
         self.first_weekday, self.accounts, self.config_error = load_config()
         self.store = Store(self.accounts)
         self.pool = ThreadPoolExecutor(max_workers=1)
@@ -279,9 +279,9 @@ class Popup(Gtk.Application):
         # Click-away catchers: a transparent TOP-layer sheet per monitor, over
         # the bar too (exclusive zone -1), so clicking the clock again closes.
         for monitor in Gdk.Display.get_default().get_monitors():
-            sheet = Gtk.Window(application=self, css_classes=["ouranos-calendar-dismiss"])
+            sheet = Gtk.Window(application=self, css_classes=["auseklis-calendar-dismiss"])
             LayerShell.init_for_window(sheet)
-            LayerShell.set_namespace(sheet, "ouranos-calendar-dismiss")
+            LayerShell.set_namespace(sheet, "auseklis-calendar-dismiss")
             LayerShell.set_layer(sheet, LayerShell.Layer.TOP)
             LayerShell.set_monitor(sheet, monitor)
             LayerShell.set_exclusive_zone(sheet, -1)
@@ -295,9 +295,9 @@ class Popup(Gtk.Application):
             sheet.present()
 
         win = Gtk.ApplicationWindow(application=self)
-        win.add_css_class("ouranos-calendar")
+        win.add_css_class("auseklis-calendar")
         LayerShell.init_for_window(win)
-        LayerShell.set_namespace(win, "ouranos-calendar")
+        LayerShell.set_namespace(win, "auseklis-calendar")
         LayerShell.set_layer(win, LayerShell.Layer.OVERLAY)
         if (monitor := cursor_monitor()) is not None:
             LayerShell.set_monitor(win, monitor)

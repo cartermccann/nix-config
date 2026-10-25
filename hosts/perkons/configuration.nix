@@ -30,10 +30,10 @@
   ];
 
   # Zen through its home-manager module so Stylix themes it; the module pins
-  # this host's existing profile path, so it stays a kronos choice.
+  # this host's existing profile path, so it stays a perkons choice.
   home-manager.users.${user}.imports = [ ../../home/zen.nix ];
 
-  networking.hostName = "kronos";
+  networking.hostName = "perkons";
 
   # Larger console font for the high-resolution display and fallback TTYs.
   console = {
@@ -43,7 +43,7 @@
   };
 
   # The monitors are external, so brightnessctl has nothing to drive: drop
-  # Ly's brightness keys rather than show dead hints. atlas keeps them.
+  # Ly's brightness keys rather than show dead hints. usins keeps them.
   services.displayManager.ly.settings = {
     brightness_down_key = "null";
     brightness_up_key = "null";
