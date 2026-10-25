@@ -130,13 +130,16 @@ let
         fi
         # jq builds the JSON so hostnames with quotes can't break it. Online
         # peers are listed; offline ones are only counted (a tailnet collects
-        # dozens of dormant devices).
+        # dozens of dormant devices). Peers are named by their MagicDNS label,
+        # which follows an admin-console rename; HostName is whatever the
+        # device reports about itself ("Pixel 11 Pro XL").
         printf '%s' "$J" | ${jq} -c '
+          def name: ((.DNSName // "") | split(".")[0]) as $d | if $d == "" then .HostName else $d end;
           [(.Peer // {})[]] as $p
-          | ([$p[] | select(.ExitNode) | .HostName][0]) as $exit
-          | ([$p[] | select(.Online) | "● \(.HostName)"] | sort) as $on
+          | ([$p[] | select(.ExitNode) | name][0]) as $exit
+          | ([$p[] | select(.Online) | "● \(name)"] | sort) as $on
           | ([$p[] | select(.Online | not)] | length) as $off
-          | (if any($p[]; .HostName == "usins" and .Online) then "usins: online" else "usins: offline" end) as $usins
+          | (if any($p[]; name == "usins" and .Online) then "usins: online" else "usins: offline" end) as $usins
           | { text: (if $exit then "TS EXIT" else "TS ON" end),
               class: (if $exit then "exit" else "on" end),
               # usins is the other machine this flake builds; name it outright.
