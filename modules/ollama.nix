@@ -18,6 +18,17 @@ let
   models = llm.tiers.${tier};
   hasGpu = config.hardware.nvidia-container-toolkit.enable or false;
 
+  tailnetBridgeScript = pkgs.writeShellScript "ollama-tailnet-bridge" ''
+    set -euo pipefail
+    tailnet_ip=$(${pkgs.iproute2}/bin/ip -j -4 address show dev tailscale0 | \
+      ${pkgs.jq}/bin/jq -er '
+        .[0].addr_info | map(select(.scope == "global")) |
+        if length == 1 then .[0].local
+        else error("Expected one IPv4 address on tailscale0") end
+      ')
+    exec ${pkgs.socat}/bin/socat "TCP-LISTEN:11434,bind=$tailnet_ip,fork,reuseaddr" TCP:127.0.0.1:11434
+  '';
+
   preloadScript = pkgs.writeShellScript "ollama-preload-models" ''
     set -euo pipefail
     echo "Ollama model preload — tier: ${tier}"
@@ -89,7 +100,8 @@ in
 
     # The container publish stays loopback-only; this bridges the API onto the
     # tailnet IP so tailnet agents (mini's Agent Zero local-model lane) can call
-    # it. Restart=always rides out the tailscale0-IP-not-yet-assigned boot race.
+    # it. Resolve this host's address on each start; Restart=always rides out
+    # the tailscale0-IP-not-yet-assigned boot race without a wildcard listener.
     systemd.services.ollama-tailnet-bridge = {
       description = "Bridge Ollama API onto the tailnet for remote agents";
       after = [
@@ -99,7 +111,7 @@ in
       wants = [ "tailscaled.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
-        ExecStart = "${pkgs.socat}/bin/socat TCP-LISTEN:11434,bind=100.99.132.25,fork,reuseaddr TCP:127.0.0.1:11434";
+        ExecStart = tailnetBridgeScript;
         Restart = "always";
         RestartSec = 5;
         DynamicUser = true;
