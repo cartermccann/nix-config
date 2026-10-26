@@ -21,6 +21,10 @@
       url = "github:zed-industries/delta-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    delta-agent-history = {
+      url = "github:comcreate-io/delta-agent-history/aa7bbd1dd5a97d1a2919f7e2011cc0e0f1551a3f";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     stylix = {
       url = "github:nix-community/stylix/release-26.05";
