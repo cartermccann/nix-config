@@ -210,6 +210,27 @@
         "url": "ssh://git@github.com/comcreate-io/comcreate-dashboard"
       }
     },
+    "delta-agent-history": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793036907,
+        "narHash": "sha256-7+vN7ywXtLhYcRa3stITgL9TGQQkwf2h2uYFerZXeFA=",
+        "owner": "comcreate-io",
+        "repo": "delta-agent-history",
+        "rev": "aa7bbd1dd5a97d1a2919f7e2011cc0e0f1551a3f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "comcreate-io",
+        "repo": "delta-agent-history",
+        "rev": "aa7bbd1dd5a97d1a2919f7e2011cc0e0f1551a3f",
+        "type": "github"
+      }
+    },
     "fenix": {
       "inputs": {
         "nixpkgs": [
@@ -1298,6 +1319,7 @@
         "claude-desktop": "claude-desktop",
         "codex-desktop-linux": "codex-desktop-linux",
         "comcreate-desktop-app": "comcreate-desktop-app",
+        "delta-agent-history": "delta-agent-history",
         "fenix": "fenix",
         "flake-parts": "flake-parts_2",
         "ghostty": "ghostty",

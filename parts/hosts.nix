@@ -91,6 +91,7 @@ let
                   hyprland
                   qmd
                   zed-delta
+                  delta-agent-history
                   ;
               };
               backupFileExtension = "hm-bak";

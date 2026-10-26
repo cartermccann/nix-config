@@ -7,6 +7,7 @@
   fenix,
   herdr,
   zed-delta,
+  delta-agent-history,
   ...
 }:
 let
@@ -190,6 +191,7 @@ in
     pkgs-unstable.cursor-cli # Cursor CLI (binary is `cursor-agent`) — unfree prebuilt, tracks lab releases
     t3code # T3 Code desktop GUI with its native terminal runtime dependency
     deltaApp # Zed Delta desktop app; CLI is zed-delta to preserve Git's delta
+    delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     # Meetings & notes
     granola # macOS build repacked onto nixpkgs Electron, see ../pkgs/granola
