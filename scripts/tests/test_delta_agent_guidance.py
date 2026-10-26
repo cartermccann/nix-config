@@ -92,6 +92,14 @@ class GuidanceTests(unittest.TestCase):
         self.assertEqual(self.codex.read_text(), "read-only instructions")
         self.assertFalse(self.claude.exists())
 
+    def test_growth_limit_is_checked_before_any_guidance_write(self):
+        self.codex.write_text("preserve")
+        self.claude.write_bytes(b"x" * (guidance.MAX_BYTES - 1))
+        with self.assertRaises(ValueError):
+            guidance.install(self.home, self.source)
+        self.assertEqual(self.codex.read_text(), "preserve")
+        self.assertEqual(self.claude.stat().st_size, guidance.MAX_BYTES - 1)
+
 
 if __name__ == "__main__":
     unittest.main()

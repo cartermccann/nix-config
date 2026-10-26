@@ -60,7 +60,10 @@ def install(home, source):
         if parent.st_uid != os.getuid() or parent.st_mode & 0o022:
             raise ValueError("Guidance directory must be owned and not writable by other users")
         old = snapshot(target, missing=True)
-        plans.append((target, old, merge(old[0] if old else b"", instruction)))
+        data = merge(old[0] if old else b"", instruction)
+        if len(data) > MAX_BYTES:
+            raise ValueError("Merged guidance exceeds its size limit")
+        plans.append((target, old, data))
     changed = 0
     for target, old, data in plans:
         if old and old[0] == data:
