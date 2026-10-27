@@ -217,17 +217,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1793036907,
-        "narHash": "sha256-7+vN7ywXtLhYcRa3stITgL9TGQQkwf2h2uYFerZXeFA=",
+        "lastModified": 1793134618,
+        "narHash": "sha256-DtoTUcPK29hFda9yaTdTPwdWH8OzvFbMIsGDafb4DTA=",
         "owner": "comcreate-io",
         "repo": "delta-agent-history",
-        "rev": "aa7bbd1dd5a97d1a2919f7e2011cc0e0f1551a3f",
+        "rev": "978c66b408a0314bf32cbe4f700574ac56262a24",
         "type": "github"
       },
       "original": {
         "owner": "comcreate-io",
         "repo": "delta-agent-history",
-        "rev": "aa7bbd1dd5a97d1a2919f7e2011cc0e0f1551a3f",
+        "rev": "978c66b408a0314bf32cbe4f700574ac56262a24",
         "type": "github"
       }
     },
