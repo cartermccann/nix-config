@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "coachloop-delta-history": {
+      "type": "stdio",
+      "command": "/etc/profiles/per-user/cjm/bin/delta-history",
+      "args": [
+        "--config", "/home/cjm/.config/delta-agent-history/config.json",
+        "--state-dir", "/home/cjm/.local/state/delta-agent-history",
+        "mcp", "--project", "/home/cjm/projects/work/CoachLoop/product"
+      ],
+      "cwd": "/home/cjm/projects/work/CoachLoop/product"
+    }
+  }
+}

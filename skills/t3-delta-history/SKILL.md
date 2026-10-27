@@ -23,7 +23,7 @@ Distinguish service health, checkout attachment time, pending outbox records, ac
 
 Read a bounded transcript with `t3-delta history --thread <T3-thread-id> --messages 1-20`; request another range only when relevant. Use the saved T3-to-Delta binding rather than guessing a thread from its title. Do not mine provider caches or credential directories to reconstruct missing history.
 
-The installed Zed app command is `zed-delta`; `delta` is Git's diff viewer. The adapter is pinned to Delta recording contracts 6–7 and T3 0.1.0. A compatibility error requires review, not an automatic upstream update.
+The installed Zed app command is `zed-delta`; `delta` is Git's diff viewer. The adapter supports reviewed Delta recording contracts 6–8 and T3 0.1.0. Contract 8 requires a live worktree mount connection owned by the recorder. A compatibility error requires review, not an automatic upstream update.
 
 Restoring Delta files does not rewind T3's conversation. For recovery, identify the exact checkout and attachment period, inspect the requested state, and prepare a separate recovery checkout or patch. Coordinate with active T3 turns before applying requested changes. This helper does not implement automatic restore; never invent restore commands or claim an untested historical recovery succeeded.
 

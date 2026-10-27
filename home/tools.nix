@@ -30,6 +30,9 @@ let
   agentToolGuard = pkgs.callPackage ../pkgs/agent-tool-guard { };
   agentTools = pkgs.callPackage ../pkgs/agent-tools { };
   deltaUpstream = zed-delta.packages.${pkgs.stdenv.hostPlatform.system}.delta;
+  deltaHistory = import ../pkgs/delta-agent-history {
+    upstream = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  };
   deltaApp = pkgs.symlinkJoin {
     name = "zed-delta-${deltaUpstream.version}";
     paths = [ deltaUpstream ];
@@ -191,7 +194,7 @@ in
     pkgs-unstable.cursor-cli # Cursor CLI (binary is `cursor-agent`) — unfree prebuilt, tracks lab releases
     t3code # T3 Code desktop GUI with its native terminal runtime dependency
     deltaApp # Zed Delta desktop app; CLI is zed-delta to preserve Git's delta
-    delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default
+    deltaHistory
 
     # Meetings & notes
     granola # macOS build repacked onto nixpkgs Electron, see ../pkgs/granola

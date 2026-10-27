@@ -56,7 +56,7 @@ Recovery must use a separate checkout or patch and coordinate with active edits.
 
 ## Compatibility and evidence
 
-Pinned interfaces: T3 **0.1.0**, Delta **0.21.0**, recording output contracts **6–7**. Future Delta contract maxima above seven require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.0/docs/user/outside-agents.md), [compatible external recorder](https://github.com/zed-industries/delta-claude/tree/d917c5191c52b55ea60826202ad9ab5e95df2520), and [Delta worktrees](https://delta.dev/docs/concepts/worktrees).
+Reviewed interfaces: T3 **0.1.0**, Delta **0.21–0.22**, recording output contracts **6–8**. The local package patch separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.0/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
 
 Verification on 2026-10-23: **86 tests passed**, final independent crash-recovery review passed, the skill validator passed, and `nh os build ~/nix-config --no-nom --diff never` completed successfully. The persistent system has been built but still needs Carter's privileged `nrs` switch.
 

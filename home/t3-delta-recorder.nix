@@ -5,10 +5,13 @@
   user,
   zed-delta,
   delta-agent-history,
+  osConfig,
   ...
 }:
 let
-  recorder = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  recorder = import ../pkgs/delta-agent-history {
+    upstream = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  };
   homeDir = config.home.homeDirectory;
   projectScope = builtins.fromJSON (builtins.readFile ../config/t3-delta-projects.json);
   enrollmentFile = "${homeDir}/.config/delta-agent-history/projects.json";
@@ -34,6 +37,14 @@ let
       {
         kind = "generic";
         instance = "local";
+      }
+      {
+        kind = "codex";
+        instance = osConfig.networking.hostName;
+      }
+      {
+        kind = "claude-code";
+        instance = osConfig.networking.hostName;
       }
     ];
     inherit (configuration)
@@ -83,6 +94,19 @@ lib.mkIf (user == "cjm") {
       --home ${lib.escapeShellArg homeDir} \
       --instruction ${delta-agent-history}/instructions/project-enrollment.md
   '';
+  home.activation.deltaClaudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ${pkgs.python3}/bin/python3 ${../scripts/delta-client-setup.py} \
+      --home ${lib.escapeShellArg homeDir} \
+      --executable /etc/profiles/per-user/${user}/bin/delta-history \
+      --instance ${lib.escapeShellArg osConfig.networking.hostName}
+  '';
+  home.activation.deltaRepairRuntimeCleanup = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    deltaRepairRuntime="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"
+    for deltaRepairUnit in t3-delta-recorder delta-agent-history; do
+      run ${pkgs.coreutils}/bin/rm -f -- \
+        "$deltaRepairRuntime/systemd/user/$deltaRepairUnit.service.d/90-contract8-repair.conf"
+    done
+  '';
   systemd.user.services.delta-agent-history = {
     Unit = {
       Description = "Drain accepted coding conversation events privately to Delta";
@@ -98,7 +122,9 @@ lib.mkIf (user == "cjm") {
       RestartSec = 15;
       UMask = "0077";
       NoNewPrivileges = true;
-      MemoryMax = "512M";
+      # Delta's background app and connection-owned mounts share this cgroup.
+      # 512 MiB repeatedly OOM-killed the recorder even before contract 8.
+      MemoryMax = "2G";
       CPUWeight = 20;
       WorkingDirectory = homeDir;
       Environment = [ "PATH=/etc/profiles/per-user/${user}/bin:/run/current-system/sw/bin" ];
@@ -120,7 +146,7 @@ lib.mkIf (user == "cjm") {
       RestartSec = 15;
       UMask = "0077";
       NoNewPrivileges = true;
-      MemoryMax = "512M";
+      MemoryMax = "2G";
       CPUWeight = 20;
       WorkingDirectory = homeDir;
       Environment = [ "PATH=/etc/profiles/per-user/${user}/bin:/run/current-system/sw/bin" ];

@@ -1,0 +1,1001 @@
+diff --git i/delta_history/adapters/claude.py w/delta_history/adapters/claude.py
+index dc44814..2b36c35 100644
+--- i/delta_history/adapters/claude.py
++++ w/delta_history/adapters/claude.py
+@@ -5,14 +5,27 @@ from .common import AdapterError, Journal, read_payload, required_id, visible_te
+ def claude_hook(config, state, instance, stream):
+     payload = read_payload(stream)
+     kind = payload.get("hook_event_name")
+-    if kind not in ("UserPromptSubmit", "Stop") or payload.get("agent_id"):
++    if kind not in ("UserPromptSubmit", "Stop", "SessionEnd") or payload.get("agent_id"):
+         return {"accepted":False, "ignored":True}
+     session = required_id(payload.get("session_id"))
+-    prompt = required_id(payload.get("prompt_id"))
+-    text = visible_text(payload.get("prompt" if kind == "UserPromptSubmit" else "last_assistant_message"))
+     project = payload.get("cwd")
+     if not isinstance(project, str):
+         raise AdapterError("Claude hook requires its explicit cwd")
++    if kind == "SessionEnd":
++        if not (state / "adapters.sqlite3").is_file():
++            return {"accepted": False, "ignored": True}
++        with Journal(config, state, "claude-code", instance, session, project, existing=True) as journal:
++            if not journal.has("session:open"):
++                return {"accepted": False, "ignored": True}
++            with journal.transaction():
++                metadata = journal.metadata()
++                if payload.get("prompt_id") and payload["prompt_id"] != metadata.get("active_prompt"):
++                    return {"accepted": False, "ignored": True}
++                metadata["inactive"] = True
++                journal.set_metadata(metadata)
++            return journal.flush()
++    prompt = required_id(payload.get("prompt_id"))
++    text = visible_text(payload.get("prompt" if kind == "UserPromptSubmit" else "last_assistant_message"))
+     with Journal(config, state, "claude-code", instance, session, project) as journal:
+         try:
+             with journal.transaction():
+@@ -26,6 +39,7 @@ def claude_hook(config, state, instance, stream):
+                 if not duplicate:
+                     metadata["active_prompt"] = prompt
+                     metadata["completed"] = kind == "Stop"
++                    metadata["inactive"] = False
+                     journal.set_metadata(metadata)
+         except AdapterError:
+             journal.halt()
+diff --git i/delta_history/adapters/common.py w/delta_history/adapters/common.py
+index 137750a..a99c10d 100644
+--- i/delta_history/adapters/common.py
++++ w/delta_history/adapters/common.py
+@@ -83,6 +83,21 @@ def adapter_health(state, project=None):
+     return {"pending":pending, "halted":halted}
+ 
+ 
++def session_inactive(state, source, instance, session):
++    """Claude idle/exit is resumable; it is not a terminal ingress close."""
++    if source != "claude-code":
++        return False
++    path = Path(state) / "adapters.sqlite3"
++    if path.is_symlink() or Path(state).is_symlink():
++        raise AdapterError("Adapter journal must not be a symlink")
++    if not path.is_file():
++        return False
++    with contextlib.closing(sqlite3.connect(path.resolve().as_uri()+"?mode=ro",uri=True,timeout=3)) as db:
++        row = db.execute("SELECT metadata FROM adapter_sessions WHERE source=? AND instance=? AND session=?", (source,instance,session)).fetchone()
++    metadata = json.loads(row[0]) if row else {}
++    return metadata.get("inactive") is True or metadata.get("completed") is True
++
++
+ def retry_pending(config, state):
+     """Replay only frozen existing events. Never discover sources or run a model."""
+     validate(config)
+diff --git i/delta_history/core.py w/delta_history/core.py
+index 92f668e..4f47eb5 100644
+--- i/delta_history/core.py
++++ w/delta_history/core.py
+@@ -227,10 +227,28 @@ def flush(config, state, sink_factory=None):
+             report["sessions"] += 1
+             key = original["key"]
+             if original["halted"]:
++                if hasattr(sink, "release_session"):
++                    try:
++                        sink.release_session(key)
++                    except Exception:
++                        pass
+                 report["halted"] += 1
+                 continue
+             try:
+                 _verify(config, original)
++                from .adapters.common import session_inactive
++                inactive = session_inactive(state, original["source"], original["source_instance"], original["session_id"])
++                new_events = db.execute("SELECT 1 FROM events WHERE session_key=? AND sequence>? LIMIT 1", (key, original["exported_sequence"])).fetchone()
++                if original["phase"] == "paused" and inactive and not new_events:
++                    if hasattr(sink, "release_session"):
++                        sink.release_session(key)
++                    report["delivered_sessions"] += 1
++                    continue
++                if original["phase"] == "closed" and original["close_sequence"] is not None and original["exported_sequence"] >= original["close_sequence"]:
++                    if hasattr(sink, "release_session"):
++                        sink.release_session(key)
++                    report["delivered_sessions"] += 1
++                    continue
+                 bound = sink.ensure_session(key, original["directory"])
+                 if not isinstance(bound, dict) or not bound.get("thread_id") or not bound.get("reference") or bound.get("directory") != original["directory"]:
+                     raise ValueError("Delta attachment receipt is incomplete")
+@@ -261,16 +279,27 @@ def flush(config, state, sink_factory=None):
+                 phase = "waiting_for_gap" if gap else "catching_up" if delivery["pending"] or delivery_health(delivery) == "catching_up" else "closed" if original["close_sequence"] is not None and expected > original["close_sequence"] else "recording"
+                 if delivery_health(delivery) == "needs_review":
+                     raise ValueError("Delta upload requires review")
++                if inactive and phase == "recording":
++                    phase = "paused"
+                 with db:
+                     db.execute("UPDATE sessions SET phase=?,error=NULL WHERE key=? AND halted=0", (phase, key))
++                if phase in ("closed", "paused") and hasattr(sink, "release_session"):
++                    sink.release_session(key)
+                 report["catching_up" if phase in ("waiting_for_gap", "catching_up") else "delivered_sessions"] += 1
+             except Exception as error:
++                transient = isinstance(error, (DeltaUnavailable, TimeoutError, ConnectionError, subprocess.TimeoutExpired))
++                if not transient and not _sqlite_busy(error) and hasattr(sink, "release_session"):
++                    # A prior cycle's connection may outlive its sink handle.
++                    # Stop file capture when current scope/binding fails review.
++                    try:
++                        sink.release_session(key)
++                    except Exception:
++                        pass
+                 if _sqlite_busy(error):
+                     # A concurrent local writer can also block status updates.
+                     # Preserve the session and replay the same durable event later.
+                     report["catching_up"] += 1
+                     continue
+-                transient = isinstance(error, (DeltaUnavailable, TimeoutError, ConnectionError, subprocess.TimeoutExpired))
+                 with db:
+                     if transient:
+                         db.execute("UPDATE sessions SET phase='catching_up',error=? WHERE key=? AND halted=0", (type(error).__name__, key))
+diff --git i/docs/adapters.md w/docs/adapters.md
+index 266102f..ffe57d9 100644
+--- i/docs/adapters.md
++++ w/docs/adapters.md
+@@ -33,7 +33,7 @@ The example uses direct executable arguments, a five-second local timeout, and `
+ 
+ Coverage is submitted prompt text and the final assistant text supplied by `Stop`, for the main agent only. Prompts can originate from Claude's own scheduled or background mechanisms as well as typed user input; the hook captures what that supported event supplies. Intermediate assistant messages, tools, reasoning, attachments, subagents, interrupted responses, and API-error text are not captured. `StopFailure` is deliberately ignored.
+ 
+-Sessions open lazily at the first captured prompt. There is no transcript backfill. A Stop event completes a turn, not the whole session, so the adapter leaves the session open for future prompts. The adapter requires the Stop's prompt ID to match a recorded active prompt. Identical callbacks replay safely. Different turns with identical prompt text are preserved as distinct turns. Changed text for an already completed prompt or Stop causes an adapter review hold. Multiple Stop continuations sharing one prompt ID have no separate documented completion ID in this integration; changed repeated completions fail closed rather than guessing their order.
++Sessions open lazily at the first captured prompt. There is no transcript backfill. A Stop event completes a turn, not the whole session. After accepted messages finish uploading, the worker releases the idle checkout mount. SessionEnd also marks the adapter inactive without closing its immutable ingress identity. The next prompt, including a native resumed session, resumes the same producer and reconnects file capture. No transcript path is read and no new producer ID is invented for a resumed session. The adapter requires the Stop's prompt ID to match a recorded active prompt. Identical callbacks replay safely. Different turns with identical prompt text are preserved as distinct turns. Changed text for an already completed prompt or Stop causes an adapter review hold. Multiple Stop continuations sharing one prompt ID have no separate documented completion ID in this integration; changed repeated completions fail closed rather than guessing their order.
+ 
+ The local journal can wait briefly on another hook process, but never on Delta upload. A hook timeout or nonblocking error can mean coverage is incomplete. Check status; do not infer success from Claude continuing normally. The adapter never uses `transcript_path` even when Claude includes it in hook input.
+ 
+diff --git i/docs/architecture.md w/docs/architecture.md
+index 4e6aa2c..775b14d 100644
+--- i/docs/architecture.md
++++ w/docs/architecture.md
+@@ -25,7 +25,7 @@ New Delta bindings use producer `delta-agent-history` and qualified hashed sessi
+ IDs. The sink waits for private cloud initialization, validates attachment and
+ producer identity, and preserves immutable outbox sequences and duplicate-safe
+ replay. Local acceptance is separate from sink export, acknowledgement and upload.
+-A malformed/unknown upstream contract fails closed. Supported contracts remain6–7.
++A malformed/unknown upstream contract fails closed. Supported contracts are 6–8; contract 8 requires connection-owned worktree mounts.
+ 
+ ## Recall
+ 
+diff --git i/docs/compatibility.md w/docs/compatibility.md
+index 664fafe..0dcd12a 100644
+--- i/docs/compatibility.md
++++ w/docs/compatibility.md
+@@ -7,9 +7,9 @@ not a promise that every application provides complete automatic capture.
+ |---|---|
+ | Python | 3.11+, standard-library runtime and POSIX locking. |
+ | Linux/macOS | Package, unit, service serialization and installed-command CI. |
+-| Delta | Tested baseline 0.21.0, public recording contracts 6–7 only. |
++| Delta | Public recording contracts 6–8; contract 8 uses connection-owned worktree mounts. |
+ | Generic producer | Strict ingress v1; live Linux private upload and separate-client MCP readback. |
+-| Claude Code | Fixture-tested documented hooks, prompts and final Stop text; prompt IDs required. |
++| Claude Code | Fixture-tested documented hooks, prompts and final Stop text; resumable idle/SessionEnd leases; prompt IDs required. |
+ | Codex | Fixture-tested wrapper for noninteractive `exec --json`; not general desktop/interactive capture. |
+ | OpenCode | Fixture-tested SDK/plugin snapshots of complete visible messages. |
+ | Optional T3 | Original 0.1.0 read-only MCP adapter, live Linux evidence, unchanged legacy identities. |
+@@ -41,7 +41,16 @@ not establish live account or desktop integration. In particular, complete live
+ Claude/Codex/OpenCode capture and actual Mac desktop upload remain unverified.
+ Do not label a hook as full transcript coverage when it provides only final text.
+ 
+-The supported Delta contract remains6–7. Newer schemas need authoritative review,
++The supported Delta contract is 6–8. Contract 8 was reviewed against the official
++[plugin protocol](https://delta.dev/docs/cli/build-a-plugin) and Delta Claude
++plugin revision `70aabf083dc985d231494d94ad45498bd9e6bc77`. Worktree creation,
++thread membership and connection-owned checkout mounting are separate operations.
++Existing thread IDs, references, producer identities and immutable records remain
++unchanged. A worker keeps mount connections across drain cycles and reconnects a
++dead mount before delivery. Scope revocation and review holds release connections.
++Closed, fully delivered generic sessions do not remount. A process holds at most
++32 live mount connections; exhaustion retains pending records for retry rather
++than creating more children. CLI contract 9 or later is refused. Newer schemas need authoritative review,
+ new tests and exact-version live checks before widening support. Adapter versions
+ and event requirements are described in [adapter setup](adapters.md).
+ 
+diff --git i/integrations/claude-hooks.example.json w/integrations/claude-hooks.example.json
+index 41b39a9..c3a9721 100644
+--- i/integrations/claude-hooks.example.json
++++ w/integrations/claude-hooks.example.json
+@@ -6,7 +6,12 @@
+           {
+             "type": "command",
+             "command": "/absolute/path/to/delta-history",
+-            "args": ["hook", "claude", "--instance", "workstation"],
++            "args": [
++              "hook",
++              "claude",
++              "--instance",
++              "workstation"
++            ],
+             "timeout": 5,
+             "onFailure": "continue"
+           }
+@@ -19,7 +24,30 @@
+           {
+             "type": "command",
+             "command": "/absolute/path/to/delta-history",
+-            "args": ["hook", "claude", "--instance", "workstation"],
++            "args": [
++              "hook",
++              "claude",
++              "--instance",
++              "workstation"
++            ],
++            "timeout": 5,
++            "onFailure": "continue"
++          }
++        ]
++      }
++    ],
++    "SessionEnd": [
++      {
++        "hooks": [
++          {
++            "type": "command",
++            "command": "/absolute/path/to/delta-history",
++            "args": [
++              "hook",
++              "claude",
++              "--instance",
++              "workstation"
++            ],
+             "timeout": 5,
+             "onFailure": "continue"
+           }
+diff --git i/skills/t3-delta-history/SKILL.md w/skills/t3-delta-history/SKILL.md
+index 3b19114..caa2345 100644
+--- i/skills/t3-delta-history/SKILL.md
++++ w/skills/t3-delta-history/SKILL.md
+@@ -45,7 +45,7 @@ Several T3 conversations in one checkout share its files. Independent work needs
+ 
+ ## Recovery and maintenance boundaries
+ 
+-The supported baseline is T3 0.1.0 and Delta 0.21.0 recording contracts 6–7. Compatibility errors require review, not automatic updates or relaxed validation.
++The supported baseline is T3 0.1.0 and Delta 0.21–0.22 recording contracts 6–8. Contract 8 requires live worktree mount connections. Compatibility errors require review, not automatic updates or relaxed validation.
+ 
+ This helper does not implement automatic restore. Latest-state recovery has a controlled Linux proof; arbitrary earlier-point recovery through the bridge remains unverified. Never invent restore commands or claim an untested recovery succeeded. Separate recovery work must establish the exact checkout and target state, prepare a separate recovery checkout or patch, and coordinate active edits before application. Restoring files does not rewind a T3 conversation.
+ 
+diff --git i/t3_delta/cli.py w/t3_delta/cli.py
+index 9097a0c..1dab92d 100644
+--- i/t3_delta/cli.py
++++ w/t3_delta/cli.py
+@@ -175,7 +175,11 @@ def run(config, state, once, config_path=None):
+                         current = load_config(config_path)
+                         mutable = {"allowed_projects", "allowed_remotes", "additional_project_paths"}
+                         if {k:v for k,v in current.items() if k not in mutable} != {k:v for k,v in config.items() if k not in mutable}:
+-                            raise ValueError("Non-project configuration changed; restart the recorder")
++                            # Let the service supervisor restart with the new
++                            # executable/configuration instead of retrying an
++                            # immutable startup configuration forever.
++                            print(json.dumps({"phase": "restart_required", "error": "ConfigurationChanged"}), flush=True)
++                            return 3
+                         if current != config:
+                             replacement = Engine(current, state, None, sink)
+                             engine.close()
+diff --git i/t3_delta/delta_sink.py w/t3_delta/delta_sink.py
+index 4d3f293..c202669 100644
+--- i/t3_delta/delta_sink.py
++++ w/t3_delta/delta_sink.py
+@@ -3,14 +3,41 @@
+ Only the public Delta CLI is used. No private Delta database is inspected.
+ """
+ 
++import atexit
+ import json
+ import os
+ from pathlib import Path
++import selectors
+ import sqlite3
+ import subprocess
+ import time
+ 
+ 
++# Contract 8 mounts belong to their CLI connection. Keep them for the worker
++# process, including across generic drain cycles which reopen their ledgers.
++_MOUNTS = {}
++MAX_MOUNTS = 32
++
++
++def stop_mounts(keys=None):
++    for key in list(_MOUNTS if keys is None else keys):
++        process = _MOUNTS.pop(key, None)
++        if process is None:
++            continue
++        if process.poll() is None:
++            process.terminate()
++        try:
++            process.wait(timeout=5)
++        except subprocess.TimeoutExpired:
++            process.kill()
++            process.wait(timeout=5)
++        if process.stdout:
++            process.stdout.close()
++
++
++atexit.register(stop_mounts)
++
++
+ class DeltaError(RuntimeError):
+     pass
+ 
+@@ -96,6 +123,7 @@ def delivery_health(session):
+ 
+ class DeltaSink:
+     SOURCE = "t3-code"
++    connection_owned_mounts = True
+ 
+     def __init__(self, state_dir: Path, binary: str = "zed-delta", timeout=30, *, organization=None, producer_name="T3 Code"):
+         self.state_dir = Path(state_dir)
+@@ -146,6 +174,10 @@ class DeltaSink:
+     def close(self):
+         self.db.close()
+ 
++    def release_session(self, external_id):
++        session = self._session(external_id)
++        stop_mounts([(self.binary, session["reference"], session["directory"])])
++
+     def _run(self, args, *, input=None):
+         try:
+             return subprocess.run(
+@@ -174,9 +206,119 @@ class DeltaSink:
+         if not isinstance(value, dict) or value.get("operation") != "contract":
+             raise DeltaConflict("Unknown Delta recording contract")
+         low, high = value.get("min"), value.get("max")
+-        if not _integer(low) or not _integer(high) or low > high or low > 7 or high < 6 or high > 7:
+-            raise DeltaConflict("Delta recording contract is incompatible; recorder supports 6–7")
+-        return min(high, 7)
++        if not _integer(low) or not _integer(high) or low > high or low > 8 or high < 6 or high > 8:
++            raise DeltaConflict("Delta recording contract is incompatible; recorder supports 6–8")
++        return min(high, 8)
++
++    def _mount(self, session):
++        key = (self.binary, session["reference"], session["directory"])
++        previous = _MOUNTS.get(key)
++        if previous is not None and previous.poll() is None:
++            return
++        if previous is not None:
++            if previous.stdout:
++                previous.stdout.close()
++            del _MOUNTS[key]
++        # Stale exited children must not consume the process-wide lease budget.
++        stop_mounts([item for item, process in _MOUNTS.items() if process.poll() is not None])
++        if len(_MOUNTS) >= MAX_MOUNTS:
++            raise DeltaUnavailable("Delta mount connection budget reached; pending records retained")
++        try:
++            process = subprocess.Popen([
++                self.binary, "--json", "worktree", "mount", session["reference"],
++                session["directory"], "--existing-checkout",
++            ], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
++        except OSError as error:
++            raise DeltaUnavailable("Delta mount command unavailable; existing binding retained") from error
++        try:
++            deadline = time.monotonic() + self.timeout
++            output = b""
++            with selectors.DefaultSelector() as selector:
++                selector.register(process.stdout, selectors.EVENT_READ)
++                while b"\n" not in output:
++                    remaining = deadline - time.monotonic()
++                    if remaining <= 0 or not selector.select(remaining):
++                        raise DeltaUnavailable("Delta mount readiness timed out; existing binding retained")
++                    chunk = os.read(process.stdout.fileno(), 65536)
++                    if not chunk or len(output) + len(chunk) > 65536:
++                        raise DeltaUnavailable("Delta mount readiness missing or exceeded its budget")
++                    output += chunk
++            mounted = json.loads(output.split(b"\n", 1)[0])
++            if isinstance(mounted, dict) and "error" in mounted:
++                if _retryable_cli_error(mounted["error"]):
++                    raise DeltaUnavailable("Delta mount is temporarily unavailable; existing binding retained")
++                raise DeltaConflict("Delta mount refused; existing binding retained for review")
++            if (not isinstance(mounted, dict) or mounted.get("operation") != "mounted"
++                    or mounted.get("reference") != session["reference"]
++                    or mounted.get("directory") != session["directory"]):
++                raise DeltaConflict("Delta mount receipt differs from the persisted checkout binding")
++            if process.poll() is not None:
++                raise DeltaUnavailable("Delta mount connection ended before readiness verification")
++            _MOUNTS[key] = process
++        except BaseException:
++            if process.poll() is None:
++                process.terminate()
++            try:
++                process.wait(timeout=5)
++            except subprocess.TimeoutExpired:
++                process.kill()
++                process.wait(timeout=5)
++            process.stdout.close()
++            raise
++
++    def _attach_v8(self, session, preliminary):
++        external_id = session["external_id"]
++        if not session["reference"]:
++            # A prior attach may have succeeded before its local receipt was
++            # saved. Reuse exactly one matching existing worktree when present.
++            trees = preliminary.get("worktrees", {})
++            matches = {tree["reference"] for tree in trees.get("items", [])
++                       if isinstance(tree, dict) and isinstance(tree.get("reference"), str)
++                       and any(isinstance(c, dict) and c.get("directory") == session["directory"]
++                               for c in tree.get("checkouts", []))}
++            if len(matches) > 1:
++                raise DeltaConflict("Existing checkout has ambiguous Delta worktree bindings")
++            if matches:
++                reference = matches.pop()
++            else:
++                listed = self._command(["worktree", "list"])
++                if (not isinstance(listed, dict) or listed.get("operation") != "listed"
++                        or not isinstance(listed.get("worktrees"), list)):
++                    raise DeltaError("Invalid Delta local worktree inventory")
++                local = {tree["reference"] for tree in listed["worktrees"]
++                         if isinstance(tree, dict) and isinstance(tree.get("reference"), str)
++                         and any(isinstance(c, dict) and c.get("directory") == session["directory"]
++                                 for c in tree.get("directories", []))}
++                if len(local) > 1:
++                    raise DeltaConflict("Existing checkout has ambiguous local worktree bindings")
++                if local:
++                    reference = local.pop()
++                else:
++                    created = self._command(["worktree", "create", session["directory"]])
++                    if (not isinstance(created, dict) or created.get("operation") != "created"
++                            or not isinstance(created.get("worktree_id"), str) or not created["worktree_id"]
++                            or created.get("reference") != created["worktree_id"]):
++                        raise DeltaError("Invalid Delta worktree creation receipt")
++                    reference = created["reference"]
++            # Persist before membership/mount so retries never replace the binding.
++            with self.db:
++                self.db.execute("UPDATE sessions SET reference=? WHERE external_id=?", (reference, external_id))
++            session = self._session(external_id)
++        if session["attached_at"] is None:
++            attached = self._command(["worktree", "attach", session["reference"], "--thread", session["thread_id"]])
++            def history(reference):
++                return reference.removeprefix("delta://worktree/").split("#", 1)[0]
++            if (not isinstance(attached, dict) or attached.get("operation") != "attached"
++                    or not isinstance(attached.get("reference"), str) or not attached["reference"]
++                    or history(attached["reference"]) != history(session["reference"])
++                    or attached.get("thread_id") != session["thread_id"]):
++                raise DeltaError("Invalid Delta worktree membership receipt")
++            with self.db:
++                self.db.execute("UPDATE sessions SET reference=? WHERE external_id=?", (attached["reference"], external_id))
++            session = self._session(external_id)
++        self._mount(session)
++        with self.db:
++            self.db.execute("UPDATE sessions SET attached_at=COALESCE(attached_at,?) WHERE external_id=?", (time.time(), external_id))
+ 
+     def _session(self, external_id):
+         row = self.db.execute("SELECT * FROM sessions WHERE external_id=?", (external_id,)).fetchone()
+@@ -251,7 +393,7 @@ class DeltaSink:
+             and ("reason" not in error or isinstance(error["reason"], str))
+         )
+ 
+-    def _checkout(self, session, value):
++    def _checkout(self, session, value, *, connection_owned=False):
+         trees = value.get("worktrees")
+         if not isinstance(trees, dict) or trees.get("status") != "available" or not isinstance(trees.get("items"), list):
+             raise DeltaUnavailable("Delta checkout inspection unavailable")
+@@ -259,10 +401,16 @@ class DeltaSink:
+             if not isinstance(tree, dict) or tree.get("reference") != session["reference"]:
+                 continue
+             for checkout in tree.get("checkouts", []):
+-                if isinstance(checkout, dict) and checkout.get("directory") == session["directory"] and checkout.get("state") == "attached" and checkout.get("active", True) is True:
++                if not isinstance(checkout, dict) or checkout.get("directory") != session["directory"]:
++                    continue
++                ready = (checkout.get("state") == "attached" and checkout.get("active", True) is True
++                         or connection_owned and checkout.get("state") == "detached" and checkout.get("active") is True)
++                if ready:
+                     with self.db:
+                         self.db.execute("UPDATE sessions SET checkout_status=?,checked_at=? WHERE external_id=?", (_json(checkout), time.time(), session["external_id"]))
+                     return
++                if connection_owned and checkout.get("state") in ("attached", "detached", "inactive"):
++                    raise DeltaUnavailable("Delta mount is not active in thread status yet; binding retained")
+         self._conflict(session["external_id"], "Delta checkout/reference no longer matches the attached directory")
+ 
+     def ensure_session(self, external_id: str, directory: str):
+@@ -279,7 +427,7 @@ class DeltaSink:
+         session = self._session(external_id)
+         if session["halted"]:
+             raise DeltaConflict(session["error"])
+-        self._contract()
++        contract = self._contract()
+         if not session["organization"]:
+             organization = self._upload_organization()
+             with self.db:
+@@ -299,7 +447,10 @@ class DeltaSink:
+         preliminary = self._live_status(session)
+         if preliminary["producer"]["next_sequence"] > session["next_sequence"]:
+             self._conflict(external_id, "Delta producer already has history absent from this outbox")
+-        if not session["reference"]:
++        if contract == 8:
++            self._attach_v8(session, preliminary)
++            session = self._session(external_id)
++        elif not session["reference"]:
+             attached = self._command(["worktree", "attach", directory, "--thread", session["thread_id"]])
+             if not isinstance(attached, dict) or attached.get("operation") != "mounted" or attached.get("directory") != directory or not isinstance(attached.get("reference"), str) or not attached["reference"]:
+                 raise DeltaError("Invalid Delta attach receipt; no checkout tracking assumed")
+@@ -307,7 +458,7 @@ class DeltaSink:
+                 self.db.execute("UPDATE sessions SET reference=?,attached_at=? WHERE external_id=?", (attached["reference"], time.time(), external_id))
+             session = self._session(external_id)
+         live = self._live_status(session)
+-        self._checkout(session, live)
++        self._checkout(session, live, connection_owned=contract == 8)
+         self._remember_status(external_id, live)
+         return self._metadata(self._session(external_id))
+ 
+@@ -354,15 +505,21 @@ class DeltaSink:
+         with self.db:
+             self.db.execute("UPDATE sessions SET upload=?,access=?,visibility=?,checked_at=? WHERE external_id=?", (_json(live.get("upload")), _json(live.get("access")), live.get("visibility"), time.time(), external_id))
+ 
+-    def flush(self, external_id: str):
++    def flush(self, external_id: str, *, maintain_mount=True):
+         session = self._session(external_id)
+         if session["halted"]:
+             raise DeltaConflict(session["error"])
+         if not session["thread_id"] or not session["reference"]:
+             raise DeltaError("Session attachment has not completed")
+-        self._contract()
++        contract = self._contract()
++        if contract == 8 and maintain_mount:
++            if session["attached_at"] is None:
++                self._attach_v8(session, self._live_status(session))
++                session = self._session(external_id)
++            else:
++                self._mount(session)
+         live = self._live_status(session)
+-        self._checkout(session, live)
++        self._checkout(session, live, connection_owned=contract == 8)
+         self._remember_status(external_id, live)
+         # Private creation/attachment can return before its asynchronous cloud
+         # binding exists. Server-ack append must wait for observed granted access;
+diff --git i/t3_delta/engine.py w/t3_delta/engine.py
+index 5986647..b55889b 100644
+--- i/t3_delta/engine.py
++++ w/t3_delta/engine.py
+@@ -6,6 +6,7 @@ from pathlib import Path
+ import sqlite3
+ import subprocess
+ from urllib.parse import urlsplit
++from .delta_sink import delivery_health
+ 
+ 
+ def utc_now():
+@@ -227,6 +228,28 @@ class Engine:
+                 report["halted"] += 1
+                 continue
+             try:
++                if getattr(self.sink, "connection_owned_mounts", False):
++                    # Reconnecting a mount resumes file capture, even when no
++                    # T3 server is reachable. Revalidate full persisted bindings
++                    # against current scope before any such connection starts.
++                    previous = self.db.execute("SELECT directory,fingerprint FROM threads WHERE external_id=?", (external_id,)).fetchone()
++                    if not previous:
++                        raise ValueError("Sink session has no immutable source binding")
++                    directory, remote = checkout_identity(session["directory"])
++                    if remote not in self.allowed:
++                        raise ValueError("Persisted checkout is outside the repository allowlist")
++                    self.scoped_checkout(directory, remote)
++                    info = Path(directory).stat()
++                    if previous[0] != directory or previous[1] != f"{info.st_dev}:{info.st_ino}":
++                        raise ValueError("Persisted checkout binding changed")
++                    if (session.get("thread_id") and session.get("reference")
++                            and session.get("pending") == 0
++                            and delivery_health(session) is None):
++                        # No outbox work exists. Live source discovery below is
++                        # what can authorize resumed capture; old empty sessions
++                        # must not starve it behind serial remote status timeouts.
++                        report["delivered_sessions"] += 1
++                        continue
+                 if not session.get("thread_id") or not session.get("reference"):
+                     previous = self.db.execute("SELECT directory,fingerprint FROM threads WHERE external_id=?", (external_id,)).fetchone()
+                     if not previous:
+@@ -241,7 +264,12 @@ class Engine:
+                     check_filenames(directory)
+                     attached = self.sink.ensure_session(external_id, directory)
+                     self._mark_attached(thread_id, attached)
+-                delivery = self.sink.flush(external_id)
++                if getattr(self.sink, "connection_owned_mounts", False):
++                    held_source = any(row and row[0] in ("needs_review", "halted", "source_missing")
++                                      for row in (held, binding_phase))
++                    delivery = self.sink.flush(external_id, maintain_mount=not held_source)
++                else:
++                    delivery = self.sink.flush(external_id)
+                 if not isinstance(delivery, dict) or not isinstance(delivery.get("pending"), int) or isinstance(delivery["pending"], bool) or delivery["pending"] < 0:
+                     raise ValueError("Delta delivery status is incomplete")
+                 if delivery["pending"]:
+@@ -315,6 +343,11 @@ class Engine:
+ 
+     def _thread_error(self, thread_id, error, transient=False, *, phase=None):
+         phase = phase or ("catching_up" if transient else "needs_review")
++        if phase in ("needs_review", "halted", "source_missing") and hasattr(self.sink, "release_session"):
++            try:
++                self.sink.release_session(self.config["environment_id"] + ":" + thread_id)
++            except Exception:
++                pass
+         previous = self.db.execute("SELECT phase FROM problems WHERE thread_id=?", (thread_id,)).fetchone()
+         binding = self.db.execute("SELECT phase FROM threads WHERE id=?", (thread_id,)).fetchone()
+         existing = {row[0] for row in (previous, binding) if row}
+diff --git i/tests/test_cli.py w/tests/test_cli.py
+index 57a0d13..2e61d63 100644
+--- i/tests/test_cli.py
++++ w/tests/test_cli.py
+@@ -6,12 +6,21 @@ import tempfile
+ import unittest
+ from unittest.mock import patch
+ 
+-from t3_delta.cli import history, read_status, load_config, main
++from t3_delta.cli import history, read_status, load_config, main, run
+ from t3_delta.delta_sink import DeltaSink
+ from t3_delta.engine import Engine
+ 
+ 
+ class ConfigTests(unittest.TestCase):
++    def test_nonproject_configuration_change_exits_for_supervisor_restart(self):
++        with tempfile.TemporaryDirectory() as directory:
++            config = {"environment_id": "env", "delta_binary": "old"}
++            with patch("t3_delta.cli.DeltaSink"), patch("t3_delta.cli.Engine") as engine, patch(
++                    "t3_delta.cli.load_config", return_value={**config, "delta_binary": "new"}):
++                self.assertEqual(run(config, Path(directory), False, Path(directory)/"config.json"), 3)
++                engine.return_value.poll.assert_not_called()
++                engine.return_value.close.assert_called_once()
++
+     def test_remote_only_configuration_is_rejected_before_authentication(self):
+         with tempfile.TemporaryDirectory() as directory:
+             path = Path(directory) / "config.json"
+diff --git i/tests/test_delta_sink.py w/tests/test_delta_sink.py
+index 0511762..04a4d99 100644
+--- i/tests/test_delta_sink.py
++++ w/tests/test_delta_sink.py
+@@ -4,10 +4,11 @@ import stat
+ import sqlite3
+ import subprocess
+ import tempfile
++import sys
+ import unittest
+ from unittest.mock import patch
+ 
+-from t3_delta.delta_sink import DeltaConflict, DeltaError, DeltaSink, DeltaUnavailable, delivery_health, projected_message_count
++from t3_delta.delta_sink import DeltaConflict, DeltaError, DeltaSink, DeltaUnavailable, delivery_health, projected_message_count, stop_mounts
+ 
+ 
+ class FakeDelta:
+@@ -18,6 +19,8 @@ class FakeDelta:
+         self.behavior = "normal"
+         self.contract = {"operation": "contract", "min": 1, "max": 7}
+         self.visibility = "private"
++        self.has_tree = True
++        self.local_worktrees = []
+         self.receipt_transform = lambda value: value
+         self.error = {"code": "app_unavailable", "message": "synthetic private diagnostic", "retryable": True}
+ 
+@@ -30,7 +33,7 @@ class FakeDelta:
+                 "reference": "history#t=timeline", "checkouts": [{
+                     "directory": self.directory, "state": "attached", "active": True,
+                 }],
+-            }]},
++            }] if self.has_tree else []},
+             "producer": {"source": "t3-code", "external_id": "env:thread", "next_sequence": self.frontier},
+         }
+ 
+@@ -48,8 +51,15 @@ class FakeDelta:
+             assert args[args.index("--visibility") + 1] == "private"
+             assert args[args.index("--organization") + 1] == "private-upload-org"
+             value = {"operation": "created", "thread_id": "thread-1"}
++        elif args[:2] == ["worktree", "create"]:
++            value = {"operation": "created", "worktree_id": "history", "reference": "history"}
++        elif args[:2] == ["worktree", "list"]:
++            value = {"operation": "listed", "worktrees": self.local_worktrees}
+         elif args[:2] == ["worktree", "attach"]:
+-            value = {"operation": "mounted", "reference": "history#t=timeline", "directory": self.directory}
++            self.has_tree = True
++            value = ({"operation": "attached", "reference": "history#t=timeline", "thread_id": "thread-1"}
++                     if self.contract["max"] == 8 else
++                     {"operation": "mounted", "reference": "history#t=timeline", "directory": self.directory})
+         elif args[:2] == ["thread", "status"]:
+             value = self.status()
+         elif args[:2] == ["thread", "show"]:
+@@ -96,6 +106,7 @@ class DeltaSinkTest(unittest.TestCase):
+         self.sink = DeltaSink(self.root / "state", "fake-delta", timeout=0.5)
+ 
+     def tearDown(self):
++        stop_mounts()
+         self.sink.close()
+         self.patch.stop()
+         self.temp.cleanup()
+@@ -428,7 +439,7 @@ class DeltaSinkTest(unittest.TestCase):
+             self.sink.flush("env:thread")
+ 
+     def test_unknown_contract_or_nonprivate_visibility_refused(self):
+-        self.fake.contract = {"operation": "contract", "min": 8, "max": 8}
++        self.fake.contract = {"operation": "contract", "min": 9, "max": 9}
+         with self.assertRaises(DeltaConflict):
+             self.bind()
+         self.assertFalse(any(args[2:4] == ["thread", "create"] for args, _ in self.fake.calls))
+@@ -452,11 +463,138 @@ class DeltaSinkTest(unittest.TestCase):
+         self.assertEqual(count, len(self.fake.calls))
+ 
+     def test_future_contract_with_overlapping_versions_stops_before_create(self):
+-        self.fake.contract = {"operation": "contract", "min": 1, "max": 8}
++        self.fake.contract = {"operation": "contract", "min": 1, "max": 9}
+         with self.assertRaises(DeltaConflict):
+             self.bind()
+         self.assertFalse(any(args[2:4] == ["thread", "create"] for args, _ in self.fake.calls))
+ 
++    def mount_process(self, args, **kwargs):
++        self.mount_calls.append(args)
++        receipt = {"operation": "mounted", "reference": self.mount_reference, "directory": self.fake.directory}
++        return self.real_popen([sys.executable, "-u", "-c",
++            "import sys,time; print(sys.argv[1],flush=True); time.sleep(60)", json.dumps(receipt)], **kwargs)
++
++    def prepare_mount(self):
++        self.fake.contract = {"operation": "contract", "min": 8, "max": 8}
++        self.real_popen = subprocess.Popen
++        self.mount_calls = []
++        self.mount_reference = "history#t=timeline"
++        return patch("t3_delta.delta_sink.subprocess.Popen", side_effect=self.mount_process)
++
++    def test_v8_keeps_connection_across_sink_reopen_and_reuses_binding(self):
++        with self.prepare_mount():
++            self.bind()
++            self.message()
++            self.sink.flush("env:thread")
++            self.sink.close()
++            self.sink = DeltaSink(self.root / "state", "fake-delta", timeout=0.5)
++            self.bind()
++            self.assertEqual(len(self.mount_calls), 1)
++            self.assertEqual(self.mount_calls[0][-3:], ["history#t=timeline", str(self.checkout), "--existing-checkout"])
++            self.assertEqual(self.sink.status("env:thread")["pending"], 0)
++            self.assertEqual(sum(args[2:4] == ["thread", "create"] for args, _ in self.fake.calls), 1)
++
++    def test_v8_wrong_mount_receipt_preserves_reference_and_never_appends(self):
++        with self.prepare_mount():
++            self.mount_reference = "another#t=timeline"
++            with self.assertRaises(DeltaConflict):
++                self.bind()
++            self.assertEqual(self.sink.status("env:thread")["reference"], "history#t=timeline")
++            self.assertFalse(any(args[2:4] == ["thread", "append"] for args, _ in self.fake.calls))
++
++    def test_v8_creation_canonicalizes_only_same_worktree_membership(self):
++        self.fake.has_tree = False
++        with self.prepare_mount():
++            self.bind()
++            self.assertEqual(self.sink.status("env:thread")["reference"], "history#t=timeline")
++            self.assertTrue(any(args[2:4] == ["worktree", "create"] for args, _ in self.fake.calls))
++
++    def test_v8_recovers_created_worktree_before_saved_membership(self):
++        self.fake.has_tree = False
++        self.fake.local_worktrees = [{"reference": "history", "directories": [{"directory": str(self.checkout)}]}]
++        with self.prepare_mount():
++            self.bind()
++            self.assertFalse(any(args[2:4] == ["worktree", "create"] for args, _ in self.fake.calls))
++            self.assertEqual(self.sink.status("env:thread")["reference"], "history#t=timeline")
++
++    def test_v8_dead_mount_reconnects_without_recreating_thread(self):
++        from t3_delta.delta_sink import _MOUNTS
++        with self.prepare_mount():
++            self.bind()
++            process = next(iter(_MOUNTS.values()))
++            process.terminate()
++            process.wait(timeout=2)
++            self.sink.flush("env:thread")
++            self.assertEqual(len(self.mount_calls), 2)
++            self.assertEqual(sum(args[2:4] == ["thread", "create"] for args, _ in self.fake.calls), 1)
++
++    def test_v8_mount_launch_failure_is_retryable_with_same_binding(self):
++        with self.prepare_mount():
++            with patch("t3_delta.delta_sink.subprocess.Popen", side_effect=OSError("synthetic")):
++                with self.assertRaises(DeltaUnavailable):
++                    self.bind()
++            self.assertEqual(self.sink.status("env:thread")["reference"], "history#t=timeline")
++            self.assertFalse(self.sink.status("env:thread")["halted"])
++            self.bind()
++
++    def test_v8_flush_finishes_pending_membership_before_mounting(self):
++        with self.prepare_mount():
++            self.bind()
++            self.message()
++            self.sink.release_session("env:thread")
++            with self.sink.db:
++                self.sink.db.execute("UPDATE sessions SET attached_at=NULL,reference='history'")
++            start = len(self.fake.calls)
++            self.sink.flush("env:thread")
++            self.assertTrue(any(args[2:4] == ["worktree", "attach"] for args, _ in self.fake.calls[start:]))
++            self.assertEqual(self.sink.status("env:thread")["reference"], "history#t=timeline")
++            self.assertEqual(self.sink.status("env:thread")["pending"], 0)
++
++    def test_v8_review_release_ends_connection_without_changing_ledger(self):
++        from t3_delta.delta_sink import _MOUNTS
++        with self.prepare_mount():
++            self.bind()
++            self.message()
++            process = next(iter(_MOUNTS.values()))
++            before = tuple(self.sink.db.execute("SELECT body FROM records").fetchone())
++            self.sink.release_session("env:thread")
++            self.assertIsNotNone(process.poll())
++            self.assertEqual(tuple(self.sink.db.execute("SELECT body FROM records").fetchone()), before)
++            self.assertEqual(self.sink.status("env:thread")["pending"], 1)
++
++    def test_v8_mount_budget_retains_binding_without_spawning(self):
++        with self.prepare_mount():
++            with patch("t3_delta.delta_sink.MAX_MOUNTS", 0):
++                with self.assertRaises(DeltaUnavailable):
++                    self.bind()
++            self.assertFalse(self.mount_calls)
++            self.assertFalse(self.sink.status("env:thread")["halted"])
++            self.bind()
++
++    def test_v8_detached_active_checkout_is_valid_connection_owned_mount(self):
++        original = self.fake.status
++        def status():
++            value = original()
++            value["worktrees"]["items"][0]["checkouts"][0]["state"] = "detached"
++            return value
++        self.fake.status = status
++        with self.prepare_mount():
++            self.bind()
++            self.message()
++            self.assertEqual(self.sink.flush("env:thread")["pending"], 0)
++
++    def test_v8_inactive_status_after_ready_is_retryable_without_halting(self):
++        original = self.fake.status
++        def status():
++            value = original()
++            value["worktrees"]["items"][0]["checkouts"][0]["active"] = False
++            return value
++        self.fake.status = status
++        with self.prepare_mount():
++            with self.assertRaises(DeltaUnavailable):
++                self.bind()
++            self.assertFalse(self.sink.status("env:thread")["halted"])
++
+     def test_explicit_local_only_null_visibility_can_attach_but_is_catching_up(self):
+         self.fake.visibility = None
+         original = self.fake.status
+diff --git i/tests/test_engine.py w/tests/test_engine.py
+index 400b56e..f0bb551 100644
+--- i/tests/test_engine.py
++++ w/tests/test_engine.py
+@@ -58,6 +58,7 @@ class Sink:
+         self.acknowledged = set()
+         self.delivered = []
+         self.flush_calls = []
++        self.released = []
+ 
+     def ensure_session(self, external_id, directory):
+         self.saved_sessions.setdefault(external_id, {"external_id": external_id, "directory": directory,
+@@ -76,7 +77,7 @@ class Sink:
+             assert self.records[binding] == update
+         self.records[binding] = update
+ 
+-    def flush(self, external_id):
++    def flush(self, external_id, **kwargs):
+         self.flush_calls.append(external_id)
+         if self.saved_sessions[external_id]["halted"]:
+             raise DeltaConflict("held")
+@@ -88,6 +89,9 @@ class Sink:
+                 self.acknowledged.add(key)
+         return {"pending": 0}
+ 
++    def release_session(self, external_id):
++        self.released.append(external_id)
++
+     def sessions(self):
+         result = []
+         for key, saved in self.saved_sessions.items():
+@@ -98,6 +102,45 @@ class Sink:
+ 
+ 
+ class EngineTests(unittest.TestCase):
++    def test_uploaded_empty_outbox_does_not_delay_live_source_discovery(self):
++        engine = self.scoped_engine()
++        engine.poll()
++        self.sink.connection_owned_mounts = True
++        self.sink.flush_calls.clear()
++        self.sink.saved_sessions["env:new"].update(
++            visibility="private", upload={"state": "uploaded"}, access={"state": "granted"})
++        self.engine.source = None
++        self.assertEqual(engine.retry_delivery()["delivered_sessions"], 1)
++        self.assertFalse(self.sink.flush_calls)
++        self.sink.saved_sessions["env:new"]["upload"]["error"] = {"code": "failed", "message": "synthetic"}
++        engine.retry_delivery()
++        self.assertEqual(self.sink.flush_calls, ["env:new"])
++        self.sink.flush_calls.clear()
++        self.sink.saved_sessions["env:new"]["upload"]["error"] = None
++        self.sink.enqueue("env:new", "pending-synthetic", {"sessionUpdate": "agent_message"})
++        engine.retry_delivery()
++        self.assertEqual(self.sink.flush_calls, ["env:new"])
++
++    def test_connection_owned_retry_revalidates_fully_bound_checkout_without_t3(self):
++        engine = self.scoped_engine()
++        engine.poll()
++        self.sink.connection_owned_mounts = True
++        self.sink.flush_calls.clear()
++        self.sink.saved_sessions["env:new"].update(
++            visibility="private", upload={"state": "uploaded"}, access={"state": "granted"})
++        other = self.repo.parent / "other"
++        subprocess.run(["git", "init", "--quiet", str(other)], check=True)
++        remote = "https://example.com/other.git"
++        subprocess.run(["git", "-C", str(other), "remote", "add", "origin", remote], check=True)
++        config = {**engine.config, "allowed_remotes": [remote], "allowed_projects": [
++            {"path": str(other), "remote": remote, "enrolled_after": NOW}]}
++        changed = Engine(config, self.state, None, self.sink, clock=lambda: NOW)
++        self.addCleanup(changed.close)
++        report = changed.retry_delivery()
++        self.assertEqual(report["halted"], 1)
++        self.assertFalse(self.sink.flush_calls)
++        self.assertIn("env:new", self.sink.released)
++
+     def setUp(self):
+         self.temp = tempfile.TemporaryDirectory()
+         self.addCleanup(self.temp.cleanup)
+diff --git i/tests/test_generic_core.py w/tests/test_generic_core.py
+index 2b76514..8c5fe8a 100644
+--- i/tests/test_generic_core.py
++++ w/tests/test_generic_core.py
+@@ -2,6 +2,7 @@ import contextlib
+ import copy
+ import fcntl
+ import json
++import io
+ import os
+ from pathlib import Path
+ import sqlite3
+@@ -96,6 +97,49 @@ class CoreTests(unittest.TestCase):
+         self.assertNotEqual(core.session_key("a", "b", "c:d"), core.session_key("a", "b:c", "d"))
+         self.assertEqual(core.status(self.config, self.state)["health"]["phase"], "catching_up")
+ 
++    def test_revoked_source_and_existing_hold_release_prior_mount(self):
++        self.submit(self.event(), self.event(2, "message.completed"))
++        self.assertEqual(self.flush()["delivered_sessions"], 1)
++        key = core.sessions(self.config, self.state, self.repo)[0]["session_key"]
++        self.config["sources"] = [{"kind": "codex", "instance": "desktop"}]
++        with patch.object(FakeSink, "release_session", create=True) as release:
++            self.assertEqual(self.flush()["halted"], 1)
++            release.assert_called_once_with(key)
++        with patch.object(FakeSink, "release_session", create=True) as release:
++            self.assertEqual(self.flush()["halted"], 1)
++            release.assert_called_once_with(key)
++
++    def test_claude_idle_exit_and_resume_keep_identity_and_release_leases(self):
++        from delta_history.adapters.claude import claude_hook
++        self.config["sources"].append({"kind": "claude-code", "instance": "desktop"})
++        def hook(kind, prompt=None, text=None):
++            payload = {"hook_event_name": kind, "session_id": "native-resumable", "cwd": str(self.repo)}
++            if prompt:
++                payload["prompt_id"] = prompt
++            if text:
++                payload["prompt" if kind == "UserPromptSubmit" else "last_assistant_message"] = text
++            return claude_hook(self.config, self.state, "desktop", io.StringIO(json.dumps(payload)))
++        hook("UserPromptSubmit", "p1", "first prompt")
++        hook("Stop", "p1", "first answer")
++        with patch.object(FakeSink, "release_session", create=True) as release:
++            self.assertEqual(self.flush()["delivered_sessions"], 1)
++            release.assert_called_once()
++        key = core.sessions(self.config, self.state, self.repo)[0]["session_key"]
++        FakeSink.calls.clear()
++        self.assertEqual(self.flush()["delivered_sessions"], 1)
++        self.assertFalse(FakeSink.calls)
++        hook("SessionEnd")
++        hook("UserPromptSubmit", "p2", "resumed prompt")
++        self.assertEqual(self.flush()["delivered_sessions"], 1)
++        self.assertTrue(FakeSink.calls)
++        hook("Stop", "p2", "resumed answer")
++        hook("SessionEnd")
++        self.assertEqual(self.flush()["delivered_sessions"], 1)
++        sessions = core.sessions(self.config, self.state, self.repo)
++        self.assertEqual(len(sessions), 1)
++        self.assertEqual(sessions[0]["session_key"], key)
++        self.assertEqual(sessions[0]["phase"], "paused")
++        self.assertEqual(len(FakeSink.stored[key]), 4)
+     def test_conflicting_sequence_or_event_halts_durably_and_never_delivers(self):
+         a, b = self.event(), self.event(2, "message.completed")
+         self.submit(a, b)
+@@ -163,11 +207,15 @@ class CoreTests(unittest.TestCase):
+     def test_fencing_isolated_per_session_and_retryable_retained(self):
+         self.submit(self.event(), self.event(2, "message.completed"))
+         FakeSink.failure = DeltaUnavailable("test")
+-        self.assertEqual(self.flush()["catching_up"], 1)
++        with patch.object(FakeSink, "release_session", create=True) as release:
++            self.assertEqual(self.flush()["catching_up"], 1)
++            release.assert_not_called()
+         FakeSink.failure = None
+         self.assertEqual(self.flush()["delivered_sessions"], 1)
+         FakeSink.failure = DeltaConflict("fenced")
+-        self.assertEqual(self.flush()["halted"], 1)
++        with patch.object(FakeSink, "release_session", create=True) as release:
++            self.assertEqual(self.flush()["halted"], 1)
++            release.assert_called_once()
+         self.assertEqual(core.status(self.config, self.state)["halted"], 1)
+ 
+     def test_concurrent_worker_fails_busy_without_remote_calls(self):

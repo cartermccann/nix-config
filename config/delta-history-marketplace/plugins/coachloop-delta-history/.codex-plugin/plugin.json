@@ -1,0 +1,20 @@
+{
+  "name": "coachloop-delta-history",
+  "version": "0.1.1",
+  "description": "Read recorded CoachLoop history from the approved local repository through Delta's public CLI.",
+  "author": {
+    "name": "Carter McCann"
+  },
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "CoachLoop Delta history",
+    "shortDescription": "Recall local project history",
+    "longDescription": "Read-only status, session listing and bounded message recall for the approved CoachLoop product repository. Runs on this computer. Does not capture chats, enroll projects, restore files or publish history.",
+    "developerName": "Carter McCann",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "defaultPrompt": "Check recorded CoachLoop history before resuming project work."
+  }
+}
