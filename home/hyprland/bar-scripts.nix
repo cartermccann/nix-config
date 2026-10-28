@@ -270,15 +270,20 @@ let
     say "codex"
     codex-update --cli-only || say "codex-update failed or had nothing to do; continuing"
 
-    T3_CURRENT=$(${jq} -r .version pkgs/t3code/sources.json)
-    T3_LATEST=$($CURL https://api.github.com/repos/pingdotgg/t3code/releases/latest | ${jq} -r 'select(.draft == false and .prerelease == false) | .tag_name | ltrimstr("v")')
-    if [ -z "$T3_LATEST" ] || [ "$T3_LATEST" = null ]; then
-      say "T3 Code: release check failed"
-    elif [ "$T3_CURRENT" = "$T3_LATEST" ]; then
-      say "T3 Code $T3_CURRENT ✓"
-    else
-      say "T3 Code $T3_CURRENT → $T3_LATEST available; refresh pkgs/t3code source and dependency hashes"
-    fi
+    T3_BACKUP_DIR=$(mktemp -d) || exit 1
+    trap 'rm -f "$T3_BACKUP_DIR/original" "$T3_BACKUP_DIR/validated"; rmdir "$T3_BACKUP_DIR"' EXIT
+    cp pkgs/t3code/sources.json "$T3_BACKUP_DIR/original" || exit 1
+    T3_UPDATED=0
+    ${pkgs.python3}/bin/python3 ${../../scripts/t3-update.py} --repo "$REPO" --user ${lib.escapeShellArg config.home.username}
+    T3_STATUS=$?
+    case "$T3_STATUS" in
+      3)
+        cp pkgs/t3code/sources.json "$T3_BACKUP_DIR/validated" || exit 1
+        T3_UPDATED=1
+        ;;
+      0) ;;
+      *) say "T3 Code update failed; continuing with the other apps" ;;
+    esac
 
     bump() { # bump <name> <file> <current> <latest> <url>
       local name=$1 file=$2 cur=$3 new=$4 url=$5
@@ -375,6 +380,13 @@ let
       if ! build; then
         say "build failed with the app pins too; restoring everything"
         [ ''${#CHANGED[@]} -gt 0 ] && git checkout -- "''${CHANGED[@]}"
+        if [ "$T3_UPDATED" = 1 ]; then
+          if cmp -s pkgs/t3code/sources.json "$T3_BACKUP_DIR/validated"; then
+            cp "$T3_BACKUP_DIR/original" pkgs/t3code/sources.json
+          else
+            say "T3 Code: preserved a concurrent pin edit; inspect before retrying"
+          fi
+        fi
         auseklis-updates check
         exit 1
       fi
@@ -383,8 +395,16 @@ let
     auseklis-updates check
     if $GUM confirm "Apply now (nrs)?"; then nh os switch "$REPO"; fi
     if ! git diff --quiet && $GUM confirm "Commit this update?"; then
-      git add -A flake.lock pkgs/code-cursor pkgs/granola pkgs/grok-cli pkgs/opencode1 pkgs/codex flake.nix
-      git commit -q -m "Update pinned apps and flake inputs" && git log --oneline -1
+      COMMIT_PATHS=(flake.lock pkgs/code-cursor pkgs/granola pkgs/grok-cli pkgs/opencode1 pkgs/codex flake.nix)
+      if [ "$T3_UPDATED" = 1 ]; then
+        if cmp -s pkgs/t3code/sources.json "$T3_BACKUP_DIR/validated"; then
+          COMMIT_PATHS+=(pkgs/t3code/sources.json)
+        else
+          say "T3 Code: preserved a concurrent pin edit; excluding it from the update commit"
+        fi
+      fi
+      git add -A -- "''${COMMIT_PATHS[@]}"
+      git commit --only -q -m "Update pinned apps and flake inputs" -- "''${COMMIT_PATHS[@]}" && git log --oneline -1
     fi
   '';
 in
