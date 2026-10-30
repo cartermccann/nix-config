@@ -5,7 +5,21 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shlex
 import tempfile
+
+
+def is_delta_hook(hook):
+    if not isinstance(hook, dict) or not isinstance(hook.get("command"), str):
+        return False
+    try:
+        command = shlex.split(hook["command"])
+    except ValueError:
+        return False
+    if not command or Path(command[0]).name != "delta-history":
+        return False
+    arguments = command[1:] or hook.get("args", [])
+    return arguments[:2] == ["hook", "claude"]
 
 
 def merge(settings, executable, instance):
@@ -13,10 +27,15 @@ def merge(settings, executable, instance):
     hooks = result.setdefault("hooks", {})
     if not isinstance(hooks, dict):
         raise ValueError("Claude hooks must be an object")
+    # Claude interprets exit 2 as a request to block the prompt. Delta uses it
+    # for ordinary capture failures too (including unapproved scratch folders).
+    # Enforce best-effort capture in the shell rather than relying on the
+    # unsupported onFailure setting. Keep sanitized errors on stderr and keep
+    # capture receipts out of Claude's prompt context.
+    command = shlex.join([executable, "hook", "claude", "--instance", instance])
     handler = {
-        "type": "command", "command": executable,
-        "args": ["hook", "claude", "--instance", instance],
-        "timeout": 5, "onFailure": "continue",
+        "type": "command", "command": command + " >/dev/null || :",
+        "timeout": 5,
     }
     for event in ("UserPromptSubmit", "Stop", "SessionEnd"):
         entries = hooks.setdefault(event, [])
@@ -27,9 +46,7 @@ def merge(settings, executable, instance):
             if not isinstance(entry, dict) or not isinstance(entry.get("hooks"), list):
                 raise ValueError("Invalid existing Claude hook entry")
             for index, prior in enumerate(entry["hooks"]):
-                if (isinstance(prior, dict) and isinstance(prior.get("command"), str)
-                        and Path(prior["command"]).name == "delta-history"
-                        and prior.get("args", [])[:2] == ["hook", "claude"]):
+                if is_delta_hook(prior):
                     entry["hooks"][index] = handler
                     found = True
         if not found:
