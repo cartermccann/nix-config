@@ -56,7 +56,21 @@ Recovery must use a separate checkout or patch and coordinate with active edits.
 
 ## Compatibility and evidence
 
-Reviewed interfaces: T3 **0.1.0**, Delta **0.21–0.22**, recording output contracts **6–8**. The pinned upstream package separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.0/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
+Reviewed interfaces: T3 **0.1.0 and 0.1.5**, Delta **0.21–0.23**, recording output contracts **6–8**. The pinned upstream package separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.5/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
+
+The local package override in `pkgs/delta-agent-history/` explicitly permits
+reviewed T3 0.1.5 alongside 0.1.0. The upstream pin otherwise rejects every
+version except 0.1.0. Both installed commands and systemd services use this same
+patched package. Unknown stable and nightly releases still stop for review.
+The patch changes no database schema, enrollment, credentials or queued payloads.
+Its tests cover 0.1.5 capture and replay without duplicates, plus rejection before
+discovery or export for unsupported versions. Live read-only environment,
+project, thread-list and message reads succeeded against 0.1.5; Delta 0.23.0
+reported contract 8. All five recorder SQLite databases, including the generic
+drainer's nested Delta sink, passed `quick_check`.
+These checks do not establish fresh capture or upload while the services are
+stopped. Apply the build with `nrs`, then verify both services and advancing
+capture/acknowledgement timestamps before treating recording as healthy.
 
 Verification on 2026-10-23: **86 tests passed**, final independent crash-recovery review passed, the skill validator passed, and `nh os build ~/nix-config --no-nom --diff never` completed successfully. The persistent system has been built but still needs Carter's privileged `nrs` switch.
 

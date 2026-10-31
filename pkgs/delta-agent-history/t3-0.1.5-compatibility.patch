@@ -1,0 +1,37 @@
+--- a/t3_delta/engine.py
++++ b/t3_delta/engine.py
+@@ -301,3 +301,4 @@
+             raise ValueError("T3 environment identity differs from the configured environment")
+-        if env.get("serverVersion") != "0.1.0":
++        # Reviewed read-only MCP schemas; future releases still require review.
++        if env.get("serverVersion") not in ("0.1.0", "0.1.5"):
+             raise ValueError("T3 server version needs compatibility review")
+--- a/tests/test_engine.py
++++ b/tests/test_engine.py
+@@ -104,2 +104,26 @@
+ class EngineTests(unittest.TestCase):
++    def test_reviewed_t3_015_capture_and_restart_preserve_records(self):
++        self.source.environment = lambda: {"environmentId": "env", "serverVersion": "0.1.5"}
++        self.engine.poll()
++        self.assertEqual(len(self.sink.records), 2)
++        original = copy.deepcopy(self.sink.records)
++        restarted = Engine(self.config, self.state, self.source, self.sink, clock=lambda: NOW)
++        try:
++            restarted.poll()
++            self.assertEqual(self.sink.records, original)
++            self.assertEqual(len(self.sink.delivered), 2)
++        finally:
++            restarted.close()
++
++    def test_unreviewed_t3_versions_stop_before_discovery_or_export(self):
++        for version in ("0.1.6", "0.2.0", "0.1.5-nightly", "invalid", None, []):
++            with self.subTest(version=version):
++                self.source.environment = lambda: {"environmentId": "env", "serverVersion": version}
++                with patch.object(self.source, "projects") as projects:
++                    with self.assertRaisesRegex(ValueError, "T3 server version needs compatibility review"):
++                        self.engine.poll()
++                    projects.assert_not_called()
++                self.assertEqual(self.sink.records, {})
++                self.assertEqual(self.sink.bindings, [])
++
+     def test_uploaded_empty_outbox_does_not_delay_live_source_discovery(self):

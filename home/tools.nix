@@ -30,7 +30,9 @@ let
   agentToolGuard = pkgs.callPackage ../pkgs/agent-tool-guard { };
   agentTools = pkgs.callPackage ../pkgs/agent-tools { };
   deltaUpstream = zed-delta.packages.${pkgs.stdenv.hostPlatform.system}.delta;
-  deltaHistory = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  deltaHistory = pkgs.callPackage ../pkgs/delta-agent-history {
+    upstream = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  };
   deltaApp = pkgs.symlinkJoin {
     name = "zed-delta-${deltaUpstream.version}";
     paths = [ deltaUpstream ];

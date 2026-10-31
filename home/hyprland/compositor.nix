@@ -177,6 +177,9 @@ let
           disable_hyprland_logo = true,
           disable_splash_rendering = true,
           focus_on_activate = true,
+          -- Wake directly on input even if the idle daemon misses a resume.
+          key_press_enables_dpms = true,
+          mouse_move_enables_dpms = true,
           -- `vfr` moved to debug.vfr in newer versions and defaults to true; dropped.
         },
         xwayland = {

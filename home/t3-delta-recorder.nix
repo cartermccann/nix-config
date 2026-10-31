@@ -9,7 +9,9 @@
   ...
 }:
 let
-  recorder = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  recorder = pkgs.callPackage ../pkgs/delta-agent-history {
+    upstream = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  };
   homeDir = config.home.homeDirectory;
   projectScope = builtins.fromJSON (builtins.readFile ../config/t3-delta-projects.json);
   enrollmentFile = "${homeDir}/.config/delta-agent-history/projects.json";
