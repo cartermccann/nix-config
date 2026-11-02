@@ -73,3 +73,20 @@ The standard smoke's blank manual is a Qt software-renderer shader-mask limit.
 A separate sandbox render with only that mask disabled displayed its content.
 Real NVIDIA rendering, PAM, suspend/resume, cross-output pointer interaction,
 DDC and portals remain interactive acceptance checks, not automated claims.
+
+## 2026-11-02 live-login startup correction
+
+The first real Pond login exposed a startup ordering gap: all three supervisors
+reported the compositor gone before its instance lock file was ready, leaving
+no shell or launcher. The launcher notice incorrectly claimed another session
+owned it even though the recorded owner was absent.
+
+Startup now waits up to 15 seconds for the compositor before taking claims or
+spawning supervisors. Supervisor output is retained in per-session runtime logs,
+and missing-launcher notices distinguish absence from another live owner.
+Six new startup regressions reproduce the late-file condition: five failed on
+the previous implementation, and all six pass with the fix. The complete
+lifecycle suite passes 176 cases, zero failures/skips; `nh os build` and
+`git diff --check` pass. Logs: `/tmp/pond-startup-before.log`,
+`/tmp/pond-startup-after.log`, `/tmp/pond-startup-lifecycle.log` and
+`/tmp/pond-startup-build.log`. The corrected live login remains to be retried.

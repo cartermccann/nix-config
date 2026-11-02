@@ -163,17 +163,17 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/Lambo/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/lambo",
       "remote": "https://github.com/comcreate-io/lamborghini-clone.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/blazity",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/blazity",
       "remote": "https://github.com/comcreate-io/ai-website-cloner-template.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/swimclub",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/swimclub",
       "remote": "https://github.com/comcreate-io/swimclub-clone",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -358,7 +358,7 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/Tarzana/DesignSystem",
+      "path": "/home/cjm/projects/work/tarzana-design/DesignSystem",
       "remote": "https://github.com/cartermccann/tarzana-design-system.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -528,22 +528,22 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/backburner/CSB",
+      "path": "/home/cjm/projects/archive/work/backburner/CSB",
       "remote": "https://github.com/Comcreate-dev/CSB.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/backburner/DumpsterAnt",
+      "path": "/home/cjm/projects/archive/work/backburner/DumpsterAnt",
       "remote": "https://github.com/cartermccann/DumpsterAnt.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/backburner/KBC",
+      "path": "/home/cjm/projects/archive/work/backburner/KBC",
       "remote": "https://github.com/cartermccann/KeyBuyersClub.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/backburner/forsyth/forsyth4defense",
+      "path": "/home/cjm/projects/archive/work/backburner/forsyth/forsyth4defense",
       "remote": "https://github.com/jdawggy25/forsyth4defense.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -643,7 +643,7 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/mind-body-athletes-recovered",
+      "path": "/home/cjm/projects/work/mind-body-athletes",
       "remote": "https://github.com/comcreate-io/mind-body-athletes.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -1761,7 +1761,7 @@
       ]
     },
     {
-      "path": "/home/cjm/projects/work/backburner/forsyth/DigitalVisibility",
+      "path": "/home/cjm/projects/archive/work/backburner/forsyth/DigitalVisibility",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
@@ -2630,7 +2630,7 @@
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/story",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/story",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
@@ -2928,121 +2928,121 @@
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/Buro/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/buro",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/Function/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/function",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/GTE/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/gte",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/alaia/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/alaia",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/antimetal/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/antimetal",
       "reasons": [
         "missing_origin"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/assembly/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/assembly",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/chanel/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/chanel",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/claudetype/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/claudetype",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/craft-engineer/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/craft-engineer",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/instrument/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/instrument",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/lifetime/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/lifetime",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/locomotive/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/locomotive",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/ramp/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/ramp",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/rerun/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/rerun",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/speakeasy/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/speakeasy",
       "reasons": [
         "missing_origin"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/techweek/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/techweek",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/tempo/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/tempo",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/therow/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/therow",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/v7lab/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/v7lab",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/waka/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/waka",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
@@ -3357,19 +3357,19 @@
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/firecrawl/siteclone/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/firecrawl",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/healthcare/forhims/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/forhims",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
-      "path": "/home/cjm/projects/archive/personal/designlang-clones-archive/healthcare/heidihealth/ai-website-cloner-template",
+      "path": "/home/cjm/projects/work/_comcreate/designlang-clones/heidihealth",
       "reasons": [
         "duplicate_checkout_not_canonical_primary"
       ]

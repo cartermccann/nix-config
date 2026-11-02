@@ -333,6 +333,33 @@ secure_by() { # <pid>: the compositor is locked, by this live client, confirmed
 reset_comp() { rm -rf "$T/comp/$SIG"; }
 lines() { [[ -e $1 ]] && wc -l <"$1" || echo 0; }
 
+# Hyprland's first-render start hook can run before createLockFile(). The
+# lifecycle helper must not interpret a not-yet-published file as a dead session.
+echo "== startup: wait for the compositor before claiming or spawning"
+LATE=dddd_4_4
+mkdir -p "$XDG_RUNTIME_DIR/hypr/$LATE"
+"$T/bin/Hyprland" -c "$BLOCK" & LATE_PID=$!
+HYPRLAND_INSTANCE_SIGNATURE=$LATE POND_START_TIMEOUT=3 pond-session start & START_PID=$!
+sleep 0.25
+check "start waits while the compositor lock file is absent" 'alive "$START_PID"'
+check "no shell or notification claim before compositor readiness" '[[ ! -e $T/shell.starts && ! -e $XDG_RUNTIME_DIR/pond-session/claims/notifications ]]'
+printf '%s\nwayland-test\n' "$LATE_PID" >"$XDG_RUNTIME_DIR/hypr/$LATE/hyprland.lock"
+wait "$START_PID"; rc=$?
+wait_for 5 'reg shell "$LATE" >/dev/null && reg launcher "$LATE" >/dev/null'
+check "delayed compositor starts both shell and launcher" '[[ $rc -eq 0 ]] && reg shell "$LATE" >/dev/null && reg launcher "$LATE" >/dev/null'
+check "supervisor output is retained for startup diagnosis" '[[ -f $XDG_RUNTIME_DIR/pond-session/$LATE/supervise-shell.log && -f $XDG_RUNTIME_DIR/pond-session/$LATE/supervise-launcher.log ]]'
+HYPRLAND_INSTANCE_SIGNATURE=$LATE pond-session stop
+kill "$LATE_PID"; wait "$LATE_PID" 2>/dev/null
+rm -rf "$XDG_RUNTIME_DIR/hypr/$LATE" "$XDG_RUNTIME_DIR/pond-session/$LATE"
+rm -f "$T/shell.starts" "$T/vicinae.servers" "$T/vicinae.live" "$T/vicinae.helper" "$T/systemctl.calls" "$T/notify.calls"
+HYPRLAND_INSTANCE_SIGNATURE=$LATE POND_START_TIMEOUT=0.3 pond-session start; rc=$?
+check "missing compositor fails without starting or claiming anything" '[[ $rc -ne 0 && ! -e $T/shell.starts && ! -e $XDG_RUNTIME_DIR/pond-session/claims/notifications && ! -e $XDG_RUNTIME_DIR/pond-session/claims/launcher ]]'
+: >"$T/notify.calls"
+HYPRLAND_INSTANCE_SIGNATURE=$LATE pond-session launcher toggle
+check "missing launcher does not claim another session owns it" 'grep -q "not running" "$T/notify.calls" && ! grep -q "another Pond session" "$T/notify.calls"'
+rm -rf "$XDG_RUNTIME_DIR/pond-session/$LATE"
+rm -f "$T/notify.calls"
+
 fake_compositor "$SIG" COMP_SIG
 
 echo "== start: stale sessions are reaped by registration, nothing else is"

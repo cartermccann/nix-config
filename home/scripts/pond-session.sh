@@ -78,6 +78,7 @@ LOCK_BUDGET=${POND_LOCK_BUDGET:-12}     # all of `lock`
 POND_SECURE=${POND_SECURE_TIMEOUT:-5}   # Pond's locker reaching isSecure
 IPC_TIMEOUT=${POND_IPC_TIMEOUT:-1.5}    # one `qs ipc` call
 CTL_TIMEOUT=${POND_CTL_TIMEOUT:-2}      # hyprctl, systemctl, gdbus, notify-send
+START_TIMEOUT=${POND_START_TIMEOUT:-15} # initial compositor readiness only
 GRACE=${POND_TERM_GRACE:-2}             # TERM to KILL
 
 log() {
@@ -444,8 +445,13 @@ launcher_cmd() {
     exec "$POND_LAUNCHER" "$@"
   fi
   log "launcher unavailable in this session (owner: ${owner:-none})"
-  notify normal "Launcher unavailable" \
-    "Vicinae is serving another Pond session. Close that session to use it here."
+  if [[ -n $owner && $owner != "$sig" ]]; then
+    notify normal "Launcher unavailable" \
+      "Vicinae is serving another Pond session. Close that session to use it here."
+  else
+    notify normal "Launcher unavailable" \
+      "Pond's launcher is not running. Check the session logs in $dir."
+  fi
   exit 1
 }
 
@@ -475,7 +481,7 @@ reap_stale() {
 
 ensure_supervisor() { # <role>
   registered "$dir" "supervise-$1" >/dev/null && return 0
-  spawn "$dir" "supervise-$1" /dev/null "$self" supervise "$1" "$sig"
+  spawn "$dir" "supervise-$1" "$dir/supervise-$1.log" "$self" supervise "$1" "$sig"
 }
 
 # Run one daemon of the session and start it again when it exits. Gives up
@@ -868,7 +874,26 @@ guard_run() {
 
 # --- commands --------------------------------------------------------------
 
+# hyprland.start is a first-render hook, not the ready event: it can run
+# before startCompositor() publishes hyprland.lock. Wait before any claims or
+# supervisors are created. Once started, supervisors still treat disappearance
+# of the file as logout immediately; this grace period is only for startup.
+wait_compositor_ready() {
+  local until delay
+  now_ms until
+  ms "$START_TIMEOUT" delay
+  until=$((until + delay))
+  while ! compositor_alive "$sig"; do
+    if ! before "$until"; then
+      log "Hyprland did not become ready within $START_TIMEOUT seconds; Pond was not started"
+      return 1
+    fi
+    sleep 0.1
+  done
+}
+
 start_main() {
+  wait_compositor_ready || return 1
   reap_stale
   with_lock "$claims/.lock" 5 claim_notifications
   ensure_supervisor shell

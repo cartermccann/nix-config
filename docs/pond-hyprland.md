@@ -113,6 +113,20 @@ Cross-output pointer delivery and mixed-scale geometry still need live testing.
 Unconfirmed display settings revert on shell restart or config reload; an
 independent watchdog protects ordinary helper/shell crashes.
 
+## Startup diagnostics
+
+Pond waits up to 15 seconds for Hyprland's instance lock file before taking
+notification/launcher claims or starting its supervisors. Hyprland's
+`hyprland.start` hook runs on the first rendered frame and can precede that file;
+previously this race made all three supervisors exit, leaving a gray desktop.
+
+Each supervisor now retains its output under
+`$XDG_RUNTIME_DIR/pond-session/$HYPRLAND_INSTANCE_SIGNATURE/`:
+`supervise-shell.log`, `supervise-launcher.log` and `supervise-guard.log`.
+Lifecycle messages also appear in `journalctl -t pond-session`.
+A missing launcher is reported as not running; the other-session warning is
+reserved for a verified live claim belonging to another session.
+
 ## Interactive acceptance checklist
 
 Run `nrs` to apply the built configuration, then log out and choose
