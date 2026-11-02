@@ -36,6 +36,11 @@ in
     };
   };
 
+  # The pinned share picker crashes in qtct's QProxyStyle palette recursion
+  # when it inherits the session's Kvantum override. Use Qt's built-in style
+  # for the portal and its picker only; keep the desktop's theme unchanged.
+  systemd.user.services.xdg-desktop-portal-hyprland.environment.QT_STYLE_OVERRIDE = "Fusion";
+
   # PAM services for the two lockers: hyprlock (Waybar session, and the
   # fallback `pond-session lock` uses if Pond's locker does not engage) and
   # Pond's own. Pond's locker reads its service name from POND_PAM_SERVICE,
