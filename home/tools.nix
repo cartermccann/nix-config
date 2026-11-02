@@ -216,7 +216,7 @@ in
     # Rice — trimmed to the ones that are actually wired to something.
     # Dropped (zero invocations, nothing references them): pipes-rs, cbonsai,
     # asciiquarium, sl, lolcat, peaclock, tty-clock.
-    cava # rice-dashboard pane (home/niri.nix); Super+Ctrl+D in Hyprland
+    cava # rice-dashboard pane (home/desktop-helpers.nix); Super+Ctrl+D in Hyprland
     cmatrix
     figlet # required by scripts/comcreate-banner.sh (runs on every bash shell)
 

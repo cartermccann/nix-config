@@ -8,8 +8,9 @@
     # Auseklis, the house palette (lib/palette.nix via lib/auseklis.nix), so GTK,
     # btop, bat, fzf, tmux, yazi, lazygit and the rest match the Hyprland
     # session instead of running catppuccin-macchiato beside it. Zen is covered
-    # on perkons through home/zen.nix (Stylix needs an HM-managed profile). Not
-    # covered: Qt (desktop-plasma.nix hands it to Plasma/Breeze).
+    # on perkons through home/zen.nix (Stylix needs an HM-managed profile). Qt
+    # goes through the qtct platform (qt6ct + Kvantum), which is the Stylix
+    # default and is stated explicitly for perkons in modules/desktop-hyprland.nix.
     base16Scheme = (import ../lib/auseklis.nix).base16;
 
     fonts = {

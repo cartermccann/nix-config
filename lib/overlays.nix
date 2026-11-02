@@ -29,6 +29,11 @@
       ];
     });
   })
+  # Pond desktop shell and locker for the "Hyprland (Pond)" session; see
+  # pkgs/pond-interface/README.md.
+  (final: prev: {
+    pond-interface = final.callPackage ../pkgs/pond-interface { };
+  })
   # Backport GNOME Keyring !112: fresh Secret Service clients can otherwise
   # crash the daemon and trigger repeated unlock prompts. See the local README.
   (final: prev: {
