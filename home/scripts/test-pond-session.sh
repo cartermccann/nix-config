@@ -240,6 +240,7 @@ esac
 if mv "$R/shell.run" "$R/shell.run.$$" 2>/dev/null; then
   bash "$R/shell.run.$$" &
 fi
+echo "$$" >"$R/shell.ready"
 exec 0<"$R/fifo"
 read -r
 EOF
@@ -409,6 +410,7 @@ check "one shell started in total" '[[ $(lines "$T/shell.starts") -eq 1 ]]'
 echo "== restart-shell (from a terminal that inherited tags, as a child of the shell)"
 echo stubborn >"$T/shellmode"
 ps_ restart-shell
+wait_for 6 '[[ -n $(reg shell) && $(cat "$T/shell.ready" 2>/dev/null) == "$(reg shell)" ]]'
 launcher_pid=$(reg launcher)
 # A child of the (stubborn) shell, standing in for a terminal it started, runs
 # restart-shell with the old environment tags.
@@ -426,9 +428,24 @@ check "restart-shell from the shell's own tree exits 0 (does not kill itself)" '
 check "TERM-ignoring shell was killed" '! alive $shell_pid'
 wait_for 6 '[[ -n $(reg shell) && $(reg shell) != "$shell_pid" ]]'
 check "shell has a new pid" '[[ -n $(reg shell) && $(reg shell) != "$shell_pid" ]]'
-check "supervisor unchanged" '[[ $(reg supervise-shell) == "$sups" ]]'
+check "shell supervisor replaced" '[[ -n $(reg supervise-shell) && $(reg supervise-shell) != "$sups" ]]'
 check "launcher untouched" '[[ $(reg launcher) == "$launcher_pid" ]]'
 echo normal >"$T/shellmode"
+ps_ restart-shell
+wait_for 6 '[[ -n $(reg shell) ]]'
+
+echo "== restart after a package upgrade"
+cat >"$T/bin/pond-shell-v2" <<EOF
+#!$BASH_BIN
+echo v2 >"$T/shell.version"
+exec "$T/bin/shell-fake" "\$@"
+EOF
+chmod +x "$T/bin/pond-shell-v2"
+guard_pid=$(reg guard)
+POND_SHELL="$T/bin/pond-shell-v2" ps_ restart-shell
+wait_for 6 '[[ -f $T/shell.version ]]'
+check "restart launches the requesting wrapper's new shell" '[[ $(cat "$T/shell.version" 2>/dev/null) == v2 ]]'
+check "upgrade leaves launcher and sleep guard running" '[[ $(reg launcher) == "$launcher_pid" && $(reg guard) == "$guard_pid" ]]'
 ps_ restart-shell
 wait_for 6 '[[ -n $(reg shell) ]]'
 

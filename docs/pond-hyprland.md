@@ -51,7 +51,26 @@ rather than covering the workspace minimap.
 `pond-shell ipc call controls open dictation` also opens a control (other names:
 `awake`, `hardware`, `bluetooth`, `updates`); `controls close` dismisses them.
 After rebuilding and applying with `nrs`, `pond-session restart-shell` loads the
-new UI without logging out. Keep-awake deliberately resets on that restart.
+new UI without logging out. The helper replaces the shell supervisor too, so
+it cannot retain the previous package's store path. It leaves the launcher,
+lockers and independent sleep-lock guard running. Keep-awake deliberately
+resets on that restart.
+
+Older helpers kept the old supervisor: after a rebuild this left the new IPC
+client unable to find the old shell, including workspace-number shortcuts.
+Logging out and back into Pond recovers that mismatch. Once the corrected
+helper is applied, `pond-session restart-shell` switches to the current package.
+
+Browser notification icons resolve Zen's `zen` identity to its installed
+`zen-beta` desktop entry. Missing icons use Pond's bundled bell, so a host icon
+theme without `application-x-executable` cannot produce checkerboards.
+
+The restart/icon correction passed `nh os build`, sandbox smoke, the focused
+restart/upgrade tests and real QML icon tests. The full lifecycle run recorded
+176 passes and two timing failures (hung-lock IPC deadline, delayed lock
+confirmation); those cases passed three and two isolated reruns respectively
+without code changes. Logs: `/tmp/pond-restart-final-lifecycle.log`,
+`/tmp/pond-lock-budget-check.log`, `/tmp/pond-default-race-check.log`.
 
 Validation for these controls: `nh os build` and the sandbox smoke passed;
 174 Python and 12 JavaScript tests passed with no skips. The smoke renders all

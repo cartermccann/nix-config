@@ -4,7 +4,7 @@
 #                    notification name, then start the shell, the launcher and
 #                    the lock guard, each under a supervisor
 #   stop             stop this session's supervisors, daemons and lockers
-#   restart-shell    stop this session's shell; its supervisor starts it again
+#   restart-shell    replace this session's shell and supervisor with current binaries
 #   lock [reason]    lock the screen; exit 0 only once it is confirmed locked
 #                    (below), 3 if locked by a lock screen it cannot confirm
 #   suspend          lock, then suspend; refuses to suspend an unlocked session
@@ -229,6 +229,8 @@ roles_of() { # <dir>: every recorded role
 terminate() {
   local dir=$1 role pid start p
   shift
+  local leader_signal=TERM
+  if [[ ${1:-} == --kill-leaders ]]; then leader_signal=KILL; shift; fi
   local -a leaders=() starts=() kids_pids=() kids_starts=() queue
   local -A child_of=() exclude=() mine=() role_pid=()
   for role in "$@"; do
@@ -271,7 +273,7 @@ terminate() {
       queue+=("$pid")
     done
   done
-  signal_all TERM leaders starts
+  signal_all "$leader_signal" leaders starts
   wait_gone leaders starts 1
   signal_all TERM kids_pids kids_starts
   wait_gone leaders starts "$GRACE"
@@ -911,9 +913,29 @@ stop_main() {
   release_claim launcher "$sig"
 }
 
+# A supervisor keeps its original POND_SHELL store path. Reusing it after a
+# rebuild silently relaunches the old shell, while the new IPC client can't
+# find that instance. Retire only the shell supervisor, without its TERM
+# trap (which would independently kill the shell and its calling terminal).
+# Freeze it while taking the descendant snapshot so it cannot spawn an
+# unregistered old shell between the snapshot and termination. EXIT resumes
+# it if this operation is interrupted before retirement.
+retire_shell_supervisor() (
+  local pid stamp
+  read -r pid stamp < <(registered "$dir" supervise-shell) || exit 0
+  # Used by name through signal_all's nameref parameters, including the trap.
+  # shellcheck disable=SC2034
+  local -a retired_pids=("$pid") retired_starts=("$stamp")
+  trap 'signal_all CONT retired_pids retired_starts' EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM HUP
+  signal_all STOP retired_pids retired_starts
+  terminate "$dir" --kill-leaders supervise-shell
+)
+
 restart_shell_main() {
+  retire_shell_supervisor || return $?
   terminate "$dir" shell
-  # A no-op while the supervisor lives; brings it back if it gave up.
   ensure_supervisor shell
 }
 

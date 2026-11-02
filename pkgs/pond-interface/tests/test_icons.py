@@ -51,3 +51,54 @@ ShellRoot {
                 self.assertEqual(results['blank'], [''], log)
                 self.assertEqual(results['ready'], [True], log)
                 self.assertNotIn('Could not load icon', log)
+
+    def test_notifications_resolve_zen_and_bundle_the_generic_fallback(self):
+        harness = qmlharness.Harness()
+        self.addCleanup(harness.close)
+        data = Path(harness.tmp.name) / 'data'
+        apps = data / 'applications'
+        apps.mkdir(parents=True)
+        (apps / 'zen-beta.desktop').write_text('[Desktop Entry]\nType=Application\nName=Zen Browser (Beta)\n'
+            'Exec=true\nIcon=zen-browser\nStartupWMClass=zen-beta\n')
+        icons = data / 'icons/hicolor/scalable/apps'
+        icons.mkdir(parents=True)
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="8" fill="white"/></svg>'
+        (icons / 'zen-browser.svg').write_text(svg)
+        harness.write('assets/bell.svg', svg)
+        source = (qmlharness.OVERLAY_SHELL / 'NiriMsg.qml').read_text()
+        app_functions = source[source.index('  function _appInfo('):source.index('  property var _rows:')]
+        harness.write('NiriMsg.qml', 'pragma Singleton\nimport QtQuick\nimport Quickshell\n'
+            'Singleton { property var _appInfoCache: ({})\n' + app_functions + '\n}')
+        source = (qmlharness.OVERLAY_SHELL / 'notifications/State.qml').read_text()
+        functions = source[source.index('  function availableIcon('):source.index('  function title(')]
+        harness.write('notifications/State.qml', 'pragma Singleton\nimport QtQuick\nimport Quickshell\n'
+            'import ".." as Shell\nSingleton {\n' + functions + '\n}')
+        harness.write('shell.qml', '''import QtQuick
+import Quickshell
+import "notifications" as Notifications
+ShellRoot {
+ Component.onCompleted: console.log("Entries initializing", DesktopEntries.applications.values.length)
+ Image { id: icon; sourceSize.width:24; sourceSize.height:24 }
+ Timer { interval:700; running:true; onTriggered: {
+  const source=Notifications.State.iconSource({appName:"Zen", desktopEntry:"zen", appIcon:""});
+  console.log("RESULT zen", JSON.stringify(source));
+  icon.source=source; zenLoaded.start();
+ }}
+ Timer { id:zenLoaded; interval:200; onTriggered: {
+  console.log("RESULT ready", JSON.stringify(icon.status === Image.Ready));
+  console.log("RESULT invalidRaw", JSON.stringify(Notifications.State.iconSource({appName:"Zen",desktopEntry:"zen",appIcon:"does-not-exist"})));
+  const source=Notifications.State.iconSource({appName:"Unknown application",appIcon:"/nonexistent/icon.png"});
+  console.log("RESULT fallback", JSON.stringify(source));
+  icon.source=source; fallbackLoaded.start();
+ }}
+ Timer { id:fallbackLoaded; interval:200; onTriggered: {
+  console.log("RESULT ready", JSON.stringify(icon.status === Image.Ready));
+  console.log("RESULT DONE", "true"); Qt.quit();
+ }}
+}''')
+        results, log = harness.run(env={'XDG_DATA_HOME': str(data), 'XDG_DATA_DIRS': str(data)})
+        self.assertIn('zen-browser', results['zen'][0], log)
+        self.assertEqual(results['zen'], results['invalidRaw'], log)
+        self.assertTrue(results['fallback'][0].endswith('/assets/bell.svg'), log)
+        self.assertEqual(results['ready'], [True, True], log)
+        self.assertNotIn('Could not load icon', log)
