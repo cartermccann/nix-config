@@ -11,9 +11,7 @@
     ./hardware-configuration.nix
     ../../modules/common.nix
     ../../modules/desktop-wayland.nix
-    ../../modules/desktop-niri-noctalia.nix
     ../../modules/desktop-hyprland.nix
-    ../../modules/desktop-plasma.nix
     ../../modules/nvidia.nix
     ../../modules/ollama.nix
     ../../modules/opencode-companion.nix
@@ -41,6 +39,11 @@
     packages = [ pkgs.terminus_font ];
     earlySetup = true;
   };
+
+  # perkons's greeter runs Ly's colour-mixing shader (cobalt, deep navy, black),
+  # as it did before the monogram; usins keeps the monogram. See
+  # local.ly.animation in modules/desktop-wayland.nix.
+  local.ly.animation = "colormix";
 
   # The monitors are external, so brightnessctl has nothing to drive: drop
   # Ly's brightness keys rather than show dead hints. usins keeps them.

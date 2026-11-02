@@ -1,24 +1,13 @@
 {
-  config,
   pkgs,
-  user,
   ...
 }:
-# The standalone "plain Niri" session was retired; only Niri-Noctalia and
-# the Hyprland sessions remain. This file provides the cross-session helper scripts
-# both still call (rice-dashboard from both; wallpaper-pick from Niri-Noctalia).
+# The standalone "plain Niri" session was retired; only Niri-Noctalia remains of
+# the Niri sessions, and only on usins (modules/desktop-niri-noctalia.nix imports
+# this). It provides the helper that session's keybind calls: wallpaper-pick on
+# Mod+Shift+W. rice-dashboard, which the Hyprland sessions call too, is in
+# home/desktop-helpers.nix.
 let
-  riceDashboard = pkgs.writeShellScriptBin "rice-dashboard" ''
-    ${pkgs.tmux}/bin/tmux new-session -d -s rice -x "$(tput cols)" -y "$(tput lines)"
-    ${pkgs.tmux}/bin/tmux send-keys -t rice 'btop' Enter
-    ${pkgs.tmux}/bin/tmux split-window -h -t rice -p 40
-    ${pkgs.tmux}/bin/tmux send-keys -t rice 'cava' Enter
-    ${pkgs.tmux}/bin/tmux split-window -v -t rice -p 50
-    ${pkgs.tmux}/bin/tmux send-keys -t rice 'yazi' Enter
-    ${pkgs.tmux}/bin/tmux select-pane -t rice:1.1
-    ${pkgs.tmux}/bin/tmux attach -t rice
-  '';
-
   wallpaperPick = pkgs.writeShellScriptBin "wallpaper-pick" ''
     PICK=$(find -L ~/wallpapers -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \) | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="Wallpaper: ")
     # ~/wallpaper.png is a cross-session contract (hyprlock reads it too) — `magick`
@@ -30,8 +19,5 @@ let
   '';
 in
 {
-  home.packages = [
-    wallpaperPick
-    riceDashboard
-  ];
+  home.packages = [ wallpaperPick ];
 }

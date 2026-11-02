@@ -15,12 +15,14 @@
 #   projects.nix    project launcher (Super+O): repo picker -> herdr workspace layout
 #   agents.nix      agent cockpit: waybar module + switcher (Super+Shift+A) over herdr
 #   calendar.nix    the clock's calendar dropdown (calendar.py, Google iCal feeds)
-#   compositor.nix  hyprland.lua + hyprsunset.conf
+#   compositor.nix  hyprland.lua, hyprland-caelestia.lua, hyprland-pond.lua + hyprsunset.conf
 #   waybar.nix      waybar config + stylesheet
 #   swaync.nix      notification daemon + stylesheet
 #   menus.nix       fuzzel + swayosd
 #   lock.nix        hyprlock + hypridle
 #   caelestia.nix   the Caelestia shell (second session tile)
+#   pond.nix        the Pond shell (third session tile): packages and the session lifecycle
+#                   helper. Not imported here: modules/desktop-hyprland.nix adds it for perkons only.
 #   palette-css.nix palette + glass tokens -> GTK @define-color block (not a module)
 #
 # Colours come from lib/palette.nix; glass, shape and blur from

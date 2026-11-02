@@ -7,7 +7,7 @@
 }:
 # The compositor config itself (Hyprland 0.55+ Lua) plus hyprsunset's profile.
 # Everything the session *shows* lives in the sibling modules: waybar.nix,
-# swaync.nix, menus.nix, lock.nix.
+# swaync.nix, menus.nix, lock.nix, caelestia.nix, pond.nix.
 let
   pal = import ../../lib/palette.nix;
   auseklis = import ../../lib/auseklis.nix;
@@ -18,32 +18,95 @@ let
   # so launch it bare — no -c/-s needed.
   waybarCmd = "waybar";
 
-  # The compositor config is shared between the two session tiles; only the
+  # The compositor config is shared between the three session tiles; only the
   # shell layer differs. `shellKind` selects it:
   #
   #   "waybar"    waybar + swaync + fuzzel + swayosd + hyprlock + hypridle
   #   "caelestia" Caelestia, which provides all of the above itself
+  #   "pond"      Pond (Quickshell) for the bar, notifications, OSD, live sky
+  #               background and lock/idle, plus Vicinae as the launcher
   #
   # Everything else — monitors, animations, window rules, window management,
   # workspaces, screenshots — is identical, which is the whole point of
   # parameterising rather than forking the file. The seams below are the only
-  # places the two diverge.
+  # places the three diverge; each takes one list of Lua lines per shell, so a
+  # missing profile is an evaluation error instead of a silently absent bind.
   #
   # Caelestia's own keybinds arrive over Hyprland's D-Bus global shortcuts
   # (appid "caelestia"), hence hl.dsp.global("caelestia:<name>"). The names come
   # from the CustomShortcut declarations in its QML source.
+  #
+  # Pond has no global-shortcut interface at all: its actions are Quickshell
+  # IpcHandler targets (shell/Shortcuts.qml, shell/shell.qml and
+  # lockscreen/session/Shell.qml upstream), reached with `pond-shell ipc call
+  # <target> <function>` and `pond-lock ipc call lockscreen <function>`. Only
+  # targets that exist upstream are bound; where Pond has no IPC for a waybar
+  # feature (per-notification dismiss, a notification-centre toggle) the key is
+  # left to the sidebar rather than mapped to something that means something
+  # else.
   mkHyprlandLua =
     shellKind:
     let
-      caelestia = shellKind == "caelestia";
-      # Pick between two lists of Lua lines at one seam. `sep` carries the
-      # indentation of the seam's surroundings: at top level that is just a
-      # newline, but inside the autostart function body the continuation lines
-      # need the block's two spaces to line up with the first.
-      shellSep =
-        sep: waybarLines: caelestiaLines:
-        lib.concatStringsSep sep (if caelestia then caelestiaLines else waybarLines);
+      # Pick one list of Lua lines at a seam. `sep` carries the indentation of
+      # the seam's surroundings: at top level that is just a newline, but inside
+      # the autostart function body the continuation lines need the block's two
+      # spaces to line up with the first.
+      shellSep = sep: lines: lib.concatStringsSep sep lines.${shellKind};
       shell = shellSep "\n";
+      # Pond's wrappers and session helper (home/hyprland/pond.nix), by name off
+      # PATH like the hypr-* scripts.
+      pondIpc = target: fn: "pond-shell ipc call ${target} ${fn}";
+
+      # Wording for the comments the generated Lua carries per shell.
+      notifier =
+        {
+          waybar = "swaync";
+          caelestia = "caelestia";
+          pond = "pond";
+        }
+        .${shellKind};
+      osd =
+        {
+          waybar = "via swayosd for the OSD";
+          caelestia = "wpctl; caelestia draws the OSD";
+          pond = "Pond draws the OSD";
+        }
+        .${shellKind};
+
+      # Media keys for the two sessions without a shell-side media handler.
+      playerctlBinds = [
+        ''hl.bind("XF86AudioPlay",    hl.dsp.exec_cmd("playerctl play-pause"), { description = "Play/pause", locked = true })''
+        ''hl.bind("XF86AudioNext",    hl.dsp.exec_cmd("playerctl next"),       { description = "Next track", locked = true })''
+        ''hl.bind("XF86AudioPrev",    hl.dsp.exec_cmd("playerctl previous"),   { description = "Previous track", locked = true })''
+      ];
+
+      # awww owns the wallpaper in the Waybar and Caelestia sessions.
+      stillWallpaper = [
+        ''hl.exec_cmd("awww-daemon")''
+        "-- Give the daemon a moment to bind its socket, then restore the shared"
+        "-- still wallpaper used by Niri, Hyprland, and hyprlock."
+        "hl.exec_cmd([[bash -c 'sleep 1 && ${pkgs.awww}/bin/awww img ${config.home.homeDirectory}/wallpaper.png --transition-type fade --transition-duration 1']])"
+        ''hl.exec_cmd("wl-paste --watch cliphist store")''
+      ];
+
+      # Pond's locker authenticates through the PAM service named in
+      # POND_PAM_SERVICE (lockscreen/session/Authentication.qml) and falls back
+      # to `login` without it. Set for the whole session so that every way the
+      # locker can start (this config's bind, the shell's idle lock, lock before
+      # sleep, `loginctl lock-session`) uses the dedicated pond-lock service.
+      pondEnv = lib.optionalString (shellKind == "pond") (
+        "\n\n-- Pond's locker: dedicated PAM service (modules/desktop-hyprland.nix).\n"
+        + ''hl.env("POND_PAM_SERVICE", "pond-lock")''
+      );
+
+      # Registered at top level, not inside hyprland.start, so a config reload
+      # re-registers it. Runs only on a clean Hyprland exit; a crash or a kill
+      # skips it, which is why `pond-session start` also reaps what a dead
+      # Pond session left behind.
+      pondShutdown = lib.optionalString (shellKind == "pond") (
+        "\n\n-- Stop this session's Pond shell, launcher and locker on a clean exit.\n"
+        + ''hl.on("hyprland.shutdown", function() hl.exec_cmd("pond-session stop") end)''
+      );
     in
     ''
       -- Hyprland session (Hyprland 0.55+ Lua config)
@@ -61,7 +124,7 @@ let
       -- NVIDIA GBM_BACKEND/__GLX_VENDOR_LIBRARY_NAME etc. are already global
       -- (modules/nvidia.nix → environment.sessionVariables); only cursor sizes here.
       hl.env("XCURSOR_SIZE", "24")
-      hl.env("HYPRCURSOR_SIZE", "24")
+      hl.env("HYPRCURSOR_SIZE", "24")${pondEnv}
 
       -- Core options
       hl.config({
@@ -234,8 +297,8 @@ let
       -- entirely (a 0.42 frost card under a 0.5 threshold renders as flat
       -- tint), and above zero so transparent gaps don't haze. Glass surfaces
       -- take auseklis.glass.blurThreshold, which sits under the tint floor.
-      ${shell
-        [
+      ${shell {
+        waybar = [
           # xray: the bar's blur samples only the wallpaper. Without it Hyprland
           # re-blurs whatever window sits under the bar and the whole bar blinks
           # when that window's colours change, until a hover forces a redraw
@@ -246,14 +309,28 @@ let
           ''hl.layer_rule({ match = { namespace = "swaync-notification-window" }, blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
           ''hl.layer_rule({ match = { namespace = "swayosd" },                    blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
           ''hl.layer_rule({ match = { namespace = "^auseklis-calendar$" },         blur = true, ignore_alpha = ${toString auseklis.glass.blurThreshold} })''
-        ]
-        [
+        ];
+        caelestia = [
           # Every Caelestia surface is namespaced caelestia-<name>
           # (components/containers/StyledWindow.qml), so one regex covers the bar,
           # launcher, dashboard, sidebar, OSD and notifications.
           ''hl.layer_rule({ match = { namespace = "^caelestia-" }, blur = true, ignore_alpha = 0.2 })''
-        ]
-      }
+        ];
+        pond = [
+          # Every Pond layer-shell surface is namespaced pond-<name> (sidebar,
+          # volume, brightness, keyboard, calendar-<output>, settings-<output>,
+          # notification-toast-/-center-, wallpaper; WlrLayershell.namespace
+          # upstream). Pond animates its own surfaces and several are
+          # output-sized, so Hyprland's layer popin/fade on top of that would
+          # scale the whole surface: switch the compositor animation off for
+          # all of them.
+          ''hl.layer_rule({ match = { namespace = "^pond-" }, no_anim = true })''
+          # The surfaces upstream's niri config gives a blurred, non-xray
+          # background (config/niri/shell/config.kdl), plus Vicinae's window.
+          ''hl.layer_rule({ match = { namespace = "^pond-((sidebar|volume|brightness|keyboard)$|calendar-)" }, blur = true, ignore_alpha = 0.2, xray = false })''
+          ''hl.layer_rule({ match = { namespace = "^vicinae$" }, blur = true, ignore_alpha = 0.2, xray = false })''
+        ];
+      }}
 
       -- Window rules
       -- The terminal is the glass centerpiece. Ghostty owns its background alpha
@@ -283,8 +360,8 @@ let
       hl.bind(mod .. " + RETURN", hl.dsp.exec_cmd("ghostty"), { description = "Terminal" })
       -- canonical tmux session ("work"), same bind as the niri session
       hl.bind(mod .. " + ALT + RETURN", hl.dsp.exec_cmd("ghostty -e fish -c 'tmux attach; or tmux new -s work'"), { description = "Terminal in tmux session work" })
-      ${shell
-        [
+      ${shell {
+        waybar = [
           ''hl.bind(mod .. " + SPACE",  hl.dsp.exec_cmd("fuzzel --config ${cfgHome}/fuzzel/hypr.ini"), { description = "App launcher" })''
           ''hl.bind(mod .. " + V",      hl.dsp.exec_cmd("cliphist list | fuzzel --dmenu --config ${cfgHome}/fuzzel/hypr.ini | cliphist decode | wl-copy"), { description = "Clipboard history" })''
           # The Auseklis menu (home/hyprland/menu.nix) and direct jumps into it.
@@ -295,14 +372,35 @@ let
           ''hl.bind(mod .. " + slash",       hl.dsp.exec_cmd("auseklis-keys"), { description = "Keybinding cheatsheet" })''
           ''hl.bind(mod .. " + O",           hl.dsp.exec_cmd("auseklis-project"), { description = "Open a project" })''
           ''hl.bind(mod .. " + SHIFT + A",   hl.dsp.exec_cmd("auseklis-agents menu"), { description = "Agent switcher" })''
-        ]
-        [
+        ];
+        caelestia = [
           ''hl.bind(mod .. " + SPACE",  hl.dsp.global("caelestia:launcher"), { description = "App launcher" })''
           # Caelestia's CLI wraps the same cliphist store the waybar session
           # writes to, so history carries across both sessions.
           ''hl.bind(mod .. " + V",      hl.dsp.exec_cmd("caelestia clipboard"), { description = "Clipboard history" })''
-        ]
-      }
+        ];
+        pond = [
+          # Vicinae is Pond's launcher and clipboard history (upstream binds
+          # exactly these two). Its own clipboard store replaces cliphist here,
+          # so the autostart below does not run `wl-paste --watch cliphist`.
+          # Through `pond-session launcher`: Vicinae has one endpoint per user
+          # ($XDG_RUNTIME_DIR/vicinae), so a second Pond session on another VT
+          # must not open the first session's window; it is told why instead.
+          ''hl.bind(mod .. " + SPACE",  hl.dsp.exec_cmd("pond-session launcher toggle"), { description = "App launcher" })''
+          ''hl.bind(mod .. " + V",      hl.dsp.exec_cmd([[pond-session launcher deeplink "vicinae://launch/clipboard/history?toggle=true"]]), { description = "Clipboard history" })''
+          # The project and agent pickers are fuzzel dmenus that depend on
+          # neither waybar nor swaync, so they carry over unchanged. The
+          # Auseklis menu (Super+Alt+Space) is not bound: its rows drive waybar,
+          # swaync and hyprlock.
+          ''hl.bind(mod .. " + slash",       hl.dsp.exec_cmd("auseklis-keys"), { description = "Keybinding cheatsheet" })''
+          ''hl.bind(mod .. " + O",           hl.dsp.exec_cmd("auseklis-project"), { description = "Open a project" })''
+          ''hl.bind(mod .. " + SHIFT + A",   hl.dsp.exec_cmd("auseklis-agents menu"), { description = "Agent switcher" })''
+          # The manual opens by itself on first run; this reopens it. Pond's
+          # pond-manual.desktop is hidden (home/hyprland/pond.nix), so this and
+          # the settings Manual page are how to reach it.
+          ''hl.bind(mod .. " + SHIFT + slash", hl.dsp.exec_cmd("${pondIpc "manual" "open"}"), { description = "Pond manual" })''
+        ];
+      }}
 
       -- Screenshots (grimblast adds --freeze: the screen stops while you aim)
       hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd([[grimblast --freeze save area - | satty -f - --output-filename ~/Pictures/Screenshots/satty-$(date +%Y%m%d-%H%M%S).png]]), { description = "Screenshot area → annotate" })
@@ -320,7 +418,21 @@ let
       hl.bind(mod .. " + T", hl.dsp.window.float(), { description = "Toggle floating" })
       hl.bind(mod .. " + C", hl.dsp.window.center(), { description = "Center window" })
       hl.bind(mod .. " + P", hl.dsp.window.pseudo(), { description = "Pseudo-tile" })
-      hl.bind(mod .. " + S", hl.dsp.layout("togglesplit"), { description = "Toggle split direction (dwindle)" })
+      ${shell {
+        waybar = [
+          ''hl.bind(mod .. " + S", hl.dsp.layout("togglesplit"), { description = "Toggle split direction (dwindle)" })''
+        ];
+        caelestia = [
+          ''hl.bind(mod .. " + S", hl.dsp.layout("togglesplit"), { description = "Toggle split direction (dwindle)" })''
+        ];
+        pond = [
+          # Pond's manual has Super+S as the screenshot key. Captures go
+          # through the shell's screenshot IPC so they reach its preview
+          # (copy, drag, save); the split toggle moves to Super+Alt+S.
+          ''hl.bind(mod .. " + S",       hl.dsp.exec_cmd("${pondIpc "screenshot" "capture area"}"), { description = "Screenshot area" })''
+          ''hl.bind(mod .. " + ALT + S", hl.dsp.layout("togglesplit"), { description = "Toggle split direction (dwindle)" })''
+        ];
+      }}
 
       -- Scratchpad (special workspace) — drops in with slidefadevert; keep a
       -- persistent ghostty+tmux session here.
@@ -396,30 +508,82 @@ let
       end)
       hl.bind(mod .. " + A", hl.dsp.submap("tmux"), { description = "tmux mode (prefix)" })
 
-      -- Workspaces 1-10 (focus + move-window-to)
-      for i = 1, 10 do
-        local key = (i == 10) and "0" or tostring(i)
-        hl.bind(mod .. " + " .. key,           hl.dsp.focus({ workspace = i }), { description = "Workspace " .. i })
-        hl.bind(mod .. " + SHIFT + " .. key,   hl.dsp.window.move({ workspace = i, follow = true }), { description = "Move window to workspace " .. i })
-      end
+      ${shell {
+        waybar = [
+          "-- Workspaces 1-10 (focus + move-window-to)"
+          "for i = 1, 10 do"
+          "  local key = (i == 10) and \"0\" or tostring(i)"
+          (
+            "  "
+            + ''hl.bind(mod .. " + " .. key,           hl.dsp.focus({ workspace = i }), { description = "Workspace " .. i })''
+          )
+          (
+            "  "
+            + ''hl.bind(mod .. " + SHIFT + " .. key,   hl.dsp.window.move({ workspace = i, follow = true }), { description = "Move window to workspace " .. i })''
+          )
+          "end"
+        ];
+        caelestia = [
+          "-- Workspaces 1-10 (focus + move-window-to)"
+          "for i = 1, 10 do"
+          "  local key = (i == 10) and \"0\" or tostring(i)"
+          (
+            "  "
+            + ''hl.bind(mod .. " + " .. key,           hl.dsp.focus({ workspace = i }), { description = "Workspace " .. i })''
+          )
+          (
+            "  "
+            + ''hl.bind(mod .. " + SHIFT + " .. key,   hl.dsp.window.move({ workspace = i, follow = true }), { description = "Move window to workspace " .. i })''
+          )
+          "end"
+        ];
+        pond = [
+          # Pond numbers workspaces per monitor in its sidebar (hypr/Model.js
+          # workspaceForNumber), and the number one past the last is the empty
+          # creation row. The shell's workspaces IPC resolves the number on
+          # the focused monitor, so the keys match what the sidebar shows.
+          "-- Workspaces 1-10 as numbered in Pond's sidebar (focus + move-window-to)"
+          "for i = 1, 10 do"
+          "  local key = (i == 10) and \"0\" or tostring(i)"
+          (
+            "  "
+            + ''hl.bind(mod .. " + " .. key,         hl.dsp.exec_cmd("${pondIpc "workspaces" "focus"} " .. i), { description = "Workspace " .. i })''
+          )
+          (
+            "  "
+            + ''hl.bind(mod .. " + SHIFT + " .. key, hl.dsp.exec_cmd("${pondIpc "workspaces" "moveWindow"} " .. i), { description = "Move window to workspace " .. i })''
+          )
+          "end"
+        ];
+      }}
       hl.bind(mod .. " + TAB",         hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
       hl.bind(mod .. " + SHIFT + TAB", hl.dsp.focus({ workspace = "e-1" }), { description = "Previous workspace" })
 
-      -- Notifications ${if caelestia then "(caelestia)" else "(swaync)"}
-      ${shell
-        [
+      -- Notifications (${notifier})
+      ${shell {
+        waybar = [
           ''hl.bind(mod .. " + comma",         hl.dsp.exec_cmd("swaync-client --close-latest -sw"), { description = "Dismiss latest notification" })''
           ''hl.bind(mod .. " + SHIFT + comma", hl.dsp.exec_cmd("swaync-client -C -sw"), { description = "Clear notifications" })''
           ''hl.bind(mod .. " + N",             hl.dsp.exec_cmd("swaync-client -t -sw"), { description = "Notification center" })''
-        ]
-        [
+        ];
+        caelestia = [
           # Caelestia exposes no per-notification dismiss, so SUPER+comma is left
           # unbound here rather than mapped to something that means something else.
           ''hl.bind(mod .. " + SHIFT + comma", hl.dsp.global("caelestia:clearNotifs"), { description = "Clear notifications" })''
           ''hl.bind(mod .. " + N",             hl.dsp.global("caelestia:sidebar"), { description = "Notification center" })''
           ''hl.bind(mod .. " + D",             hl.dsp.global("caelestia:dashboard"), { description = "Dashboard" })''
-        ]
-      }
+        ];
+        pond = [
+          # Pond's notification history lives in its sidebar, and its IPC has no
+          # per-notification dismiss or clear (shell/shell.qml: sidebar, manual,
+          # settings; shell/Shortcuts.qml: volume, media, brightness), so
+          # SUPER+comma / SUPER+SHIFT+comma are the settings pair upstream binds
+          # rather than a notification action.
+          ''hl.bind(mod .. " + N",             hl.dsp.exec_cmd("${pondIpc "sidebar" "toggle"}"), { description = "Sidebar (notifications)" })''
+          ''hl.bind(mod .. " + comma",         hl.dsp.exec_cmd("${pondIpc "settings" "toggle"}"), { description = "Settings" })''
+          ''hl.bind(mod .. " + SHIFT + comma", hl.dsp.exec_cmd("${pondIpc "settings" "open display"}"), { description = "Display settings" })''
+        ];
+      }}
 
       -- Control panels
       -- CTRL+A is the full mixer; CTRL+S is the quick output picker (three
@@ -431,19 +595,43 @@ let
       hl.bind(mod .. " + CTRL + D", hl.dsp.exec_cmd("ghostty -e rice-dashboard"), { description = "Rice dashboard" })
 
       -- Utilities
-      ${shell
-        [
+      ${shell {
+        waybar = [
           ''hl.bind(mod .. " + CTRL + L",  hl.dsp.exec_cmd("hyprlock"), { description = "Lock screen" })''
           ''hl.bind(mod .. " + SHIFT + X", hl.dsp.exec_cmd("hypr-power-menu"), { description = "Power menu" })''
-        ]
-        [
+        ];
+        caelestia = [
           ''hl.bind(mod .. " + CTRL + L",  hl.dsp.global("caelestia:lock"), { description = "Lock screen" })''
           ''hl.bind(mod .. " + SHIFT + X", hl.dsp.global("caelestia:session"), { description = "Power menu" })''
-        ]
-      }
-      hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("hypr-wallpaper-pick"), { description = "Wallpaper picker" })
-      ${shell
-        [
+        ];
+        pond = [
+          # `pond-session lock` locks with Pond's locker and falls back to
+          # hyprlock (home/scripts/pond-session.sh). Allowed while locked: if
+          # the lock screen has died or hung, pressing it again replaces the
+          # lock screen without unlocking.
+          ''hl.bind(mod .. " + CTRL + L",  hl.dsp.exec_cmd("pond-session lock"), { description = "Lock screen", locked = true })''
+          # The lock / suspend / reboot / shutdown buttons sit in Pond's settings
+          # window (settings/Window.qml SessionButton), so that is its power menu.
+          ''hl.bind(mod .. " + SHIFT + X", hl.dsp.exec_cmd("${pondIpc "settings" "toggle"}"), { description = "Power menu (settings)" })''
+        ];
+      }}
+      ${shell {
+        waybar = [
+          ''hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("hypr-wallpaper-pick"), { description = "Wallpaper picker" })''
+        ];
+        caelestia = [
+          ''hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("hypr-wallpaper-pick"), { description = "Wallpaper picker" })''
+        ];
+        pond = [
+          # Not hypr-wallpaper-pick: that one rewrites ~/wallpaper.png and drives
+          # awww, i.e. it would repaint the Waybar and Caelestia desktops and do
+          # nothing here. Pond keeps its own background mode and image in its
+          # settings (Appearance page), which is where the picker lives.
+          ''hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("${pondIpc "settings" "open appearance"}"), { description = "Wallpaper and appearance" })''
+        ];
+      }}
+      ${shell {
+        waybar = [
           # Waybar handles SIGUSR2 as an in-process reload, avoiding a layer-shell
           # teardown/recreate flash. Start it only when no process is running.
           # The bare pattern matches .waybar-wrapped, the name nixpkgs' wrapper runs
@@ -451,12 +639,18 @@ let
           ''hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("pkill -USR2 waybar || ${waybarCmd}"), { description = "Reload the bar" })''
           # SIGUSR1 is waybar's show/hide toggle: the screen back, panels and binds intact.
           ''hl.bind(mod .. " + B", hl.dsp.exec_cmd("pkill -USR1 waybar"), { description = "Show/hide the bar" })''
-        ]
-        [
+        ];
+        caelestia = [
           # Caelestia has no reload signal; -k then -d is the supported restart.
           ''hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("bash -c 'caelestia shell -k; caelestia shell -d'"), { description = "Restart the shell" })''
-        ]
-      }
+        ];
+        pond = [
+          # Stops only this session's shell process; the session supervisor
+          # (pond-session) starts it again, so there is no kill-then-start race.
+          ''hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("pond-session restart-shell"), { description = "Restart the shell" })''
+          ''hl.bind(mod .. " + B", hl.dsp.exec_cmd("${pondIpc "sidebar" "toggle"}"), { description = "Show/hide the sidebar" })''
+        ];
+      }}
       hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("hyprctl reload"), { description = "Reload Hyprland" })
       hl.bind(mod .. " + CTRL + N",  hl.dsp.exec_cmd("hypr-night-toggle"), { description = "Night light" })
       hl.bind(mod .. " + ALT + R",   hl.dsp.exec_cmd("hypr-record"), { description = "Record focused monitor → ~/Videos/Recordings" })
@@ -471,17 +665,15 @@ let
       -- Session
       hl.bind(mod .. " + SHIFT + E", hl.dsp.exit(), { description = "Exit Hyprland" })
 
-      -- Repeating volume/brightness ${
-        if caelestia then "(wpctl; caelestia draws the OSD)" else "(via swayosd for the OSD)"
-      }
-      ${shell
-        [
+      -- Repeating volume/brightness (${osd})
+      ${shell {
+        waybar = [
           ''hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume raise"), { description = "Volume up", repeating = true })''
           ''hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume lower"), { description = "Volume down", repeating = true })''
           ''hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("swayosd-client --brightness raise"),    { description = "Brightness up", repeating = true })''
           ''hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("swayosd-client --brightness lower"),    { description = "Brightness down", repeating = true })''
-        ]
-        [
+        ];
+        caelestia = [
           # Caelestia declares brightness globals but no volume ones — its OSD
           # watches PipeWire directly, so driving wpctl is what surfaces it.
           # @DEFAULT_AUDIO_SINK@ is deliberate: modules/audio.nix ranks the
@@ -490,23 +682,41 @@ let
           ''hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%-"),        { description = "Volume down", repeating = true })''
           ''hl.bind("XF86MonBrightnessUp",  hl.dsp.global("caelestia:brightnessUp"),   { description = "Brightness up", repeating = true })''
           ''hl.bind("XF86MonBrightnessDown",hl.dsp.global("caelestia:brightnessDown"), { description = "Brightness down", repeating = true })''
-        ]
-      }
+        ];
+        pond = [
+          # Pond draws its own volume and brightness OSD and moves the volume in
+          # 2% steps and the brightness in 5% steps (shell/Shortcuts.qml). Locked
+          # as well, as upstream's allow-when-locked binds are.
+          ''hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("${pondIpc "volume" "increase"}"), { description = "Volume up", repeating = true, locked = true })''
+          ''hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("${pondIpc "volume" "decrease"}"), { description = "Volume down", repeating = true, locked = true })''
+          ''hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("${pondIpc "brightness" "increase"}"), { description = "Brightness up", repeating = true, locked = true })''
+          ''hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("${pondIpc "brightness" "decrease"}"), { description = "Brightness down", repeating = true, locked = true })''
+        ];
+      }}
 
       -- Locked binds (work while the lock screen is active)
-      ${shell
-        [
+      ${shell {
+        waybar = [
           ''hl.bind("XF86AudioMute",    hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"), { description = "Mute", locked = true })''
           ''hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle"),  { description = "Mute mic", locked = true })''
         ]
-        [
+        ++ playerctlBinds;
+        caelestia = [
           ''hl.bind("XF86AudioMute",    hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),   { description = "Mute", locked = true })''
           ''hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { description = "Mute mic", locked = true })''
         ]
-      }
-      hl.bind("XF86AudioPlay",    hl.dsp.exec_cmd("playerctl play-pause"), { description = "Play/pause", locked = true })
-      hl.bind("XF86AudioNext",    hl.dsp.exec_cmd("playerctl next"),       { description = "Next track", locked = true })
-      hl.bind("XF86AudioPrev",    hl.dsp.exec_cmd("playerctl previous"),   { description = "Previous track", locked = true })
+        ++ playerctlBinds;
+        pond = [
+          ''hl.bind("XF86AudioMute",    hl.dsp.exec_cmd("${pondIpc "volume" "muteOutput"}"), { description = "Mute", locked = true })''
+          ''hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("${pondIpc "volume" "muteInput"}"),  { description = "Mute mic", locked = true })''
+          # Pond's media card follows these through its own MPRIS state
+          # (media/State.qml `shortcut`), so they go through it, not playerctl.
+          ''hl.bind("XF86AudioPlay",    hl.dsp.exec_cmd("${pondIpc "media" "playPause"}"), { description = "Play/pause", locked = true })''
+          ''hl.bind("XF86AudioPause",   hl.dsp.exec_cmd("${pondIpc "media" "playPause"}"), { description = "Play/pause", locked = true })''
+          ''hl.bind("XF86AudioNext",    hl.dsp.exec_cmd("${pondIpc "media" "next"}"),      { description = "Next track", locked = true })''
+          ''hl.bind("XF86AudioPrev",    hl.dsp.exec_cmd("${pondIpc "media" "previous"}"),  { description = "Previous track", locked = true })''
+        ];
+      }}
 
       -- Mouse drag/resize
       hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(),   { description = "Drag window", mouse = true })
@@ -544,13 +754,18 @@ let
         -- while there is no compositor, hits "Start request repeated too
         -- quickly", and a plain restart on a start-limited unit fails.
         hl.exec_cmd([[bash -c 'systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE NIXOS_OZONE_WL GBM_BACKEND NVD_BACKEND LIBVA_DRIVER_NAME __GLX_VENDOR_LIBRARY_NAME; dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE; systemctl --user reset-failed xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-desktop-portal 2>/dev/null; systemctl --user restart xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-desktop-portal 2>/dev/null']])
-        hl.exec_cmd("awww-daemon")
-        -- Give the daemon a moment to bind its socket, then restore the shared
-        -- still wallpaper used by Niri, Hyprland, and hyprlock.
-        hl.exec_cmd([[bash -c 'sleep 1 && ${pkgs.awww}/bin/awww img ${config.home.homeDirectory}/wallpaper.png --transition-type fade --transition-duration 1']])
-        hl.exec_cmd("wl-paste --watch cliphist store")
-        ${shellSep "\n  "
-          [
+        ${shellSep "\n  " {
+          waybar = stillWallpaper;
+          caelestia = stillWallpaper;
+          # Pond paints its own live sky on the Background layer (pond-wallpaper)
+          # and keeps its selection in its own state, so awww is not started and
+          # ~/wallpaper.png, which the other two sessions and hyprlock share, is
+          # left alone. No cliphist watcher either: Vicinae keeps the clipboard
+          # history here, and two stores would drift apart.
+          pond = [ "-- Wallpaper: owned by Pond (pond-wallpaper layer); no awww." ];
+        }}
+        ${shellSep "\n  " {
+          waybar = [
             ''hl.exec_cmd("swayosd-server --style ${cfgHome}/swayosd/style.css")''
             ''hl.exec_cmd("${waybarCmd}")''
             # Through its systemd unit, not a bare process: swaync is also
@@ -561,8 +776,8 @@ let
             # the import above it (autostart commands run concurrently).
             ''hl.exec_cmd("bash -c 'systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE; systemctl --user start swaync'")''
             ''hl.exec_cmd("hypridle")''
-          ]
-          [
+          ];
+          caelestia = [
             # One process replaces all four. Started here rather than as a systemd
             # user service (programs.caelestia.systemd.enable = false in
             # caelestia.nix) so it is scoped to this session — the upstream unit
@@ -571,19 +786,29 @@ let
             # No hypridle: Caelestia runs its own idle monitor and lock screen,
             # and two idle daemons racing to lock is exactly the kind of fight
             # this split exists to avoid.
-          ]
-        }
+          ];
+          pond = [
+            # Notifications, volume/brightness OSD, the live sky, the lock
+            # screen and idle handling are all Pond's (its NotificationServer,
+            # pond-* layers, lockscreen and IdleMonitor), and Vicinae is the
+            # launcher. pond-session starts and supervises both for this
+            # Hyprland instance only; see home/hyprland/pond.nix for the
+            # lifecycle. No swayosd, swaync, waybar or hypridle.
+            ''hl.exec_cmd("pond-session start")''
+          ];
+        }}
         -- hyprsunset as a plain autostart = hyprland-session-only by construction
         -- (a systemd user service would leak into the niri session and fight wlsunset).
         hl.exec_cmd("hyprsunset")
-      end)
+      end)${pondShutdown}
     '';
 in
 {
-  # Two session tiles, one compositor config, differing only in shell layer.
+  # Three session tiles, one compositor config, differing only in shell layer.
   # modules/desktop-hyprland.nix points each .desktop entry at its own file.
   xdg.configFile."hypr/hyprland.lua".text = mkHyprlandLua "waybar";
   xdg.configFile."hypr/hyprland-caelestia.lua".text = mkHyprlandLua "caelestia";
+  xdg.configFile."hypr/hyprland-pond.lua".text = mkHyprlandLua "pond";
 
   # hyprsunset: scheduled night light (config read by the autostart daemon)
   xdg.configFile."hypr/hyprsunset.conf".text = ''

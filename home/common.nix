@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   user,
   ...
@@ -11,8 +12,7 @@
     ./fastfetch.nix
     ./git.nix
     ./neovim.nix
-    ./niri.nix
-    ./niri-noctalia.nix
+    ./desktop-helpers.nix
     ./hyprland
     ./crash-watch.nix
     ./tmux.nix
@@ -64,7 +64,11 @@
     };
   };
 
-  home.file."wallpapers".source = ../wallpaper;
+  # The shared wallpaper library, which both pickers and Pond's custom-image
+  # picker read through ~/wallpapers. A default so a host can join more images
+  # in (perkons adds Pond's artwork in home/hyprland/pond.nix) without dropping
+  # these.
+  home.file."wallpapers".source = lib.mkDefault ../wallpaper;
 
   # Figma (Chrome web app)
   xdg.desktopEntries.figma = {
