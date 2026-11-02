@@ -30,5 +30,15 @@ in
   buildCommand = old.buildCommand + ''
     wrapProgram "$out/bin/t3code-desktop" \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ stdenv.cc.cc.lib ]}"
+
+    # Native Wayland windows use this app ID. Match it in the desktop entry
+    # so Pond/Quickshell can associate the window with the installed icon.
+    # Replace symlinkJoin's link before editing; the unwrapped output is immutable.
+    desktopFile="$out/share/applications/t3code.desktop"
+    rm "$desktopFile"
+    cp "${unwrapped}/share/applications/t3code.desktop" "$desktopFile"
+    chmod u+w "$desktopFile"
+    substituteInPlace "$desktopFile" \
+      --replace-fail 'StartupWMClass=t3code' 'StartupWMClass=com.t3tools.T3Code'
   '';
 })
