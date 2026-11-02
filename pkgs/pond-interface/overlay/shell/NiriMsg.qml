@@ -38,6 +38,13 @@ Singleton {
   property bool _workspaceLauncherOpen: false
   property var _windows: ({})
   property var _appInfoCache: ({})
+  Connections {
+    target: DesktopEntries.applications
+    function onValuesChanged() {
+      root._appInfoCache = ({});
+      root._recompute();
+    }
+  }
   property var _creation: ({})
   property var _unread: ({})
   property int _focusedWorkspaceId: 0
@@ -346,17 +353,24 @@ Singleton {
     if (_appInfoCache[appId])
       return _appInfoCache[appId];
     const lower = appId.toLowerCase();
-    const entry = appId && (DesktopEntries.heuristicLookup(appId)
+    const matched = appId && (DesktopEntries.heuristicLookup(appId)
            || DesktopEntries.byId(appId)
            || DesktopEntries.byId(lower)
            || DesktopEntries.heuristicLookup(lower));
+    // Electron can install an iconless, hidden protocol handler whose ID
+    // exactly matches the window. It wins heuristicLookup over the packaged
+    // application; use that application's StartupWMClass to recover its icon.
+    const entry = matched?.icon ? matched
+        : (appId && DesktopEntries.applications.values.find(candidate => candidate.icon
+            && candidate.startupClass.toLowerCase() === lower)) || matched;
     const iconName = entry?.icon || lower;
     const info = {
       iconName: iconName,
       iconSource: entry && !Quickshell.hasThemeIcon(iconName) && _hicolorIcon(iconName)
           || Quickshell.iconPath(iconName, "application-x-executable")
     };
-    if (entry)
+    // DesktopEntries scans asynchronously; don't cache an incomplete match.
+    if (entry?.icon)
       _appInfoCache[appId] = info;
     return info;
   }

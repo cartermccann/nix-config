@@ -61,6 +61,33 @@ Shaders (`wallpaper/daylight/sky.frag`, `lockscreen/frontend/shaders/soft-light.
 and any `.frag`/`.vert` the overlay adds) are recompiled with this Qt's `qsb`
 (GLSL 100 es/120/150, HLSL 50, MSL 12, as upstream).
 
+## Sidebar controls
+
+`overlay/shell/Sidebar.qml` integrates `controls/` with upstream Card/CardStack
+components. Four custom popouts share those primitives; Bluetooth reuses the
+upstream panel. `controls/State.qml` is a singleton across outputs: one telemetry
+watcher, one dictation action at a time and one stdin-lifetime logind idle
+inhibitor. Only confirmed inhibition suppresses the automatic idle monitors in
+`shell.qml`; the independent session lock guard is unchanged.
+
+`controls/control.py` reads `/proc`, disk usage and bounded `nvidia-smi` output.
+It never changes settings. `watch` exits on stdin EOF; `hold`, launched beneath
+`systemd-inhibit --what=idle`, exits on a stop line or EOF. GPU telemetry and btop
+come from the host PATH; dictation scripts come from `~/.local/bin`. Pinned app
+updates use the existing `auseklis-updates` cache/user service. Missing services
+and hardware show unavailable/error states.
+
+`tests/test_controls.py` covers telemetry edge cases, inhibitor lifetime and
+real offscreen QML presentation/actions (`QS` as below). The sandbox smoke opens
+all five popouts in expanded and compact modes and saves screenshots; it never
+starts recording, inhibition, pairing or an update.
+
+Window icons prefer an explicit desktop-entry icon. If an Electron-generated
+hidden protocol handler has no icon, `NiriMsg.qml` falls back to a visible entry
+with the same `StartupWMClass` (notably T3 Code). Desktop-entry changes invalidate
+the cache; incomplete matches are not cached. `tests/test_icons.py` reproduces
+the hidden-handler override with real Quickshell lookup in a temporary data dir.
+
 ## Adapter overlay
 
 `./overlay/` (owned by the Hyprland adapter port, with its tests in `./tests/`)

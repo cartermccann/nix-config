@@ -101,6 +101,19 @@ runCommand "pond-interface-smoke"
       grim $TMPDIR/settings-$page.png
     done
     ${pond-interface}/bin/pond-shell ipc call settings close
+    # Custom controls must load in both rail presentations. These calls only
+    # open views: no recording, inhibition, pairing or updates are started.
+    for layout in expanded compact; do
+      [ "$layout" = expanded ] || ${pond-interface}/bin/pond-shell ipc call sidebar toggle
+      for control in dictation awake hardware bluetooth updates; do
+        ${pond-interface}/bin/pond-shell ipc call controls open "$control"
+        sleep 1
+        grim $TMPDIR/controls-$layout-$control.png
+        ${pond-interface}/bin/pond-shell ipc call controls close
+        sleep 0.3
+      done
+    done
+    ${pond-interface}/bin/pond-shell ipc call sidebar toggle
     ${pond-interface}/bin/pond-shell ipc call sidebar toggle
     sleep 1
     ${pond-interface}/bin/pond-shell ipc call sidebar toggle
@@ -115,6 +128,10 @@ runCommand "pond-interface-smoke"
     session='"(niri|hyprctl|pm)"|JSON\.parse'
     if grep -hE "$fatal" $TMPDIR/lock.log $TMPDIR/shell.log | grep -vE "$session"; then
       echo "QML/runtime load errors (above)" >&2
+      exit 1
+    fi
+    if grep -E 'controls/.*(ReferenceError|TypeError|Binding loop|Cannot assign|Unable to assign)' $TMPDIR/shell.log; then
+      echo "Sidebar control runtime errors (above)" >&2
       exit 1
     fi
     echo "expected outside a session (compositor/updater/pactl without servers):"

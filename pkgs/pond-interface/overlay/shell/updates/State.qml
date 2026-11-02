@@ -22,6 +22,9 @@ Singleton {
   property string pending: ""
   property var inputs: []
   property string error: ""
+  property string message: ""
+  property string lastChecked: ""
+  readonly property bool checking: check.running || reconcile.running
   property bool launching: false
   property bool unresolved: false
   property string outcomeKey: ""
@@ -52,6 +55,7 @@ Singleton {
   }
 
   function apply(result, message, force, transaction) {
+    root.message = message || "";
     const wasUpdating = force || root.status === "updating";
     const key = (transaction || "") + "\n" + result + "\n" + message;
     if (result !== "updating" && key === root.outcomeKey) return;
@@ -125,6 +129,7 @@ Singleton {
         launchWatch.stop();
         root.launching = false;
         root.status = "updating";
+        root.message = result.message || "Updating";
         Installs.State.update("system-update", "System update", "installing", -1, result.message || "Updating");
         afterFile.reload();
         return;
@@ -156,6 +161,7 @@ Singleton {
         return;
       }
       root.error = "";
+      root.lastChecked = new Date().toLocaleTimeString(Qt.locale(), "hh:mm");
       root.inputs = result.inputs;
       if (result.activationPending) root.unresolved = true;
       if (root.status === "" || root.status === "available")

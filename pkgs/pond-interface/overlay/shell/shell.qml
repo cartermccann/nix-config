@@ -5,6 +5,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import "battery" as Battery
 import "calendar" as Calendar
+import "controls" as Controls
 import "settings" as Settings
 import "settings/appearance" as Appearance
 import "settings/system" as System
@@ -31,7 +32,7 @@ ShellRoot {
       lock: ["python3", root.sessionHelper, "lock"],
       sleep: ["python3", root.sessionHelper, "suspend"]
     })
-    model: ["lock", "display", "sleep"].filter(key => System.Idle.current[key] > 0)
+    model: (Controls.State.keepAwake ? [] : ["lock", "display", "sleep"]).filter(key => System.Idle.current[key] > 0)
         .map(key => ({timeout: System.Idle.current[key], key: key}))
     delegate: IdleMonitor {
       required property var modelData
@@ -111,6 +112,15 @@ ShellRoot {
       Settings.State.open("", "manual");
       Qt.callLater(() => setText("shown\n"));
     }
+  }
+
+  IpcHandler {
+    target: "controls"
+    function open(kind: string): void {
+      if (["dictation", "awake", "hardware", "bluetooth", "updates"].indexOf(kind) < 0) return;
+      Controls.State.panelCommand(kind, NiriMsg.focusedOutputName || Quickshell.screens[0]?.name || "");
+    }
+    function close(): void { Controls.State.panelCommand("", ""); }
   }
 
   IpcHandler {

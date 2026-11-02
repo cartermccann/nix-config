@@ -1,8 +1,9 @@
 # Pond on Hyprland
 
-Ready for interactive testing: implementation, both system builds, regression
-tests and the focused security review passed. Nothing has been activated. See
-[the implementation plan](pond-hyprland-plan.md) for scope.
+The Pond session is running on perkons after the startup-race correction.
+The original implementation, both system builds, regression tests and focused
+security review passed. See [the implementation plan](pond-hyprland-plan.md)
+for scope and the verification limits below.
 
 ## Session boundaries
 
@@ -16,6 +17,47 @@ wallpaper only while its session is active. Ghostty and Zen remain the terminal
 and browser. Waybar and Caelestia retain their existing appearance and awww
 backgrounds. The existing monitor/NVIDIA setup, audio EQ, and application profiles
 must not change as a side effect of installing Pond.
+
+## Sidebar controls
+
+Pond adds five cards above the bottom controls. Expanded cards show status;
+collapsed cards retain icons, activity/error dots and hover labels. Clicking
+opens the matching Pond card stack on that display. Escape, its close button,
+or clicking outside dismisses it. On short displays the control stack scrolls
+rather than covering the workspace minimap.
+
+- **Dictation:** live streaming (`Super+Alt+Shift+L`) and batch
+  (`Super+Alt+L`), using the existing Home Manager scripts and default microphone.
+  The panel closes before starting/stopping so typed text returns to the app.
+  The other mode is disabled while recording; status follows the keyboard
+  shortcuts too. Model preparation/transcription runs without blocking the UI.
+- **Keep awake:** 30 minutes, one hour, two hours, or until Pond exits. Activation
+  requires a confirmed logind idle inhibitor; while active Pond removes its
+  automatic lock/display/suspend monitors. Expiry, manual stop, or shell exit
+  restores normal idle behavior. It never changes saved idle settings or the
+  separate sleep-lock guard. Manual lock and suspend remain available.
+- **Hardware:** CPU, available-memory-based RAM usage, NVIDIA GPU load,
+  temperature/VRAM, and home-filesystem usage. One sampler serves all displays,
+  sampling the system every five seconds and GPU every ten. Missing readings
+  show as unavailable. The popout can open btop in Ghostty.
+- **Bluetooth:** adapter power, paired-device connections, discovery and pairing
+  through Pond's existing Bluetooth panel and agent.
+- **Updates:** system input revisions and pending activation use Pond's existing
+  guarded updater. Review opens Ghostty for confirmation, build and authenticated
+  switch. The same popout lists pinned app versions from Waybar's daily cache;
+  these are explicitly separate from system input updates. Check refreshes both
+  sources, using the existing user service for the app check.
+
+`pond-shell ipc call controls open dictation` also opens a control (other names:
+`awake`, `hardware`, `bluetooth`, `updates`); `controls close` dismisses them.
+After rebuilding and applying with `nrs`, `pond-session restart-shell` loads the
+new UI without logging out. Keep-awake deliberately resets on that restart.
+
+Validation for these controls: `nh os build` and the sandbox smoke passed;
+174 Python and 12 JavaScript tests passed with no skips. The smoke renders all
+five popouts in both layouts. Live dictation focus/typing and Bluetooth device
+actions remain acceptance checks; the tests use fake actions, never a live
+recorder, inhibitor or pairing request.
 
 ## Upstream, runtime and assets
 
