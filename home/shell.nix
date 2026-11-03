@@ -31,7 +31,7 @@ let
 
     # Nix
     nrs = "nh os switch ~/nix-config";
-    update = "nh os switch ~/nix-config --update";
+    update = "auseklis-update";
 
     # Modern replacements.
     # Dropped as unused over a full history window: ll (fish ships its own `la`,

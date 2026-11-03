@@ -4,6 +4,7 @@
 import argparse
 import base64
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -103,13 +104,17 @@ def dependency_hash(output, drv):
     return result
 
 
-def update(repo, host, user):
+def update(repo, host, user, expected_pin_sha256=None):
     path = repo / PIN
-    dirty = run(["git", "status", "--porcelain", "--", PIN], repo)
-    if dirty.strip():
-        print(f"T3 Code: {PIN} has local edits; skipping", flush=True)
-        return False
     original = path.read_bytes()
+    if expected_pin_sha256 is not None:
+        if not re.fullmatch(r"[0-9a-f]{64}", expected_pin_sha256):
+            raise ValueError("Expected pin SHA-256 must be 64 lowercase hexadecimal characters")
+        if hashlib.sha256(original).hexdigest() != expected_pin_sha256:
+            raise ValueError(f"T3 Code: {PIN} changed since the trusted updater snapshot")
+    dirty = run(["git", "status", "--porcelain", "--", PIN], repo)
+    if dirty.strip() and expected_pin_sha256 is None:
+        raise ValueError(f"T3 Code: {PIN} has local edits; refusing to overwrite them")
     current = json.loads(original)
     current_version = stable_version(current["version"])
     latest = latest_release(repo)
@@ -165,7 +170,10 @@ def main():
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--host", default=socket.gethostname())
     parser.add_argument("--user", required=True)
+    parser.add_argument("--expected-pin-sha256", help="Permit only this updater-owned exact dirty pin")
     args = parser.parse_args()
+    if args.expected_pin_sha256 is not None and not re.fullmatch(r"[0-9a-f]{64}", args.expected_pin_sha256):
+        parser.error("Expected a SHA-256 hex digest for the owned pin")
     repo = args.repo.resolve()
     for value in (args.host, args.user):
         if not re.fullmatch(r"[A-Za-z0-9_-]+", value):
@@ -183,7 +191,7 @@ def main():
             raise KeyboardInterrupt(f"Interrupted by signal {signum}")
         signal.signal(signal.SIGTERM, interrupted)
         try:
-            return 3 if update(repo, args.host, args.user) else 0
+            return 3 if update(repo, args.host, args.user, args.expected_pin_sha256) else 0
         except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, KeyboardInterrupt) as error:
             print(f"T3 Code: {error}", file=sys.stderr)
             return 1

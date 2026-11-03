@@ -56,6 +56,22 @@ let
     '';
   };
 
+  systemUpdater = pkgs.writeShellApplication {
+    name = "auseklis-update";
+    runtimeInputs = with pkgs; [
+      python3
+      curl
+      nix
+      git
+      nh
+    ];
+    text = ''
+      target="''${1:-all}"
+      exec python3 ${../pkgs/pond-interface/overlay/shell/updates/nix.py} run \
+        "''${XDG_RUNTIME_DIR:-/run/user/$UID}/pond-update" "$target"
+    '';
+  };
+
   # OpenCode v2 owns its binary in ~/.opencode/bin so its built-in updater can
   # replace it in place: a /nix/store copy is read-only, and nixpkgs `opencode`
   # is still the 1.x line. This launcher is the declarative half. It bootstraps
@@ -97,9 +113,15 @@ let
   # OpenCode 2 client (merged upstream 2026-10-01, nightly-only so far).
   # Pinned in pkgs/opencode1/sources.json; auseklis-update bumps it.
   opencode1Pkg = pkgs-unstable.callPackage ../pkgs/opencode1 { };
-  opencode1 = pkgs.writeShellScriptBin "opencode1" ''
-    exec ${opencode1Pkg}/bin/opencode "$@"
-  '';
+  opencode1 =
+    (pkgs.writeShellScriptBin "opencode1" ''
+      exec ${opencode1Pkg}/bin/opencode "$@"
+    '').overrideAttrs
+      (old: {
+        passthru = (old.passthru or { }) // {
+          unwrapped = opencode1Pkg;
+        };
+      });
 
   comcreateDesktopUpstream =
     comcreate-desktop-app.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -184,6 +206,7 @@ in
     pkgs-unstable.bubblewrap # PATH bwrap preferred by Codex over its bundled fallback
     codexCli
     codexUpdater
+    systemUpdater
     agentToolGuard
     agentTools
     pkgs-unstable.cliproxyapi # OpenAI/Gemini/Claude/Codex-compatible local proxy

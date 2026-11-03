@@ -28,9 +28,9 @@ Page {
   }
   Label { visible: root.updates.inputs.length === 0; text: root.updates.unresolved ? "Changes already downloaded; activation is pending." : "No new revisions listed." }
   Shell.ActionButton {
-    width: parent.width; text: root.updates.launching ? "Opening Ghostty…" : root.updates.unresolved ? "Resume system update" : "Review system update"
-    interactive: root.interactive && root.updates.status === "available" && !root.updates.launching
-    onClicked: { root.stackController.closeAll(); root.updates.start(); }
+    width: parent.width; text: root.updates.launching ? "Opening Ghostty…" : root.updates.unresolved ? "Resume system update" : "Update all"
+    interactive: root.interactive && root.updates.status !== "updating" && !root.updates.launching
+    onClicked: { root.stackController.closeAll(); root.updates.start("all"); }
   }
   Label { text: "Opens a terminal to review, build and confirm before applying." }
   Text {
@@ -39,13 +39,28 @@ Page {
   }
   Repeater {
     model: root.service.appUpdates
-    delegate: Label { required property string modelData; text: modelData; opacity: 0.9 }
+    delegate: Row {
+      required property string modelData
+      width: parent.width
+      spacing: 8
+      Label { width: parent.width - 74; text: parent.modelData; opacity: 0.9 }
+      Shell.ActionButton {
+        width: 66; text: "Update"
+        interactive: root.interactive && root.updates.status !== "updating" && !root.updates.launching
+            && !root.updates.unresolved && !!root.updates.appTarget(parent.modelData)
+        onClicked: {
+          const target = root.updates.appTarget(parent.modelData);
+          root.stackController.closeAll();
+          root.updates.start(target);
+        }
+      }
+    }
   }
   Label {
     visible: root.service.appUpdates.length === 0
     text: root.service.appUpdatesKnown ? "No app updates in the last daily check." : "App versions have not been checked yet."
   }
-  Label { visible: root.service.appUpdates.length > 0; text: "These pinned apps are managed separately from system input updates." }
+  Label { visible: root.service.appUpdates.length > 0; text: "Update one app here, or update apps and system inputs together with Update all." }
   Shell.ActionButton {
     width: parent.width
     text: root.updates.checking || root.service.appChecking ? "Checking…" : "Check for updates"

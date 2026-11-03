@@ -60,8 +60,25 @@ class UpdateTests(unittest.TestCase):
 
     def test_dirty_pin_is_preserved_before_network(self):
         with patch.object(t3, "run", return_value=" M " + t3.PIN), patch.object(t3, "latest_release") as release:
-            self.assertFalse(t3.update(self.repo, "perkons", "cjm"))
+            with self.assertRaisesRegex(ValueError, "local edits"):
+                t3.update(self.repo, "perkons", "cjm")
         release.assert_not_called()
+        self.assertEqual(self.pin.read_bytes(), self.original)
+
+    def test_trusted_dirty_pin_checks_upstream(self):
+        digest = t3.hashlib.sha256(self.original).hexdigest()
+        with patch.object(t3, "run", return_value=" M " + t3.PIN), \
+                patch.object(t3, "latest_release", return_value="0.1.0") as release:
+            self.assertFalse(t3.update(self.repo, "perkons", "cjm", digest))
+        release.assert_called_once_with(self.repo)
+        self.assertEqual(self.pin.read_bytes(), self.original)
+
+    def test_trusted_digest_rejects_changed_or_malformed_pin_before_network(self):
+        for digest in ("0" * 64, "not-a-digest"):
+            with self.subTest(digest=digest), patch.object(t3, "latest_release") as release:
+                with self.assertRaises(ValueError):
+                    t3.update(self.repo, "perkons", "cjm", digest)
+                release.assert_not_called()
         self.assertEqual(self.pin.read_bytes(), self.original)
 
     def test_downgrade_is_rejected(self):

@@ -118,7 +118,8 @@ Singleton {
  property bool checking: false
  property bool launching: false
  property bool unresolved: false
- function start() {}
+ function start(target) {}
+ function appTarget(line) { return "t3"; }
  function refresh() {}
 }''')
         harness.write('bluetooth/State.qml', '''pragma Singleton

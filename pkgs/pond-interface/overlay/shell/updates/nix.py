@@ -6,9 +6,10 @@
       temporary lock file and compare them with flake.lock. Read-only: the
       flake's own lock file is never written, and no update state is touched.
       Prints JSON.
-  nix.py run STATUS_FILE
+  nix.py run STATUS_FILE [APP]
       Interactive, in a terminal the user watches: show the pending input
-      updates, and only after confirmation write the new flake.lock, build the
+      updates, and only after confirmation write the new flake.lock, refresh
+      the selected app pins (APP=all includes inputs), and build the
       system without privileges, and then, after a second confirmation, run
       the authenticated switch (nh or nixos-rebuild prompts for the password).
       Progress goes to STATUS_FILE ("status\\nmessage\\nowner-json") for the
@@ -101,21 +102,21 @@ def compare(old, new):
     return changes
 
 
-def resolve_latest(flake, output, run=subprocess.run):
-    result = run(["nix", "flake", "update", "--flake", str(flake), "--output-lock-file", str(output)],
+def resolve_latest(flake, output, run=subprocess.run, inputs=()):
+    result = run(["nix", "flake", "update", "--flake", str(flake), "--output-lock-file", str(output), *inputs],
                  capture_output=True, text=True, timeout=600)
     if result.returncode:
         lines = [line for line in result.stderr.splitlines() if line.strip()]
         raise RuntimeError(lines[-1].strip() if lines else "nix flake update failed")
 
 
-def check(env=None, run=subprocess.run, keep=False):
+def check(env=None, run=subprocess.run, keep=False, inputs=()):
     flake = flake_dir(env)
     lock_file = flake / "flake.lock"
     original = lock_file.read_bytes()
     with tempfile.TemporaryDirectory(prefix="pond-update-") as directory:
         latest = Path(directory) / "flake.lock"
-        resolve_latest(flake, latest, run)
+        resolve_latest(flake, latest, run, inputs)
         if lock_file.read_bytes() != original:
             raise RuntimeError("flake.lock changed during the check")
         resolved = latest.read_bytes()
@@ -469,6 +470,8 @@ def outcome(stage, reason, journal=None, flake=None):
         return "failed", f"Update {reason} just as it finished. Check flake.lock and the running system"
     if stage in ("start", "checking", "confirm", ""):
         return "available", f"Update {reason} before any change"
+    if stage == "apps":
+        return "failed", f"Update {reason} while updating app pins. Review the pins and rebuild before switching"
     if stage in ("lock-write", "building", "restore"):
         return "failed", f"Update {reason} while building. {note or 'flake.lock may hold the new revisions'}"
     if stage == "built":
@@ -707,7 +710,12 @@ def signal_code(stop):
     return 128 + (stop.signum if isinstance(stop, Interrupted) else signal.SIGINT)
 
 
-def interactive(status_path, run=None, env=None):
+APP_TARGETS = ("all", "codex", "t3", "cursor", "granola", "grok", "opencode1", "delta")
+
+
+def interactive(status_path, run=None, env=None, app=None):
+    if app is not None and app not in APP_TARGETS:
+        raise ValueError(f"Unknown app target: {app}")
     check_run = run or subprocess.run
     status = Status(status_path)
     try:
@@ -729,9 +737,17 @@ def interactive(status_path, run=None, env=None):
         transaction.clean_stale_temporaries()
         previous = read_json(transaction.journal_path)
         transaction.prior_pending = bool(previous.get("activation_pending", False))
-        transaction.record("start", flake=str(flake), backup=None,
+        previous_app = previous.get("app_target")
+        if transaction.prior_pending and app and app != "all" and app != previous_app:
+            status("available", "Resume the pending update with Update all before selecting another app")
+            return 1
+        if transaction.prior_pending and previous_app:
+            app = previous_app
+        transaction.apps_complete = bool(previous.get("apps_complete", False)) if transaction.prior_pending else False
+        transaction.record("start", flake=str(flake), backup=None, app_target=app,
+                           apps_complete=transaction.apps_complete,
                            activation_pending=transaction.prior_pending)
-        return transact(transaction, flake, status, status_path, check_run, exec_run, env)
+        return transact(transaction, flake, status, status_path, check_run, exec_run, env, app)
     except (Interrupted, KeyboardInterrupt) as stop:
         ignore_interrupts()
         reason = REASONS.get(getattr(stop, "signum", signal.SIGINT), "interrupted")
@@ -746,7 +762,7 @@ def interactive(status_path, run=None, env=None):
         transaction.release()
 
 
-def transact(transaction, flake, status, status_path, check_run, exec_run, env):
+def transact(transaction, flake, status, status_path, check_run, exec_run, env, app=None):
     resume = transaction.prior_pending
     if resume:
         # Retry the current flake independently of newer upstream revisions.
@@ -755,26 +771,34 @@ def transact(transaction, flake, status, status_path, check_run, exec_run, env):
         result = {"_original": current, "_lock": current, "inputs": []}
         status("updating", "Activation pending for the current flake")
         print(f"System flake: {flake}\nA previous update has not been successfully switched.\n")
+    elif app and app not in ("all", "delta"):
+        current = (flake / "flake.lock").read_bytes()
+        result = {"_original": current, "_lock": current, "inputs": []}
+        print(f"Update selected app: {app} (other app pins and flake inputs are unchanged)")
     else:
         status("updating", "Checking flake inputs")
         transaction.record("checking")
         print(f"System flake: {flake}\nChecking for newer inputs (flake.lock is not modified)…\n")
         try:
-            result = check(env=env, run=check_run, keep=True)
+            result = check(env=env, run=check_run, keep=True,
+                           inputs=("zed-delta",) if app == "delta" else ())
         except (RuntimeError, OSError, ValueError, subprocess.SubprocessError) as error:
             print(f"Check failed: {error}")
             status("failed", f"Check failed: {error}")
             return 1
-        if not result["available"]:
+        if not result["available"] and not app:
             print("Everything is up to date.")
             status("complete", "Up to date")
             return 0
     for change in result["inputs"]:
         when = time.strftime("%Y-%m-%d", time.localtime(change["toDate"])) if change["toDate"] else "?"
         print(f"  {change['input']:<28} {change['from']} → {change['to']}  ({when})")
+    if app and not resume:
+        print(f"  App updates: {app}. Downloads and package checks run before the system build.")
     print()
     transaction.record("confirm")
     question = ("Rebuild the current flake and retry switching it?" if resume else
+                "Update the selected apps and inputs, then build the system?" if app else
                 "Write these revisions to flake.lock and build the new system?")
     if not ask(question):
         status("available", "Update cancelled")
@@ -805,6 +829,31 @@ def transact(transaction, flake, status, status_path, check_run, exec_run, env):
         transaction.drop_backup()
         transaction.record("finished", outcome="not-written", activation_pending=resume)
         return 1
+
+    if app and app != "delta" and (not resume or not transaction.apps_complete):
+        transaction.record("apps", activation_pending=True)
+        status("updating", "Updating app pins")
+        updater = flake / "scripts/apps-update.py"
+        command = [sys.executable, str(updater), "--repo", str(flake), "--app", app,
+                   "--user", os.environ.get("USER", ""), "--host", socket.gethostname()]
+        if run_command(exec_run, command):
+            status("failed", "App update failed; Update all will retry unfinished apps")
+            transaction.record("finished", outcome="apps-failed")
+            return 1
+        transaction.record("apps-complete", apps_complete=True)
+    # Accept only intentional pin writes into the pre-update fingerprint.
+    # Edits to any other source during downloads must still block switching.
+    if app and baseline is not None:
+        current_tree = tree_fingerprint(flake)
+        pins = {
+            "codex": "pkgs/codex/sources.json", "t3": "pkgs/t3code/sources.json",
+            "cursor": "pkgs/code-cursor/sources.json", "granola": "pkgs/granola/default.nix",
+            "grok": "pkgs/grok-cli/default.nix", "opencode1": "pkgs/opencode1/sources.json",
+        }
+        if current_tree is not None:
+            for target, path in pins.items():
+                if app in ("all", target):
+                    baseline[path] = current_tree.get(path)
 
     build, switch = builder(flake)
     transaction.record("building")
@@ -853,7 +902,9 @@ def transact(transaction, flake, status, status_path, check_run, exec_run, env):
         status("failed", "Switch failed; the system may be partially activated (see the terminal)")
         transaction.record("finished", outcome="switch-failed")
         return 1
-    print("\nDone. Remember to commit flake.lock.")
+    print("\nDone. Review and commit the updated app pins and flake.lock.")
+    if app and shutil.which("auseklis-updates"):
+        run_command(exec_run, ["auseklis-updates", "check"])
     action = pending_after(status_path)  # read before the shell can react to the status
     restart = needs_restart()
     transaction.drop_backup()
@@ -879,6 +930,14 @@ def drift(lock_file, written, flake, baseline):
 
 
 def build_failed(transaction, lock_file, original, written, status, interrupted):
+    if transaction.journal.get("app_target"):
+        # Dependency hashes belong to the input/toolchain used to produce them.
+        # Keep the pair together instead of restoring only the old toolchain.
+        message = "Build failed; app pins and matching flake inputs kept together. Resume with Update all"
+        print(message + ". Original lock backup: " + str(transaction.backup))
+        status("failed", message)
+        transaction.record("finished", outcome="build-failed", activation_pending=True)
+        return signal_code(interrupted) if interrupted else 1
     transaction.record("restore")
     saved = f" (original saved at {transaction.backup})"
     if not ask("Restore the previous flake.lock?", default=True):
@@ -929,7 +988,7 @@ def main():
     elif action == "run":
         try:
             with interrupts_raise():
-                code = interactive(args[0] if args else "")
+                code = interactive(args[0] if args else "", app=args[1] if len(args) > 1 else None)
         except Interrupted as stop:
             sys.exit(signal_code(stop))
         try:

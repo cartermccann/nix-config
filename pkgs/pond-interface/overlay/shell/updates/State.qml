@@ -30,8 +30,16 @@ Singleton {
   property string outcomeKey: ""
   readonly property string helper: Quickshell.shellDir + "/updates/nix.py"
 
-  function start() {
-    if (status !== "available" || launching) return;
+  function appTarget(line) {
+    const name = line.split(/  +/)[0];
+    return ({"Codex CLI": "codex", "T3 Code": "t3", "Cursor": "cursor",
+             "Granola": "granola", "grok-cli": "grok", "OpenCode 1": "opencode1",
+             "Zed Delta": "delta"})[name] || "";
+  }
+
+  function start(target) {
+    target = target || "all";
+    if (status === "updating" || launching) return;
     pending = "";
     launching = true;
     Settings.State.close();
@@ -39,7 +47,7 @@ Singleton {
     Installs.State.update("system-update", "System update", "installing", -1, "Opening Ghostty");
     launchWatch.restart();
     Quickshell.execDetached(["ghostty", "--title=Pond system update", "-e",
-        "python3", root.helper, "run", statusFile.path]);
+        "python3", root.helper, "run", statusFile.path, target]);
   }
 
   // Reboot or shut down once the update finishes. Only meaningful for the

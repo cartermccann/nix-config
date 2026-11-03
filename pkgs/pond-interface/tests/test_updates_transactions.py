@@ -107,7 +107,7 @@ class Base(unittest.TestCase):
         self.env.stop()
         self.tmp.cleanup()
 
-    def interactive(self, answers, fake, status=None):
+    def interactive(self, answers, fake, status=None, app=None):
         replies, prompts, output = iter(answers), [], []
 
         def reply(prompt=""):
@@ -125,7 +125,7 @@ class Base(unittest.TestCase):
                 mock.patch.object(nix, "builder", lambda flake: (["build"], ["switch"])), \
                 mock.patch.object(nix, "needs_restart", lambda: False), \
                 mock.patch("builtins.print", lambda *a, **k: output.append(" ".join(map(str, a)))):
-            code = nix.interactive(str(status), run=fake)
+            code = nix.interactive(str(status), run=fake, app=app)
         text = Path(status).read_text() if status and Path(status).exists() else ""
         return Result(code, text, "\n".join(output), prompts)
 
@@ -382,6 +382,58 @@ class SwitchDrift(Base):
         subprocess.run(["git", "-C", str(self.flake), "add", "-A"], check=True)
         fake = Fake(on_build=lambda: (self.flake / "scratch.txt").write_text("not part of the flake"))
         self.assertEqual(self.interactive(["y", "y"], fake).state, "complete")
+
+
+class AppTransactions(Base):
+    def runner(self, app_code=0, build=0, during_apps=None):
+        fake = Fake(build=build)
+        def run(argv, **kwargs):
+            if "--app" in argv:
+                fake.calls.append(argv)
+                if during_apps:
+                    during_apps()
+                return subprocess.CompletedProcess(argv, app_code)
+            return fake(argv, **kwargs)
+        run.calls = fake.calls
+        return run
+
+    def test_individual_app_keeps_lock_and_other_inputs_unchanged(self):
+        run = self.runner()
+        result = self.interactive(["y", "n"], run, app="cursor")
+        self.assertEqual(result.code, 0)
+        self.assertEqual(self.lock_text(), ORIGINAL)
+        self.assertFalse(any(call[:3] == ["nix", "flake", "update"] for call in run.calls))
+        self.assertEqual([call[call.index("--app") + 1] for call in run.calls if "--app" in call], ["cursor"])
+
+    def test_failed_apps_are_retried_before_any_switch(self):
+        first = self.runner(app_code=1)
+        self.assertEqual(self.interactive(["y"], first, app="all").code, 1)
+        self.assertNotIn(["switch"], first.calls)
+        second = self.runner()
+        self.assertEqual(self.interactive(["y", "y"], second, app="all").code, 0)
+        self.assertTrue(any("--app" in call for call in second.calls))
+        self.assertLess(next(i for i,c in enumerate(second.calls) if "--app" in c), second.calls.index(["switch"]))
+
+    def test_failed_build_keeps_matching_inputs_and_app_hashes_together(self):
+        run = self.runner(build=1)
+        result = self.interactive(["y"], run, app="all")
+        self.assertEqual(result.code, 1)
+        self.assertEqual(json.loads(self.lock_text()), NEWER)
+        self.assertTrue(self.journal()["activation_pending"])
+        self.assertIn("kept together", result.message)
+
+    def test_unrelated_source_edit_during_app_download_blocks_switch(self):
+        run = self.runner(during_apps=lambda: (self.flake / "modules.nix").write_text("edited"))
+        result = self.interactive(["y"], run, app="cursor")
+        self.assertEqual(result.code, 1)
+        self.assertNotIn(["switch"], run.calls)
+        self.assertIn("changed", result.message)
+
+    def test_other_individual_app_cannot_silently_replace_pending_target(self):
+        self.interactive(["y", "n"], self.runner(), app="cursor")
+        result = self.interactive([], self.runner(), app="granola")
+        self.assertEqual(result.code, 1)
+        self.assertIn("Resume", result.message)
 
 
 # --- A8: signals and abandoned updates ----------------------------------------

@@ -146,11 +146,18 @@ ShellRoot {
     console.log("RESULT unresolved " + JSON.stringify(Updates.State.unresolved));
     console.log("RESULT count " + JSON.stringify(Installs.State.count));
     console.log("RESULT message " + JSON.stringify(Installs.State.message));
+    console.log("RESULT targets " + JSON.stringify([
+      "Codex CLI  0.165.0 → 0.166.0", "T3 Code  0.1.5 → 0.1.6",
+      "Cursor  3.27.22 → 3.28.7", "Granola  7.722.0 → 7.726.2",
+      "grok-cli  1.0.0 → 1.0.1", "OpenCode 1  1.19.4 → 1.19.5",
+      "Zed Delta  1.0.0 → 1.0.1", "Unknown  1 → 2"
+    ].map(line => Updates.State.appTarget(line))));
     console.log("RESULT DONE true"); Qt.quit();
   } }
 }
 ''')
         results, _ = harness.run()
+        self.assertEqual(results["targets"], [["codex", "t3", "cursor", "granola", "grok", "opencode1", "delta", ""]])
         self.assertEqual(results["status"], ["available"])
         self.assertEqual(results["unresolved"], [True])
         self.assertEqual(results["count"], [1])

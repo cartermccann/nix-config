@@ -42,11 +42,23 @@ rather than covering the workspace minimap.
   show as unavailable. The popout can open btop in Ghostty.
 - **Bluetooth:** adapter power, paired-device connections, discovery and pairing
   through Pond's existing Bluetooth panel and agent.
-- **Updates:** system input revisions and pending activation use Pond's existing
-  guarded updater. Review opens Ghostty for confirmation, build and authenticated
-  switch. The same popout lists pinned app versions from Waybar's daily cache;
-  these are explicitly separate from system input updates. Check refreshes both
-  sources, using the existing user service for the app check.
+- **Updates:** Update all refreshes pinned apps and system inputs through one
+  guarded transaction. Each app row also has an Update button that leaves other
+  app pins and inputs alone. Both open Ghostty for confirmation, an unprivileged
+  system build, and confirmation before the authenticated switch. Check refreshes
+  system revisions and the app-version cache through the existing user service.
+  The terminal command `update` uses the same transaction; `update cursor` targets
+  one app (also `codex`, `t3`, `granola`, `grok`, `opencode1`, and `delta`).
+  Interrupted app stages are retried before switching. Failed builds retain app
+  hashes and their matching input revisions together, with the original lock
+  backed up in the transaction state directory. Review the diff before committing.
+
+OpenCode 1's Bun dependency output is validated even when its version is current:
+updating Bun can change the fixed-output hash without an OpenCode release. The
+updater accepts a replacement hash only from the exact dependency derivation,
+then builds the binary and tests the real v1 server API. A private Git-directory
+ledger recognizes the updater's own exact pin bytes between runs; unknown local
+pin edits are preserved and must be reviewed before updating that app.
 
 `pond-shell ipc call controls open dictation` also opens a control (other names:
 `awake`, `hardware`, `bluetooth`, `updates`); `controls close` dismisses them.
