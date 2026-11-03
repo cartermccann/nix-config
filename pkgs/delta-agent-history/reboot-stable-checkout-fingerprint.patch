@@ -1,0 +1,202 @@
+diff --git i/delta_history/adapters/common.py w/delta_history/adapters/common.py
+index a99c10d..7f60b49 100644
+--- i/delta_history/adapters/common.py
++++ w/delta_history/adapters/common.py
+@@ -11,6 +11,7 @@ from pathlib import Path
+ import sqlite3
+ 
+ from ..configuration import resolve_project, validate
++from t3_delta.engine import directory_fingerprint, fingerprint_matches
+ from ..protocol import MAX_BATCH_BYTES, MAX_TEXT_BYTES, encode, identifier, validate_event
+ 
+ MAX_INPUT = 4 * 1024 * 1024
+@@ -154,8 +155,7 @@ class Journal:
+         self.config, self.state = config, _state(state)
+         self.source, self.instance, self.session = source, instance, required_id(session)
+         self.project = check_source(config, source, instance, project)
+-        directory_stat = Path(self.project).stat()
+-        self.fingerprint = f"{directory_stat.st_dev}:{directory_stat.st_ino}"
++        self.fingerprint = directory_fingerprint(self.project)
+         if self.state.is_symlink():
+             raise AdapterError("Adapter state must not be a symlink")
+         if not existing:
+@@ -200,7 +200,7 @@ class Journal:
+         self.db.execute("BEGIN IMMEDIATE")
+         try:
+             row = self.db.execute("SELECT project,halted,fingerprint FROM adapter_sessions WHERE source=? AND instance=? AND session=?", self.key).fetchone()
+-            if row and (row[0] != self.project or row[1] or row[2] != self.fingerprint):
++            if row and (row[0] != self.project or row[1] or not fingerprint_matches(row[2], self.project)):
+                 raise AdapterError("Adapter session is halted or checkout identity changed")
+             if not row:
+                 self.db.execute("INSERT INTO adapter_sessions(source,instance,session,project,fingerprint) VALUES(?,?,?,?,?)", (*self.key,self.project,self.fingerprint))
+diff --git i/delta_history/core.py w/delta_history/core.py
+index 4f47eb5..d829a4e 100644
+--- i/delta_history/core.py
++++ w/delta_history/core.py
+@@ -13,7 +13,7 @@ import sqlite3
+ import subprocess
+ 
+ from t3_delta.delta_sink import DeltaSink, DeltaConflict, DeltaUnavailable, delivery_health, projected_message_count
+-from t3_delta.engine import checkout_identity, check_filenames, common_directory, utc_now
++from t3_delta.engine import checkout_identity, check_filenames, common_directory, directory_fingerprint, fingerprint_matches, utc_now
+ from .configuration import inspect_scope, validate
+ from .protocol import encode, utc_timestamp, validate_batch
+ 
+@@ -85,10 +85,9 @@ def _binding(config, project):
+     directory, approved = inspect_scope(config, project)
+     _, remote = checkout_identity(directory)
+     check_filenames(directory)
+-    info = Path(directory).stat()
+     rule = next(r for r in config["allowed_projects"] if r["path"] == approved)
+     return {"directory": directory, "project": approved, "remote": remote,
+-            "common_dir": str(common_directory(directory)), "fingerprint": f"{info.st_dev}:{info.st_ino}",
++            "common_dir": str(common_directory(directory)), "fingerprint": directory_fingerprint(directory),
+             "cutoff": utc_timestamp(rule["enrolled_after"])}
+ 
+ 
+@@ -96,7 +95,8 @@ def _verify(config, row):
+     if (row["source"], row["source_instance"]) not in {(s["kind"], s["instance"]) for s in config["sources"]}:
+         raise ValueError("Source binding is no longer enrolled")
+     actual = _binding(config, row["directory"])
+-    if any(actual[k] != row[k] for k in ("directory", "project", "remote", "common_dir", "fingerprint")):
++    if (any(actual[k] != row[k] for k in ("directory", "project", "remote", "common_dir"))
++            or not fingerprint_matches(row["fingerprint"], actual["directory"])):
+         raise ValueError("Immutable repository binding changed")
+ 
+ 
+diff --git i/t3_delta/engine.py w/t3_delta/engine.py
+index f613439..bad5e9c 100644
+--- i/t3_delta/engine.py
++++ w/t3_delta/engine.py
+@@ -13,6 +13,32 @@ def utc_now():
+     return dt.datetime.now(dt.timezone.utc).isoformat()
+ 
+ 
++def directory_fingerprint(directory):
++    """Return a reboot-stable identity for a checkout directory.
++
++    ``st_dev`` is not stable across boots on btrfs subvolumes (and other
++    filesystems that use anonymous device numbers), so bind to the
++    filesystem id reported by ``statvfs`` plus the directory inode.
++    """
++    info = os.stat(directory)
++    return f"fs:{os.statvfs(directory).f_fsid:x}:{info.st_ino}"
++
++
++def fingerprint_matches(stored, directory):
++    """Compare a persisted binding with the live checkout directory.
++
++    Bindings written before ``directory_fingerprint`` used ``st_dev:st_ino``.
++    Those still match when the inode is unchanged, because the device number
++    alone can change on every boot without the checkout being replaced.
++    """
++    if not isinstance(stored, str):
++        return False
++    if stored == directory_fingerprint(directory):
++        return True
++    device, separator, inode = stored.partition(":")
++    return bool(separator) and device.isdigit() and inode.isdigit() and int(inode) == os.stat(directory).st_ino
++
++
+ def timestamp(value):
+     return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
+ 
+@@ -239,8 +265,7 @@ class Engine:
+                     if remote not in self.allowed:
+                         raise ValueError("Persisted checkout is outside the repository allowlist")
+                     self.scoped_checkout(directory, remote)
+-                    info = Path(directory).stat()
+-                    if previous[0] != directory or previous[1] != f"{info.st_dev}:{info.st_ino}":
++                    if previous[0] != directory or not fingerprint_matches(previous[1], directory):
+                         raise ValueError("Persisted checkout binding changed")
+                     if (session.get("thread_id") and session.get("reference")
+                             and session.get("pending") == 0
+@@ -258,8 +283,7 @@ class Engine:
+                     if remote not in self.allowed:
+                         raise ValueError("Persisted checkout is outside the repository allowlist")
+                     self.scoped_checkout(directory, remote)
+-                    info = Path(directory).stat()
+-                    if previous[0] != directory or previous[1] != f"{info.st_dev}:{info.st_ino}":
++                    if previous[0] != directory or not fingerprint_matches(previous[1], directory):
+                         raise ValueError("Persisted checkout binding changed")
+                     check_filenames(directory)
+                     attached = self.sink.ensure_session(external_id, directory)
+@@ -378,9 +402,8 @@ class Engine:
+         if remote not in self.allowed:
+             raise ValueError("T3 checkout is outside the repository allowlist")
+         self.scoped_checkout(directory, remote, str(Path(project["workspaceRoot"]).resolve()))
+-        stat = Path(directory).stat()
+-        fingerprint = f"{stat.st_dev}:{stat.st_ino}"
+-        if previous and (previous[0] != external_id or previous[1] != directory or previous[3] != fingerprint):
++        fingerprint = directory_fingerprint(directory)
++        if previous and (previous[0] != external_id or previous[1] != directory or not fingerprint_matches(previous[3], directory)):
+             raise ValueError("T3 checkout binding changed; preserve the old recording")
+         if not previous:
+             check_filenames(directory)
+diff --git i/tests/test_engine.py w/tests/test_engine.py
+index 53fa3ab..9053284 100644
+--- i/tests/test_engine.py
++++ w/tests/test_engine.py
+@@ -8,7 +8,7 @@ import tempfile
+ import unittest
+ from unittest.mock import patch
+ 
+-from t3_delta.engine import Engine
++from t3_delta.engine import Engine, directory_fingerprint, fingerprint_matches
+ from t3_delta.delta_sink import DeltaUnavailable, DeltaConflict
+ from t3_delta.cli import read_status, writer_lock
+ 
+@@ -355,7 +355,7 @@ class EngineTests(unittest.TestCase):
+ 
+     def test_initial_failure_retains_original_inode_and_rejects_reused_path(self):
+         original = self.repo.stat()
+-        original_fingerprint = f"{original.st_dev}:{original.st_ino}"
++        original_fingerprint = directory_fingerprint(self.repo)
+         self.sink.fail = True
+         self.engine.poll()
+         self.assertEqual(self.engine.db.execute("SELECT fingerprint FROM threads WHERE id='new'").fetchone()[0], original_fingerprint)
+@@ -366,7 +366,9 @@ class EngineTests(unittest.TestCase):
+         subprocess.run(["git", "init", "-q", str(self.repo)], check=True)
+         subprocess.run(["git", "-C", str(self.repo), "remote", "add", "origin", REMOTE], check=True)
+         replacement = self.repo.stat()
+-        self.assertNotEqual(f"{replacement.st_dev}:{replacement.st_ino}", original_fingerprint)
++        self.assertNotEqual(directory_fingerprint(self.repo), original_fingerprint)
++        self.assertFalse(fingerprint_matches(original_fingerprint, self.repo))
++        self.assertFalse(fingerprint_matches(f"{original.st_dev}:{original.st_ino}", self.repo))
+         self.sink.fail = False
+         self.engine.source = None
+         restarted = Engine(self.config, self.state, None, self.sink, clock=lambda: NOW)
+diff --git i/tests/test_generic_core.py w/tests/test_generic_core.py
+index 8c5fe8a..9b613f8 100644
+--- i/tests/test_generic_core.py
++++ w/tests/test_generic_core.py
+@@ -204,6 +204,29 @@ class CoreTests(unittest.TestCase):
+         self.assertEqual(self.flush()["halted"], 1)
+         self.assertFalse(FakeSink.calls)
+ 
++    def test_reboot_changed_device_number_keeps_legacy_binding(self):
++        # btrfs subvolumes get a new anonymous st_dev on each boot; the
++        # checkout itself (path, origin, common dir, inode) is unchanged.
++        self.submit(self.event(), self.event(2, "message.completed"))
++        info = self.repo.stat()
++        db = sqlite3.connect(self.state / "ingress.sqlite3")
++        with db:
++            db.execute("UPDATE sessions SET fingerprint=?", (f"{info.st_dev + 11}:{info.st_ino}",))
++        db.close()
++        result = self.flush()
++        self.assertEqual(result["halted"], 0)
++        self.assertEqual(result["delivered_sessions"], 1)
++
++    def test_replaced_checkout_inode_still_halts(self):
++        self.submit(self.event(), self.event(2, "message.completed"))
++        info = self.repo.stat()
++        db = sqlite3.connect(self.state / "ingress.sqlite3")
++        with db:
++            db.execute("UPDATE sessions SET fingerprint=?", (f"{info.st_dev}:{info.st_ino + 1}",))
++        db.close()
++        self.assertEqual(self.flush()["halted"], 1)
++        self.assertFalse(FakeSink.calls)
++
+     def test_fencing_isolated_per_session_and_retryable_retained(self):
+         self.submit(self.event(), self.event(2, "message.completed"))
+         FakeSink.failure = DeltaUnavailable("test")
