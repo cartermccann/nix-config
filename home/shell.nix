@@ -99,6 +99,7 @@ in
       set -gx GOPATH $HOME/.local/share/go
       set -gx GOBIN $HOME/.local/bin
       fish_add_path $HOME/.local/bin
+      ${pkgs.worktrunk}/bin/wt config shell init fish | source
 
       # Autosuggestion color — visible but subtle on dark backgrounds
       set -U fish_color_autosuggestion 90909a
@@ -169,6 +170,7 @@ in
     inherit shellAliases;
     initExtra = ''
       export PATH="$HOME/.local/bin:$PATH"
+      eval "$(${pkgs.worktrunk}/bin/wt config shell init bash)"
       if [[ $- == *i* && -z "$TMUX" ]]; then perkons-banner; fi
     '';
   };

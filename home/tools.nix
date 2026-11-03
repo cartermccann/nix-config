@@ -159,6 +159,7 @@ in
     procs # modern ps; used by home/codex-desktop.nix
 
     # Dev workflow
+    worktrunk # wt: shared worktree lifecycle for coding agents
     lazygit
     lazydocker # backs the "Docker" desktop entry in home/common.nix
     git-lfs
