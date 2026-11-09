@@ -8,6 +8,7 @@
   herdr,
   zed-delta,
   delta-agent-history,
+  nix-apple-dev,
   ...
 }:
 let
@@ -28,6 +29,9 @@ let
   t3code = pkgs-unstable.callPackage ../pkgs/t3code { };
   agentToolGuard = pkgs.callPackage ../pkgs/agent-tool-guard { };
   agentTools = pkgs.callPackage ../pkgs/agent-tools { };
+  iphoneTools = pkgs.callPackage ../pkgs/iphone-tools {
+    inherit (nix-apple-dev.inputs) pyproject-nix uv2nix pyproject-build-systems;
+  };
   deltaUpstream = zed-delta.packages.${pkgs.stdenv.hostPlatform.system}.delta;
   deltaHistory = pkgs.callPackage ../pkgs/delta-agent-history {
     upstream = delta-agent-history.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -154,6 +158,9 @@ in
     # Languages & runtimes
     python3
     uv
+    iphoneTools
+    libimobiledevice
+    nix-apple-dev.packages.${pkgs.stdenv.hostPlatform.system}.apple-dev
     go
     nodejs_24
     bun

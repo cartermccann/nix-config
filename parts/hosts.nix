@@ -92,6 +92,7 @@ let
                   qmd
                   zed-delta
                   delta-agent-history
+                  nix-apple-dev
                   ;
               };
               backupFileExtension = "hm-bak";

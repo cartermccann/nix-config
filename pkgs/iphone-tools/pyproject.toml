@@ -1,0 +1,6 @@
+[project]
+name = "iphone-tools"
+version = "0.1.0"
+description = "Linux iPhone development and diagnostics for CoachLoop"
+requires-python = ">=3.13,<3.14"
+dependencies = ["pymobiledevice3==11.50.3"]

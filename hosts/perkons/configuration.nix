@@ -33,6 +33,8 @@
 
   networking.hostName = "perkons";
 
+  services.usbmuxd.enable = true;
+
   # Larger console font for the high-resolution display and fallback TTYs.
   console = {
     font = "ter-v24n";
