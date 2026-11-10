@@ -56,14 +56,14 @@ Recovery must use a separate checkout or patch and coordinate with active edits.
 
 ## Compatibility and evidence
 
-Reviewed interfaces: T3 **0.1.0 and 0.1.5**, Delta **0.21–0.23**, recording output contracts **6–8**. The pinned upstream package separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.5/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
+Reviewed interfaces: T3 **0.1.0, 0.1.5 and 0.1.7**, Delta **0.21–0.23**, recording output contracts **6–8**. The pinned upstream package separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.5/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
 
 The local package override in `pkgs/delta-agent-history/` explicitly permits
-reviewed T3 0.1.5 alongside 0.1.0. The upstream pin otherwise rejects every
+reviewed T3 0.1.5 and 0.1.7 alongside 0.1.0. The upstream pin otherwise rejects every
 version except 0.1.0. Both installed commands and systemd services use this same
 patched package. Unknown stable and nightly releases still stop for review.
 The patch changes no database schema, enrollment, credentials or queued payloads.
-Its tests cover 0.1.5 capture and replay without duplicates, plus rejection before
+Its tests cover 0.1.5 and 0.1.7 capture and replay without duplicates, plus rejection before
 discovery or export for unsupported versions. Live read-only environment,
 project, thread-list and message reads succeeded against 0.1.5; Delta 0.23.0
 reported contract 8. All five recorder SQLite databases, including the generic
@@ -77,3 +77,55 @@ Verification on 2026-10-23: **86 tests passed**, final independent crash-recover
 Live synthetic proof on 2026-10-23: private/uploaded/granted status; server ACKs for synthetic messages; identical replay reported `duplicate` without an extra message; edited `pilot.txt` recovered from a separate fork as the expected `after` content. Fixture state is in `~/.local/state/t3-delta-recorder/live-verification/`. No ComCreate source edit was needed.
 
 The scope expansion was explicitly requested after the synthetic pilot. Each real project still needs its first new T3 conversation to produce recording evidence; configured enrollment alone does not prove capture. The old bulk repository-opening queue is not used. Historical recovery remains a separate unverified capability.
+
+
+## 2026-11-09 compatibility outage
+
+The active recorder accepted only T3 0.1.0 and 0.1.5 while the live server had
+updated to 0.1.7. A read-only probe with the existing scoped credential reached
+the correct environment and successfully read environment, project, thread and
+bounded message pages. The installed engine nevertheless raised
+`T3 server version needs compatibility review` before source discovery. Its
+outer error handler reduced that to `ValueError`, so status looked like a
+recurring unspecified Delta outage. The service remained running with zero
+systemd restarts; running is not proof of recording.
+
+The package compatibility patch now accepts the reviewed exact 0.1.7 release.
+Unknown versions still stop before discovery or export, and now identify the
+failure as `T3CompatibilityError`. Regression coverage verifies 0.1.7 capture,
+restart and replay without duplicate records, alongside 0.1.5 compatibility and
+rejection of unreviewed versions. The override applies to the packaged upstream
+implementation used by both installed services, not the older reference copy in
+`scripts/t3-delta-recorder`.
+
+This source fix requires a declarative build and Carter's `nrs` activation;
+editing the patch does not alter an already running Nix-store process. A
+service-specific transient executable override is technically possible, but
+would introduce runtime drift and requires stopping/restarting the writer. No
+such override was applied. After activation, verify advancing source and sink
+acknowledgement timestamps, not just an active service or a successful build.
+
+Separate retained issues remain: the T3 sink reported 46 checkout/reference
+mismatches, one invalid receipt prefix and one sequence frontier conflict.
+All 46 mismatched checkout directories still existed, and none had a saved
+successful checkout-status receipt. These findings do not establish why Delta
+omitted the expected binding. Preserve those holds and their immutable queued
+records for individual review; compatibility repair does not authorize clearing
+them or replacing references.
+
+The generic Delta service cgroup was near its 2 GiB resident-memory limit with
+about 2.4 GiB additionally swapped. Its memory event counters showed limit hits
+but zero OOM kills, and its current memory PSI averages were zero. This is
+capacity pressure evidence, not proof that an OOM or active memory thrashing
+caused the compatibility outage. Raising the cap alone would shift pressure to
+the workstation. Review session/mount retention before changing the limit.
+The cgroup includes the shared `delta-app` daemon launched beneath the generic
+history service. A later process-level sample attributed approximately 1.4 GiB
+resident and 2.4 GiB swapped memory to that daemon, while the history worker
+itself used about 18 MiB resident. The cap therefore constrains the Delta app
+as well as its recorder. Review daemon ownership and service isolation alongside
+mount retention; do not attribute the entire cgroup footprint to the worker.
+A `/proc` file-descriptor sample also counted 319,834 inotify watches across
+81 inotify instances in that daemon. This is observed watcher scale, not proof
+of a leak or that ignored dependencies are being recorded. Check mount lifetime
+and watcher exclusions before adding more mounted checkouts.
