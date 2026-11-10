@@ -358,7 +358,7 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/tarzana-design/DesignSystem",
+      "path": "/home/cjm/projects/work/_support/tarzana/tarzana-design/DesignSystem",
       "remote": "https://github.com/cartermccann/tarzana-design-system.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -618,17 +618,17 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/knockturnal-migration-deck",
+      "path": "/home/cjm/projects/work/_support/knockturnal/knockturnal-migration-deck",
       "remote": "https://github.com/comcreate-io/TheKnockturnal-Nextjs-Migration-Deck",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/knockturnal-platform",
+      "path": "/home/cjm/projects/work/_support/knockturnal/knockturnal-platform",
       "remote": "https://github.com/comcreate-io/knockturnal-platform.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/knockturnal-sanity-migration-docs",
+      "path": "/home/cjm/projects/work/_support/knockturnal/knockturnal-sanity-migration-docs",
       "remote": "https://github.com/comcreate-io/knockturnal-sanity-migration-docs.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -640,11 +640,6 @@
     {
       "path": "/home/cjm/projects/work/mcg",
       "remote": "https://github.com/comcreate-io/mcg.git",
-      "enrolled_after": "2026-10-23T20:15:13Z"
-    },
-    {
-      "path": "/home/cjm/projects/work/mind-body-athletes",
-      "remote": "https://github.com/comcreate-io/mind-body-athletes.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
@@ -728,7 +723,7 @@
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
     {
-      "path": "/home/cjm/projects/work/teknik-engagement",
+      "path": "/home/cjm/projects/work/_support/teknik/teknik-engagement",
       "remote": "https://github.com/comcreate-io/teknik-engagement.git",
       "enrolled_after": "2026-10-23T20:15:13Z"
     },
@@ -768,12 +763,6 @@
       ]
     },
     {
-      "path": "/home/cjm/projects/work/LouWellSpa--genny-brand-pass",
-      "reasons": [
-        "duplicate_checkout_not_canonical_primary"
-      ]
-    },
-    {
       "path": "/home/cjm/projects/work/RATH",
       "reasons": [
         "current_recorder_filename_boundary_hold"
@@ -783,30 +772,6 @@
       "path": "/home/cjm/projects/work/entrada-mockup",
       "reasons": [
         "same_remote_primary_checkout_unresolved"
-      ]
-    },
-    {
-      "path": "/home/cjm/projects/work/mcg-client-preview",
-      "reasons": [
-        "duplicate_checkout_not_canonical_primary"
-      ]
-    },
-    {
-      "path": "/home/cjm/projects/work/mind-body-athletes-agent-forms",
-      "reasons": [
-        "duplicate_checkout_not_canonical_primary"
-      ]
-    },
-    {
-      "path": "/home/cjm/projects/work/mind-body-athletes-agent-seo",
-      "reasons": [
-        "duplicate_checkout_not_canonical_primary"
-      ]
-    },
-    {
-      "path": "/home/cjm/projects/work/mind-body-athletes-hardening",
-      "reasons": [
-        "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
@@ -825,12 +790,6 @@
       "path": "/home/cjm/projects/work/tarzana",
       "reasons": [
         "missing_origin"
-      ]
-    },
-    {
-      "path": "/home/cjm/projects/work/teknikinc-r2-pr63",
-      "reasons": [
-        "duplicate_checkout_not_canonical_primary"
       ]
     },
     {
