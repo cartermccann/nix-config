@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   acira = pkgs.callPackage ../pkgs/acira-browser { };
-  id = "acira-browser.desktop";
+  id = "zen-beta.desktop";
   browserDefaults = {
     "x-scheme-handler/http" = [ id ];
     "x-scheme-handler/https" = [ id ];
@@ -16,7 +16,7 @@ let
 in
 {
   home.packages = [ acira ];
-  home.sessionVariables.BROWSER = "acira-browser";
+  home.sessionVariables.BROWSER = "zen-beta";
 
   xdg.mimeApps = {
     enable = true;
@@ -41,7 +41,6 @@ in
 
   # GLib, xdg-open and Vicinae consult desktop-specific defaults first.
   xdg.configFile."hyprland-mimeapps.list".source = pkgs.runCommand "hyprland-mimeapps.list" { } ''
-    test -f ${acira}/share/applications/${id}
     cat > "$out" <<EOF
     [Default Applications]
     x-scheme-handler/http=${id}
