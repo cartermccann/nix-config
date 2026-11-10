@@ -29,7 +29,10 @@
 
   # Zen through its home-manager module so Stylix themes it; the module pins
   # this host's existing profile path, so it stays a perkons choice.
-  home-manager.users.${user}.imports = [ ../../home/zen.nix ];
+  home-manager.users.${user}.imports = [
+    ../../home/zen.nix
+    ../../home/acira.nix
+  ];
 
   networking.hostName = "perkons";
 
