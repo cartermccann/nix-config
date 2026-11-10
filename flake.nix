@@ -23,7 +23,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     delta-agent-history = {
-      url = "github:comcreate-io/delta-agent-history/978c66b408a0314bf32cbe4f700574ac56262a24";
+      url = "github:comcreate-io/delta-agent-history/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";

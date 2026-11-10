@@ -227,7 +227,7 @@
       "original": {
         "owner": "comcreate-io",
         "repo": "delta-agent-history",
-        "rev": "978c66b408a0314bf32cbe4f700574ac56262a24",
+        "ref": "main",
         "type": "github"
       }
     },

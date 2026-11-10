@@ -119,6 +119,7 @@ but zero OOM kills, and its current memory PSI averages were zero. This is
 capacity pressure evidence, not proof that an OOM or active memory thrashing
 caused the compatibility outage. Raising the cap alone would shift pressure to
 the workstation. Review session/mount retention before changing the limit.
+
 The cgroup includes the shared `delta-app` daemon launched beneath the generic
 history service. A later process-level sample attributed approximately 1.4 GiB
 resident and 2.4 GiB swapped memory to that daemon, while the history worker
@@ -129,3 +130,45 @@ A `/proc` file-descriptor sample also counted 319,834 inotify watches across
 81 inotify instances in that daemon. This is observed watcher scale, not proof
 of a leak or that ignored dependencies are being recorded. Check mount lifetime
 and watcher exclusions before adding more mounted checkouts.
+
+## Updating the integration together
+
+The existing Pond system updater now resolves `zed-delta` and
+`delta-agent-history` together when selecting either Delta or T3. The recorder
+input tracks its upstream `main` branch, while `flake.lock` still pins an exact
+revision and content hash. Previously its input URL named an immutable commit,
+so ordinary input updates could never pick up recorder fixes.
+
+Before writing a new T3 source pin, `scripts/t3-update.py` builds and checks the
+candidate Delta/recorder packages against the proposed T3 version. The Pond
+transaction also checks the resulting combination before the system build,
+including retries of a pending activation. A current T3 release is rechecked,
+because its recorder or Delta input may have changed independently. Failed
+package patches, unsupported T3 releases or CLI contracts leave the candidate
+unactivated. Existing transaction backups and drift protection still apply.
+
+The check invokes the actual packaged recorder's version gate and contract
+parser with synthetic inputs, stopping before project discovery and without
+initializing either recorder database. It queries the candidate CLI's
+`thread contract` inside mandatory bubblewrap isolation: private user, PID,
+network and IPC namespaces, an empty environment, private runtime/home paths,
+and only the Nix store mounted read-only. It cannot query the old running Delta
+daemon, use the user's login, or access live checkout/recorder state. Missing
+isolation support fails the check instead of falling back to the live app.
+
+For a manual update outside Pond, run the same check before building/switching:
+
+```sh
+python3 ~/nix-config/scripts/delta-compatibility.py \
+  --repo ~/nix-config --host perkons --user cjm
+```
+
+This checks existing compatibility policy; it does not automatically approve
+future T3 releases, new Delta recording contracts or database migrations.
+Reviewed upstream recorder fixes arrive through normal input updates. A new
+incompatible interface still requires a tested adapter change. No additional
+scheduler or privileged activation was introduced. After switching, verify
+fresh source captures and sink acknowledgements separately.
+
+Upstream references: [official Delta Nix update instructions](https://github.com/zed-industries/delta-nix#releases-and-updates)
+and [plugin compatibility and recovery contract](https://delta.dev/docs/cli/build-a-plugin).

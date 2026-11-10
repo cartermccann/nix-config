@@ -472,6 +472,8 @@ def outcome(stage, reason, journal=None, flake=None):
         return "available", f"Update {reason} before any change"
     if stage == "apps":
         return "failed", f"Update {reason} while updating app pins. Review the pins and rebuild before switching"
+    if stage == "compatibility":
+        return "failed", f"Update {reason} while checking recorder compatibility. Candidate was not activated. {note}"
     if stage in ("lock-write", "building", "restore"):
         return "failed", f"Update {reason} while building. {note or 'flake.lock may hold the new revisions'}"
     if stage == "built":
@@ -771,7 +773,7 @@ def transact(transaction, flake, status, status_path, check_run, exec_run, env, 
         result = {"_original": current, "_lock": current, "inputs": []}
         status("updating", "Activation pending for the current flake")
         print(f"System flake: {flake}\nA previous update has not been successfully switched.\n")
-    elif app and app not in ("all", "delta"):
+    elif app and app not in ("all", "delta", "t3"):
         current = (flake / "flake.lock").read_bytes()
         result = {"_original": current, "_lock": current, "inputs": []}
         print(f"Update selected app: {app} (other app pins and flake inputs are unchanged)")
@@ -781,7 +783,7 @@ def transact(transaction, flake, status, status_path, check_run, exec_run, env, 
         print(f"System flake: {flake}\nChecking for newer inputs (flake.lock is not modified)…\n")
         try:
             result = check(env=env, run=check_run, keep=True,
-                           inputs=("zed-delta",) if app == "delta" else ())
+                           inputs=("zed-delta", "delta-agent-history") if app in ("delta", "t3") else ())
         except (RuntimeError, OSError, ValueError, subprocess.SubprocessError) as error:
             print(f"Check failed: {error}")
             status("failed", f"Check failed: {error}")
@@ -854,6 +856,16 @@ def transact(transaction, flake, status, status_path, check_run, exec_run, env, 
             for target, path in pins.items():
                 if app in ("all", target):
                     baseline[path] = current_tree.get(path)
+
+    transaction.record("compatibility", activation_pending=True)
+    status("updating", "Checking Delta recorder compatibility")
+    compatibility = [sys.executable, str(flake / "scripts/delta-compatibility.py"),
+                     "--repo", str(flake), "--user", os.environ.get("USER", ""),
+                     "--host", socket.gethostname()]
+    if run_command(exec_run, compatibility):
+        status("failed", "Delta recorder compatibility failed; candidate remains unactivated")
+        transaction.record("finished", outcome="compatibility-failed")
+        return 1
 
     build, switch = builder(flake)
     transaction.record("building")

@@ -29,6 +29,9 @@ class UpdateTests(unittest.TestCase):
         # Noncanonical spacing deliberately checks byte-for-byte restoration.
         self.original = b'{"version":"0.1.0", "srcHash":"old-source", "pnpmHash":"old-deps"}\n'
         self.pin.write_bytes(self.original)
+        compatibility = patch.object(t3, "compatibility_check")
+        self.compatibility = compatibility.start()
+        self.addCleanup(compatibility.stop)
 
     def run_commands(self, args, repo, timeout=120):
         if args[:2] == ["git", "status"]:
@@ -55,6 +58,16 @@ class UpdateTests(unittest.TestCase):
     def test_current_does_not_write_or_build(self):
         with patch.object(t3, "run", return_value="") as run, patch.object(t3, "latest_release", return_value="0.1.0"):
             self.assertFalse(t3.update(self.repo, "perkons", "cjm"))
+        self.assertEqual(run.call_count, 1)
+        self.assertEqual(self.pin.read_bytes(), self.original)
+        self.compatibility.assert_called_once_with(self.repo, "perkons", "cjm", "0.1.0")
+
+    def test_incompatible_release_stops_before_prefetch_or_pin_write(self):
+        self.compatibility.side_effect = ValueError("Recorder does not support candidate T3")
+        with patch.object(t3, "run", return_value="") as run, \
+                patch.object(t3, "latest_release", return_value="0.1.8"):
+            with self.assertRaisesRegex(ValueError, "does not support"):
+                t3.update(self.repo, "perkons", "cjm")
         self.assertEqual(run.call_count, 1)
         self.assertEqual(self.pin.read_bytes(), self.original)
 

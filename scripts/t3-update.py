@@ -104,6 +104,12 @@ def dependency_hash(output, drv):
     return result
 
 
+def compatibility_check(repo, host, user, version):
+    run([sys.executable, str(repo / "scripts/delta-compatibility.py"),
+         "--repo", str(repo), "--host", host, "--user", user,
+         "--t3-version", version], repo, 1800)
+
+
 def update(repo, host, user, expected_pin_sha256=None):
     path = repo / PIN
     original = path.read_bytes()
@@ -120,6 +126,7 @@ def update(repo, host, user, expected_pin_sha256=None):
     latest = latest_release(repo)
     if stable_version(latest) < current_version:
         raise ValueError("Refusing a T3 downgrade")
+    compatibility_check(repo, host, user, latest)
     if latest == current["version"]:
         print(f"T3 Code {latest} is current", flush=True)
         return False

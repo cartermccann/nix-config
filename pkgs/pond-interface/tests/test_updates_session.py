@@ -37,6 +37,8 @@ class FakeNix:
 
     def __call__(self, argv, **kwargs):
         self.calls.append(argv)
+        if any(str(a).endswith("delta-compatibility.py") for a in argv):
+            return subprocess.CompletedProcess(argv, 0, "", "")
         if argv[:3] == ["nix", "flake", "update"]:
             assert "--output-lock-file" in argv, "the real lock must never be updated by nix"
             Path(argv[argv.index("--output-lock-file") + 1]).write_text(json.dumps(self.latest))

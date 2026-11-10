@@ -385,6 +385,36 @@ class SwitchDrift(Base):
 
 
 class AppTransactions(Base):
+    def test_delta_update_resolves_recorder_and_delta_together(self):
+        run = self.runner()
+        self.interactive(["y", "n"], run, app="delta")
+        updates = [c for c in run.calls if c[:3] == ["nix", "flake", "update"]]
+        self.assertEqual(len(updates), 1)
+        self.assertEqual(updates[0][-2:], ["zed-delta", "delta-agent-history"])
+
+    def test_t3_update_resolves_recorder_and_delta_together(self):
+        run = self.runner()
+        self.interactive(["y", "n"], run, app="t3")
+        updates = [c for c in run.calls if c[:3] == ["nix", "flake", "update"]]
+        self.assertEqual(len(updates), 1)
+        self.assertEqual(updates[0][-2:], ["zed-delta", "delta-agent-history"])
+
+    def test_failed_compatibility_stops_before_system_build_and_rechecks_on_resume(self):
+        calls = []
+        fake = Fake()
+        def run(argv, **kwargs):
+            calls.append(argv)
+            if any(str(a).endswith("delta-compatibility.py") for a in argv):
+                return subprocess.CompletedProcess(argv, 1)
+            return fake(argv, **kwargs)
+        first = self.interactive(["y"], run, app="delta")
+        self.assertEqual(first.code, 1)
+        self.assertNotIn(["build"], calls)
+        self.assertNotIn(["switch"], calls)
+        second = self.interactive(["y"], run, app="delta")
+        self.assertEqual(second.code, 1)
+        self.assertEqual(sum(any(str(a).endswith("delta-compatibility.py") for a in c) for c in calls), 2)
+
     def runner(self, app_code=0, build=0, during_apps=None):
         fake = Fake(build=build)
         def run(argv, **kwargs):
@@ -439,6 +469,12 @@ class AppTransactions(Base):
 # --- A8: signals and abandoned updates ----------------------------------------
 
 class Interruptions(Base):
+    def test_compatibility_interruption_does_not_claim_partial_activation(self):
+        state, message = nix.outcome("compatibility", "interrupted")
+        self.assertEqual(state, "failed")
+        self.assertIn("not activated", message)
+        self.assertNotIn("partially activated", message)
+
     def test_no_signal_at_any_stage_leaves_the_status_updating(self):
         stages = {
             "check": lambda sig: (Fake(on_check=self.raiser(sig)), ["y", "y"]),
@@ -688,6 +724,8 @@ class EndToEnd(unittest.TestCase):
         self.flake = root / "flake"
         self.flake.mkdir()
         (self.flake / "flake.nix").write_text("{ }")
+        (self.flake / "scripts").mkdir()
+        (self.flake / "scripts/delta-compatibility.py").write_text("raise SystemExit(0)\n")
         self.lock_file = self.flake / "flake.lock"
         self.lock_file.write_text(ORIGINAL)
         self.marks = root / "marks"
@@ -780,7 +818,7 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(json.loads(self.lock_file.read_text()), NEWER)
         self.assertEqual(self.journal()["outcome"], "switched")
         self.assertIn(self.status_state(), ("complete", "restart"))
-        self.assertEqual(sorted(p.name for p in self.flake.iterdir()), ["flake.lock", "flake.nix"])
+        self.assertEqual(sorted(p.name for p in self.flake.iterdir()), ["flake.lock", "flake.nix", "scripts"])
 
     def test_terminal_signals_during_the_build_clean_up_and_stop_the_whole_build(self):
         for sig in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):

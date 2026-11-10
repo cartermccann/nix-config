@@ -39,7 +39,8 @@ class Recovery(Base):
         retry = Fake(latest=NEWER)
         second = self.interactive(["y", "y"], retry)
         self.assertEqual(second.state, "complete")
-        self.assertEqual(retry.calls, [["build"], ["switch"]])
+        self.assertEqual(Path(retry.calls[0][1]), self.flake / "scripts/delta-compatibility.py")
+        self.assertEqual(retry.calls[1:], [["build"], ["switch"]])
         self.assertFalse(nix.activation_pending(self.flake))
 
     def test_failed_switch_and_cancelled_retry_remain_actionable(self):
