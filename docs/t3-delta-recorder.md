@@ -56,14 +56,14 @@ Recovery must use a separate checkout or patch and coordinate with active edits.
 
 ## Compatibility and evidence
 
-Reviewed interfaces: T3 **0.1.0, 0.1.5 and 0.1.7**, Delta **0.21–0.23**, recording output contracts **6–8**. The pinned upstream package separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.5/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
+Reviewed interfaces: T3 **0.1.0, 0.1.5, 0.1.7, 0.1.8 and 0.1.9**, Delta **0.21–0.24**, recording output contracts **6–8**. Delta 0.24.0 advertises CLI contracts 8–9; the recorder still negotiates 8. The pinned upstream package separates worktree creation, thread membership and connection-owned mounts for contract 8. Existing producer IDs, thread IDs, references and queued record bytes are preserved. Non-project configuration changes exit the old worker so its service supervisor can restart it with the current CLI. Future contract maxima above eight require review. References: [T3 read-only access](https://github.com/pingdotgg/t3code/blob/v0.1.9/docs/user/outside-agents.md), [contract 8 plugin reference](https://github.com/zed-industries/delta-claude/tree/70aabf083dc985d231494d94ad45498bd9e6bc77), and [Delta plugin protocol](https://delta.dev/docs/cli/build-a-plugin).
 
 The local package override in `pkgs/delta-agent-history/` explicitly permits
-reviewed T3 0.1.5 and 0.1.7 alongside 0.1.0. The upstream pin otherwise rejects every
+reviewed T3 0.1.5, 0.1.7, 0.1.8 and 0.1.9 alongside 0.1.0. The upstream pin otherwise rejects every
 version except 0.1.0. Both installed commands and systemd services use this same
 patched package. Unknown stable and nightly releases still stop for review.
 The patch changes no database schema, enrollment, credentials or queued payloads.
-Its tests cover 0.1.5 and 0.1.7 capture and replay without duplicates, plus rejection before
+Its tests cover 0.1.5, 0.1.7, 0.1.8 and 0.1.9 capture and replay without duplicates, plus rejection before
 discovery or export for unsupported versions. Live read-only environment,
 project, thread-list and message reads succeeded against 0.1.5; Delta 0.23.0
 reported contract 8. All five recorder SQLite databases, including the generic
@@ -130,6 +130,39 @@ A `/proc` file-descriptor sample also counted 319,834 inotify watches across
 81 inotify instances in that daemon. This is observed watcher scale, not proof
 of a leak or that ignored dependencies are being recorded. Check mount lifetime
 and watcher exclusions before adding more mounted checkouts.
+
+## 2026-11-11 T3 0.1.9 update gate
+
+A Pond app update wrote Codex 0.167.1 and other pins, then stopped before
+activation because `t3-update.py` probed GitHub's latest stable T3 **0.1.9**
+against the recorder allowlist. The packaged engine still accepted only
+0.1.0, 0.1.5 and 0.1.7, so it raised `T3CompatibilityError` before source
+discovery. The T3 pin stayed on 0.1.7; the candidate was not activated.
+
+Published 0.1.8 and 0.1.9 contracts keep the recorder's read-only fields:
+`t3_environment_read` still reports `environmentId` and `serverVersion`;
+orchestration protocol remains 2; `OrchestrationProjectShell` is unchanged
+(`id`, `workspaceRoot`); `t3_thread_list` / `t3_thread_read` still expose
+`threadId`, `createdAt`, `status`, `worktreePath`, `projectId`, `items`,
+`recentRuns`, `visibility`, `itemId`, `textTruncated` and `nextTextOffset`.
+0.1.7→0.1.9 MCP contract additions (`executedModel`, `freshContext`,
+`freshSession`, secret-request URL/value) are optional operate-path fields
+the recorder does not read. Outside-agent docs changed sign-in UX only.
+Unknown versions, including nightlies, still stop for review.
+
+The same update also pulled Delta 0.24.0, whose CLI reports
+`{"min":8,"max":9}`. Official plugin compatibility is: update Delta if `max`
+is below the plugin's version, and update the plugin only if `min` is above
+it. Contract 8 remains in range, so the recorder keeps negotiating 8. The
+previous `high > 8` check treated an extra advertised maximum as a hard
+incompatibility. Forced contract 9 (`min > 8`) and unreviewed maxima above 9
+still stop before thread create. Plugin docs for 0.24 still describe
+contract 8; this does not implement or send contract 9 records.
+
+This is a published-schema review, not a live 0.1.9 capture probe: the
+running server is still 0.1.7 until Carter retries the updater, builds, and
+applies with `nrs`. After activation, verify advancing source and sink
+acknowledgement timestamps on a new approved-project conversation.
 
 ## Updating the integration together
 

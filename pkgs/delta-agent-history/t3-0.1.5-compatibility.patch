@@ -18,14 +18,14 @@
 -        if env.get("serverVersion") != "0.1.0":
 -            raise ValueError("T3 server version needs compatibility review")
 +        # Reviewed read-only MCP schemas; future releases still require review.
-+        if env.get("serverVersion") not in ("0.1.0", "0.1.5", "0.1.7"):
++        if env.get("serverVersion") not in ("0.1.0", "0.1.5", "0.1.7", "0.1.8", "0.1.9"):
 +            raise T3CompatibilityError("T3 server version needs compatibility review")
          matched_projects = 0
          seen_threads = set()
          self.set_progress("source_projects")
 --- a/tests/test_engine.py
 +++ b/tests/test_engine.py
-@@ -102,6 +102,44 @@
+@@ -102,6 +102,70 @@
  
  
  class EngineTests(unittest.TestCase):
@@ -55,6 +55,32 @@
 +        finally:
 +            restarted.close()
 +
++    def test_reviewed_t3_018_capture_and_restart_preserve_records(self):
++        self.source.environment = lambda: {"environmentId": "env", "serverVersion": "0.1.8"}
++        self.engine.poll()
++        self.assertEqual(len(self.sink.records), 2)
++        original = copy.deepcopy(self.sink.records)
++        restarted = Engine(self.config, self.state, self.source, self.sink, clock=lambda: NOW)
++        try:
++            restarted.poll()
++            self.assertEqual(self.sink.records, original)
++            self.assertEqual(len(self.sink.delivered), 2)
++        finally:
++            restarted.close()
++
++    def test_reviewed_t3_019_capture_and_restart_preserve_records(self):
++        self.source.environment = lambda: {"environmentId": "env", "serverVersion": "0.1.9"}
++        self.engine.poll()
++        self.assertEqual(len(self.sink.records), 2)
++        original = copy.deepcopy(self.sink.records)
++        restarted = Engine(self.config, self.state, self.source, self.sink, clock=lambda: NOW)
++        try:
++            restarted.poll()
++            self.assertEqual(self.sink.records, original)
++            self.assertEqual(len(self.sink.delivered), 2)
++        finally:
++            restarted.close()
++
 +    def test_unreviewed_t3_versions_stop_before_discovery_or_export(self):
 +        from t3_delta.engine import T3CompatibilityError
 +        for version in ("0.1.6", "0.2.0", "0.1.5-nightly", "invalid", None, []):
@@ -70,3 +96,27 @@
      def test_uploaded_empty_outbox_does_not_delay_live_source_discovery(self):
          engine = self.scoped_engine()
          engine.poll()
+--- a/t3_delta/delta_sink.py
++++ b/t3_delta/delta_sink.py
+@@ -209,2 +209,4 @@
+-        if not _integer(low) or not _integer(high) or low > high or low > 8 or high < 6 or high > 8:
+-            raise DeltaConflict("Delta recording contract is incompatible; recorder supports 6–8")
++        # Recorder speaks 6–8. Delta 0.24 advertises 8–9; keep negotiating 8.
++        # Forced contract 9 (min>8) and unreviewed maxima above 9 still stop.
++        if not _integer(low) or not _integer(high) or low > high or low > 8 or high < 6 or high > 9:
++            raise DeltaConflict("Delta recording contract is incompatible; recorder supports 6–8")
+--- a/tests/test_delta_sink.py
++++ b/tests/test_delta_sink.py
+@@ -465,5 +465,10 @@
+-    def test_future_contract_with_overlapping_versions_stops_before_create(self):
+-        self.fake.contract = {"operation": "contract", "min": 1, "max": 9}
++    def test_reviewed_cli_contract_9_overlap_still_records_as_8(self):
++        self.fake.contract = {"operation": "contract", "min": 8, "max": 9}
++        self.assertEqual(self.sink._contract(), 8)
++        self.assertFalse(any(args[2:4] == ["thread", "create"] for args, _ in self.fake.calls))
++
++    def test_unreviewed_contract_maxima_stop_before_create(self):
++        self.fake.contract = {"operation": "contract", "min": 1, "max": 10}
+         with self.assertRaises(DeltaConflict):
+             self.bind()
+         self.assertFalse(any(args[2:4] == ["thread", "create"] for args, _ in self.fake.calls))
