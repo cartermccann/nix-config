@@ -17,8 +17,8 @@
 }:
 
 # Granola — AI meeting notepad. Upstream ships macOS and Windows only, but the
-# app is Electron, so the macOS .dmg already contains the entire app (JS in
-# app.asar, C++ source for its one load-bearing native module). This derivation
+# app is Electron, so the macOS .dmg already contains the JS app (in app.asar)
+# plus the unpacked native-module tree. This derivation
 # does what tirtha4/Granola-for-Linux's shell script does, declaratively, and
 # swaps that script's downloaded Electron prebuilt for nixpkgs' electron_42 —
 # which is the whole reason this is a derivation and not a run of the script:
@@ -30,11 +30,14 @@
 #     answers 500 to any request carrying platform=linux, sign-in included. The
 #     replacement is byte-for-byte the same length because an asar header
 #     records file offsets; Electron does not verify asar integrity on Linux.
-#  2. better-sqlite3-multiple-ciphers is rebuilt from the C++ source inside the
-#     bundle. Granola ships a *fork* carrying an updateHook() that no published
-#     build has, so a stock prebuilt gets you a window that dies on
-#     "r.updateHook is not a function". Only binding.gyp is missing from the
-#     bundle, hence bs3Src below.
+#  2. better-sqlite3-multiple-ciphers is rebuilt from the matching npm source
+#     plus Granola's updateHook() fork. Granola ships a fork of 12.9.0 whose
+#     C++ binding exposes updateHook(); a stock prebuilt dies on "r.updateHook
+#     is not a function". Through 7.726 the dmg still unpacked that C++ tree
+#     (only binding.gyp was omitted). 7.786 ships JS + a Darwin .node and
+#     dropped src/ and deps/, so the rebuild now overlays the npm tarball and
+#     re-applies the fork (updateHook, Electron 44 V8 External sandbox, and
+#     SQLITE_ENABLE_BYTECODE_VTAB) from better-sqlite3-granola.patch.
 #  3. nixpkgs' electron dist is *copied* into a private dist directory whose
 #     resources/ holds Granola's payload, rather than symlinked to.
 #     process.resourcesPath derives from /proc/self/exe, which resolves
@@ -57,8 +60,9 @@
 # and re-check that the platform patterns below still match. Granola's own
 # auto-updater cannot write to the store, so updates are declarative only.
 let
-  # The bundled fork's version. binding.gyp is the one file the app bundle
-  # omits, so it comes from the matching npm release.
+  # The bundled fork's version. 7.786 dropped the C++ tree from asar.unpacked,
+  # so src/, deps/, and binding.gyp all come from the matching npm release and
+  # then get Granola's fork patched on top.
   bs3Version = "12.9.0";
 
   bs3Src = fetchurl {
@@ -159,8 +163,12 @@ stdenv.mkDerivation (finalAttrs: {
 
     echo "rebuilding better-sqlite3-multiple-ciphers for Electron ${electron.version}"
     bs3=payload/app.asar.unpacked/node_modules/better-sqlite3-multiple-ciphers
-    tar xzf ${bs3Src} package/binding.gyp
+    tar xzf ${bs3Src}
     cp package/binding.gyp "$bs3/"
+    rm -rf "$bs3/src" "$bs3/deps"
+    cp -r package/src package/deps "$bs3/"
+    rm -rf package
+    patch -d "$bs3" -p1 < ${./better-sqlite3-granola.patch}
 
     export HOME=$TMPDIR
 
@@ -176,9 +184,11 @@ stdenv.mkDerivation (finalAttrs: {
         rebuild --release --arch=x64 \
         --nodedir=${electron.headers} --devdir=$TMPDIR/.node-gyp )
 
-    # Ship the two loadable modules, not node-gyp's object files and static lib.
+    # Ship the two loadable modules, not node-gyp's object files, static lib,
+    # or the C++ tree copied in only for the rebuild.
     find "$bs3/build" -mindepth 1 -maxdepth 1 ! -name Release -exec rm -rf {} +
     find "$bs3/build/Release" -mindepth 1 ! -name '*.node' -prune -exec rm -rf {} +
+    rm -rf "$bs3/src" "$bs3/deps" "$bs3/binding.gyp"
 
     runHook postBuild
   '';
