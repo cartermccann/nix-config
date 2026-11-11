@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   pkgs-unstable,
   comcreate-desktop-app,
@@ -236,11 +237,14 @@ in
     pandoc # document format conversion
     poppler-utils # pdftotext/pdfinfo
 
+    # 3D
+    blender # modeling/UV/GLB export; Cycles is CPU-only (cudaSupport rebuilds from source)
+
     # SEO
     screamingFrog # proprietary crawler, bundled JDK
 
     # Games
-    prismlauncher # Minecraft Java launcher (Microsoft login, bundles its own JDKs)
+    prismlauncher # Minecraft Java launcher (Microsoft login, bundles JDKs 8/17/21/25)
 
     # Rice — trimmed to the ones that are actually wired to something.
     # Dropped (zero invocations, nothing references them): pipes-rs, cbonsai,
@@ -254,4 +258,33 @@ in
     google-workspace-cli.packages.${pkgs.stdenv.hostPlatform.system}.default # gws
     herdr.packages.${pkgs.stdenv.hostPlatform.system}.default # workspace manager for AI agents
   ];
+
+  # Prism records absolute /nix/store JDK paths in instance.cfg / prismlauncher.cfg.
+  # Those go missing after a GC even though the launcher wrapper still exposes live
+  # JDKs on PRISMLAUNCHER_JAVA_PATHS. Drop a dead override so auto-detect can pick one.
+  home.activation.fixPrismJavaPaths = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    data="''${XDG_DATA_HOME:-$HOME/.local/share}/PrismLauncher"
+    jdk21=${lib.escapeShellArg (lib.getExe pkgs.jdk21)}
+    fix_prism_java() {
+      local cfg="$1" is_global="$2"
+      [ -f "$cfg" ] || return 0
+      local path
+      path="$(${pkgs.gawk}/bin/awk -F= '/^JavaPath=/ { print $2; exit }' "$cfg")"
+      [ -n "$path" ] || return 0
+      [ -x "$path" ] && return 0
+      echo "Prism Java path gone ($path); repairing $cfg"
+      if [ "$is_global" = global ]; then
+        run ${pkgs.gnused}/bin/sed -i "s|^JavaPath=.*|JavaPath=$jdk21|" "$cfg"
+      else
+        run ${pkgs.gnused}/bin/sed -i \
+          -e 's/^AutomaticJava=.*/AutomaticJava=true/' \
+          -e 's/^OverrideJavaLocation=.*/OverrideJavaLocation=false/' \
+          "$cfg"
+      fi
+    }
+    fix_prism_java "$data/prismlauncher.cfg" global
+    for cfg in "$data/instances/"*/instance.cfg; do
+      fix_prism_java "$cfg" instance
+    done
+  '';
 }
